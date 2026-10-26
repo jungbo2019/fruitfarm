@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FRUIT FARM 푸꾸옥 플래그십 | 프리미엄 무설탕 골드망고 플래그십{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#070A12',
+                            800: '#0B1120',
+                            700: '#131D31',
+                            600: '#1C2942',
+                            500: '#2A3B5C'
+                        },
+                        gold: {
+                            100: '#FDF6E2',
+                            200: '#FCE7B2',
+                            300: '#FAD477',
+                            400: '#E6A23C',
+                            500: '#D97706',
+                            600: '#B45309'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    {% set current_theme = settings.get('theme_preset', 'luxury_dark') %}
+    {% set primary_accent = settings.get('theme_primary_color', '#E6A23C') %}
+    <style>
+        :root {
+            --primary-accent: {{ primary_accent }};
+        }
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            {% if current_theme in ['fresh_cream_mango', 'modern_light', 'sunset_amber'] %}
+            background-color: #FAF7F2 !important;
+            color: #1E293B !important;
+            {% elif current_theme == 'tropical_emerald' %}
+            background-color: #061A14 !important;
+            color: #ECFDF5 !important;
+            {% else %}
+            background-color: #070A12 !important;
+            color: #F1F5F9 !important;
+            {% endif %}
+        }
+        {% if current_theme in ['fresh_cream_mango', 'modern_light', 'sunset_amber'] %}
+        /* =========================================================================
+           [프리미엄 웜 크림 & 망고 골드] 마켓컬리·현대식품관 프리미엄 과일 선호 색상
+           ========================================================================= */
+        .luxury-card {
+            background: #FFFFFF !important;
+            border: 1px solid #EFEAE2 !important;
+            box-shadow: 0 4px 20px -2px rgba(180, 130, 60, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02) !important;
+        }
+        .luxury-card-gold {
+            background: #FFFDF7 !important;
+            border: 1.5px solid #FCD34D !important;
+            box-shadow: 0 8px 25px -4px rgba(245, 158, 11, 0.14) !important;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #B45309 0%, #D97706 50%, #F59E0B 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        header { 
+            background-color: rgba(255, 255, 255, 0.97) !important; 
+            border-bottom: 1px solid #EDE8DF !important;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03) !important;
+        }
+        header a, header nav a { color: #475569 !important; }
+        header a:hover { color: #D97706 !important; }
+        header .text-white { color: #0F172A !important; }
+        
+        .text-slate-300:not(.hero-keep-white), .text-slate-400:not(.hero-keep-white) { color: #57534E !important; }
+        .text-slate-500 { color: #78716C !important; }
+        /* removed buggy text-white override */
+        .hero-keep-white { color: #FFFFFF !important; }
+        .btn-keep-white { color: #FFFFFF !important; }
+        
+        .bg-dark-900 { background-color: #FAF7F2 !important; }
+        .bg-dark-800 { background-color: #FFFFFF !important; }
+        .border-slate-800, .border-slate-700 { border-color: #EDE8DF !important; }
+        .border-slate-900 { border-color: #E7E2D8 !important; }
+
+        /* Footer in Warm Linen Tone */
+        footer.bg-dark-900 {
+            background-color: #F4EFE6 !important;
+            border-top: 1px solid #E5DED1 !important;
+            color: #6B655B !important;
+        }
+        footer .text-white { color: #1C1917 !important; }
+
+        /* Top Announcement Bar in Warm Honey Tone */
+        .bg-gradient-to-r.from-dark-900 {
+            background: linear-gradient(to right, #FFFBEB, #FEF3C7, #FFFBEB) !important;
+            border-color: #FDE68A !important;
+            color: #78350F !important;
+        }
+        .bg-gradient-to-r.from-dark-900 a { color: #92400E !important; }
+        .bg-gradient-to-r.from-dark-900 .text-slate-300 { color: #78350F !important; }
+        .bg-gradient-to-r.from-dark-900 .text-slate-400 { color: #92400E !important; }
+        .bg-gradient-to-r.from-dark-900 .text-gold-300 { color: #B45309 !important; }
+        .bg-gradient-to-r.from-dark-900 .text-slate-600 { color: #D97706 !important; }
+        {% elif current_theme == 'tropical_emerald' %}
+        .luxury-card {
+            background: linear-gradient(145deg, rgba(8, 38, 29, 0.88) 0%, rgba(6, 26, 20, 0.96) 100%) !important;
+            border: 1px solid rgba(16, 185, 129, 0.28) !important;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6) !important;
+        }
+        .luxury-card-gold {
+            background: linear-gradient(145deg, rgba(10, 48, 36, 0.9) 0%, rgba(6, 26, 20, 0.98) 100%) !important;
+            border: 1px solid rgba(16, 185, 129, 0.5) !important;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #ECFDF5 0%, #6EE7B7 50%, var(--primary-accent) 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        .bg-dark-900 { background-color: #061A14 !important; }
+        .bg-dark-800 { background-color: #09261E !important; }
+        {% elif current_theme == 'sunset_amber' %}
+        .luxury-card {
+            background: linear-gradient(145deg, rgba(38, 20, 10, 0.88) 0%, rgba(26, 15, 8, 0.96) 100%) !important;
+            border: 1px solid rgba(249, 115, 22, 0.28) !important;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6) !important;
+        }
+        .luxury-card-gold {
+            background: linear-gradient(145deg, rgba(48, 25, 12, 0.9) 0%, rgba(26, 15, 8, 0.98) 100%) !important;
+            border: 1px solid rgba(249, 115, 22, 0.5) !important;
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF7ED 0%, #FDBA74 50%, var(--primary-accent) 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        .bg-dark-900 { background-color: #1A0F08 !important; }
+        .bg-dark-800 { background-color: #27160C !important; }
+        {% else %}
+        .luxury-card {
+            background: linear-gradient(145deg, rgba(19, 29, 49, 0.85) 0%, rgba(11, 17, 32, 0.95) 100%);
+            border: 1px solid rgba(230, 162, 60, 0.18);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .luxury-card-gold {
+            background: linear-gradient(145deg, rgba(29, 23, 15, 0.9) 0%, rgba(15, 12, 8, 0.98) 100%);
+            border: 1px solid rgba(230, 162, 60, 0.45);
+            box-shadow: 0 15px 35px -10px rgba(230, 162, 60, 0.15);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #FFF0D4 0%, #FAD477 50%, var(--primary-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        {% endif %}
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0B1120; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2A3B5C; border-radius: 3px; }
+    </style>
+</head>
+<body class="text-slate-100 antialiased flex flex-col min-h-screen">
+
+    <!-- Top Customer Benefit Bar (Clean & Focused on Delivery Benefit) -->
+    <div class="bg-gradient-to-r from-dark-900 via-dark-800 to-dark-900 border-b border-gold-400/20 text-xs py-2 px-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-2.5">
+                <span class="bg-amber-500 text-stone-950 font-black text-[10px] px-2 py-0.5 rounded">
+                    푸꾸옥 직영
+                </span>
+                <span class="text-slate-200 text-[11px] sm:text-xs font-medium">
+                    ✈️ $100 이상 주문 시 한국 자택 100% 무료 항공 직배송 (15kg 수하물 오버차지 ZERO)
+                </span>
+            </div>
+            
+            <div class="flex items-center space-x-3 text-[11px]">
+                <a href="{{ url_for('order_track') }}" class="text-slate-200 hover:text-amber-300 transition font-bold flex items-center space-x-1">
+                    <i class="fa-solid fa-truck-fast text-amber-400"></i>
+                    <span>실시간 배송조회</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guide B2B Mode isolated to partner route -->
+    </div>
+
+    <!-- Luxury Sticky Header -->
+    <header class="sticky top-0 z-40 bg-dark-900/95 backdrop-blur-xl border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="{{ url_for('index') }}" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-400 to-amber-600 flex items-center justify-center text-dark-900 font-black text-xl shadow-lg shadow-gold-500/20">
+                    <i class="fa-solid fa-lemon"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xl sm:text-2xl font-black tracking-tight text-white group-hover:text-gold-300 transition">FRUIT FARM</span>
+                        <span class="text-[10px] font-bold text-gold-400 border border-gold-500/30 px-2 py-0.5 rounded bg-gold-500/10 tracking-widest uppercase">Phu Quoc</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 tracking-wider">PREMIUM DRIED FRUITS FLAGSHIP STORE</p>
+                </div>
+            </a>
+
+            <!-- Clean Customer Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-8 text-xs font-bold text-slate-700">
+                <a href="{{ url_for('index') }}#promo" class="hover:text-amber-500 transition py-1">추천 기획세트 ($100)</a>
+                <a href="{{ url_for('index') }}#custom-builder" class="hover:text-amber-500 transition py-1 text-amber-500 font-extrabold">10+2 골라담기</a>
+                <a href="{{ url_for('index') }}#products" class="hover:text-amber-500 transition py-1">전체 상품</a>
+                <a href="{{ url_for('index') }}#delivery-info" class="hover:text-amber-500 transition py-1">무료 직배송 안내</a>
+            </nav>
+
+            <!-- Right Actions: Cart Only -->
+            <div class="flex items-center space-x-3">
+                                <!-- Cart Button -->
+                <button onclick="openCartModal()" class="flex items-center space-x-2 bg-amber-500 hover:bg-amber-600 text-stone-950 px-4 py-2.5 rounded-xl text-xs font-black transition shadow-md shadow-amber-500/20 transform hover:-translate-y-0.5 cursor-pointer">
+                    <i class="fa-solid fa-bag-shopping text-sm"></i>
+                    <span>장바구니</span>
+                    <span class="bg-stone-950/15 text-stone-950 px-2 py-0.5 rounded-full text-xs font-black ml-1 border border-stone-950/20">(<span id="nav-cart-badge">0</span>)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Floating Customer Care Button (Mobile Responsive High Contrast) -->
+    <div class="fixed bottom-4 right-3 sm:bottom-6 sm:right-6 z-40">
+        <a href="{{ settings.get('kakao_channel_url', 'https://pf.kakao.com') }}" target="_blank"
+           class="flex items-center gap-1.5 bg-[#FEE500] hover:bg-[#edd500] text-black px-3.5 py-2.5 sm:px-5 sm:py-3.5 rounded-full shadow-2xl font-black text-xs border border-yellow-400 transition transform hover:scale-105 cursor-pointer">
+            <i class="fa-solid fa-comment text-base sm:text-lg"></i>
+            <span class="hidden sm:inline">카톡 1:1 상담 / 리조트 배달</span>
+            <span class="inline sm:hidden font-black text-[11px]">카톡 1:1 상담</span>
+        </a>
+    </div>
+
+    <footer class="bg-dark-900 border-t border-slate-800 text-slate-400 text-xs py-12 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="space-y-3">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 font-black">
+                        <i class="fa-solid fa-lemon"></i>
+                    </div>
+                    <span class="text-lg font-black text-white">FRUIT FARM</span>
+                </div>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                    베트남 호치민 직영 HACCP 공장 및 푸꾸옥 직영 플래그십 스토어. 무설탕 골드망고 저온건조 & 대한민국 100% 무사통관 직배송 전문.
+                </p>
+                <div class="text-[11px] text-gold-400 font-bold">
+                    <i class="fa-solid fa-shield-check mr-1"></i>식물검역법 정식 적합 품목 · 관세청 소액면세 보증
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-black text-xs uppercase tracking-wider mb-3">매장 및 운영 안내</h4>
+                <ul class="space-y-2 text-[11px]">
+                    <li>• 사업장: {{ settings.get('store_branch_name', 'FRUIT FARM 푸꾸옥 플래그십') }}</li>
+                    <li>• 위치: {{ settings.get('store_address', '베트남 푸꾸옥 즈엉동 야시장 인근') }}</li>
+                    <li>• 영업시간: {{ settings.get('business_hours', '매일 09:00 ~ 22:00 (연중무휴)') }}</li>
+                    <li>• 실시간 상담: 카카오톡 채널 @fruitfarm</li>
+                                    </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-black text-xs uppercase tracking-wider mb-3">안심 쇼핑 보증</h4>
+                <ul class="space-y-2.5 text-xs font-bold text-stone-700">
+                    <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-amber-500 font-black"></i><span>100% 무설탕 저온건조 프리미엄 특산품 보증</span></li>
+                    <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-amber-500 font-black"></i><span>$100 이상 주문 시 한국 자택 무료 직배송</span></li>
+                    <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-amber-500 font-black"></i><span>푸꾸옥 전지역 리조트 당일 2시간 퀵 배달</span></li>
+                    <li class="flex items-center space-x-2"><i class="fa-solid fa-check text-amber-500 font-black"></i><span>배송 중 파손·변질 시 100% 즉시 무상 맞교환</span></li>
+                </ul>
+            </div>
+
+                            <div>
+                    <h4 class="text-stone-900 font-black text-xs uppercase tracking-wider mb-3">품질 보증 & 고객 지원</h4>
+                    <p class="text-[11px] text-stone-500 leading-relaxed mb-3">
+                        호치민 직영 HACCP 가공 시설에서 생산된 100% 무설탕 저온건조 특산품만을 정직하게 엄선하여 배송 중 파손이나 통관 문제 시 100% 무상 재발송을 보증합니다.
+                    </p>
+                    <div class="text-xs text-stone-700 font-bold flex items-center space-x-2">
+                        <i class="fa-solid fa-shield-check text-amber-500"></i>
+                        <span>100% 고객 안심 보증제 운영</span>
+                    </div>
+                </div>
+
+        <div class="max-w-7xl mx-auto mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-500 gap-2">
+            <div>© 2026 FRUIT FARM PHU QUOC FLAGSHIP STORE. ALL RIGHTS RESERVED.</div>
+            <div>HACCP CERTIFIED FACTORY IN HO CHI MINH & WMS FEFO AUTOMATION</div>
+        </div>
+    </footer>
+
+    <!-- Global Cart & Guide JavaScript Core -->
+    <script>
+        // Global State
+        const EXCHANGE_RATE = parseFloat("{{ settings.get('usd_krw_rate', '1380') }}");
+        let cart = JSON.parse(localStorage.getItem('fruitfarm_cart_v2') || '[]');
+        let currentGuide = JSON.parse(localStorage.getItem('fruitfarm_active_guide') || 'null');
+
+        // Check URL parameter for referral code (?ref=GUIDE_KIM or ?guide=GUIDE_KIM)
+        const urlParams = new URLSearchParams(window.location.search);
+        const refParam = urlParams.get('ref') || urlParams.get('guide');
+        if (refParam) {
+            sessionStorage.setItem('referral_guide_code', refParam.toUpperCase());
+        }
+
+        function saveCart() {
+            localStorage.setItem('fruitfarm_cart_v2', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function addToCart(id, name, priceUsd, priceKrw, imageUrl, qty = 1) {
+            const existing = cart.find(item => item.id === id);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                cart.push({
+                    id: id,
+                    name: name,
+                    price_usd: parseFloat(priceUsd),
+                    price_krw: parseInt(priceKrw),
+                    image_url: imageUrl,
+                    qty: qty
+                });
+            }
+            saveCart();
+            openCartModal();
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) {
+                cart = cart.filter(i => i.id !== id);
+            }
+            saveCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            saveCart();
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            const subtotalUsd = cart.reduce((sum, item) => sum + (item.price_usd * item.qty), 0);
+            
+            // Badges
+            const navBadge = document.getElementById('nav-cart-badge');
+            if (navBadge) navBadge.textContent = count;
+            const countBadge = document.getElementById('cart-item-count-badge');
+            if (countBadge) countBadge.textContent = `${count}개`;
+            const orderCount = document.getElementById('cartOrderCountText');
+            if (orderCount) orderCount.textContent = count;
+
+            // Free shipping calculation ($100 threshold)
+            const threshold = 100.0;
+            const shippingUsd = (subtotalUsd >= threshold || subtotalUsd === 0) ? 0.0 : 15.0;
+            const totalUsd = subtotalUsd + shippingUsd;
+            const totalKrw = Math.round(totalUsd * EXCHANGE_RATE);
+
+            // Shipping Progress
+            const progress = Math.min(100, Math.round((subtotalUsd / threshold) * 100));
+            const pBar = document.getElementById('shippingProgressBar');
+            const pText = document.getElementById('shippingProgressText');
+            const pPercent = document.getElementById('shippingProgressPercent');
+            if (pBar) pBar.style.width = `${progress}%`;
+            if (pPercent) pPercent.textContent = `${progress}%`;
+            if (pText) {
+                if (subtotalUsd >= threshold) {
+                    pText.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>한국 자택 무료 직배송 혜택 달성!</span>';
+                } else {
+                    const remaining = (threshold - subtotalUsd).toFixed(2);
+                    pText.textContent = `$${remaining} 추가 주문 시 한국 무료 직배송`;
+                }
+            }
+
+            // Totals
+            if (document.getElementById('cartSubtotalUsd')) document.getElementById('cartSubtotalUsd').textContent = `$${subtotalUsd.toFixed(2)}`;
+            if (document.getElementById('cartShippingUsd')) {
+                document.getElementById('cartShippingUsd').textContent = shippingUsd === 0 ? (subtotalUsd > 0 ? '무료' : '$0.00') : `$${shippingUsd.toFixed(2)}`;
+            }
+            if (document.getElementById('cartTotalUsd')) document.getElementById('cartTotalUsd').textContent = `$${totalUsd.toFixed(2)}`;
+            if (document.getElementById('cartTotalKrw')) document.getElementById('cartTotalKrw').textContent = `₩${totalKrw.toLocaleString()}원`;
+
+            // Render Items
+            const container = document.getElementById('cartItemsList');
+            if (!container) return;
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fa-solid fa-basket-shopping text-3xl mb-3 text-slate-600"></i>
+                        <p class="text-sm">장바구니가 비어 있습니다.</p>
+                        <p class="text-xs text-slate-400 mt-1">푸꾸옥 플래그십 인기 $100 세트를 둘러보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="flex items-center space-x-3 p-3 bg-dark-900 rounded-2xl border border-slate-700/60">
+                    <img src="${item.image_url}" alt="${item.name}" class="w-14 h-14 object-cover rounded-xl border border-slate-700">
+                    <div class="flex-grow min-w-0">
+                        <div class="font-bold text-xs text-white truncate">${item.name}</div>
+                        <div class="text-gold-300 font-black text-xs mt-0.5">$${item.price_usd.toFixed(2)} <span class="text-slate-400 font-normal text-[10px]">(${Math.round(item.price_usd * EXCHANGE_RATE).toLocaleString()}원)</span></div>
+                    </div>
+                    <div class="flex items-center space-x-1.5 bg-dark-800 border border-slate-700 rounded-lg p-1">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-white text-xs">-</button>
+                        <span class="w-5 text-center text-xs font-bold text-white">${item.qty}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-white text-xs">+</button>
+                    </div>
+                    <button onclick="removeFromCart(${item.id})" class="text-slate-500 hover:text-rose-400 p-1">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Cart Modals
+        function openCartModal() {
+            updateCartUI();
+            document.getElementById('cartModal').classList.remove('hidden');
+        }
+        function closeCartModal() {
+            document.getElementById('cartModal').classList.add('hidden');
+        }
+
+        // Checkout Modals
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert('장바구니에 담긴 상품이 없습니다.');
+                return;
+            }
+            closeCartModal();
+            updateOrderGuideDisplay();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function toggleDeliveryType(val) {
+            const labelDirect = document.getElementById('labelDirectKorea');
+            const labelLocal = document.getElementById('labelLocalPhuquoc');
+            const customsContainer = document.getElementById('customsIdContainer');
+            const addrLabel = document.getElementById('addressLabel');
+            const custAddress = document.getElementById('custAddress');
+            const quickResort = document.getElementById('quickResortSelector');
+
+            if (val === 'direct_korea') {
+                labelDirect.className = 'cursor-pointer border border-gold-500/50 bg-gold-500/10 p-3 rounded-2xl flex flex-col items-center text-center transition';
+                labelLocal.className = 'cursor-pointer border border-slate-700 bg-dark-800 p-3 rounded-2xl flex flex-col items-center text-center transition';
+                customsContainer.style.display = 'block';
+                if (quickResort) quickResort.classList.add('hidden');
+                addrLabel.textContent = '배송 주소 (한국 자택 도로명 주소) *';
+                custAddress.placeholder = '도로명 주소 및 상세 동호수를 입력하세요';
+            } else {
+                labelLocal.className = 'cursor-pointer border border-gold-500/50 bg-gold-500/10 p-3 rounded-2xl flex flex-col items-center text-center transition';
+                labelDirect.className = 'cursor-pointer border border-slate-700 bg-dark-800 p-3 rounded-2xl flex flex-col items-center text-center transition';
+                customsContainer.style.display = 'none';
+                if (quickResort) quickResort.classList.remove('hidden');
+                addrLabel.textContent = '푸꾸옥 리조트명 / 호텔 객실 정보 *';
+                custAddress.placeholder = '예: 노보텔 리조트 302호 (로비 정문 대면 수령)';
+            }
+        }
+
+        function selectQuickResort(resortName) {
+            const addr = document.getElementById('custAddress');
+            if (addr) {
+                addr.value = resortName + ' 객실번호: ';
+                addr.focus();
+            }
+        }
+
+        function updateOrderGuideDisplay() {
+            const display = document.getElementById('displayGuideCodeInOrder');
+            const refCode = sessionStorage.getItem('referral_guide_code') || (currentGuide ? currentGuide.guide_code : null);
+            if (refCode) {
+                display.textContent = `연계 가이드 [${refCode}] (수수료 자동 적립 대상)`;
+                display.className = 'font-mono font-black text-gold-300';
+            } else {
+                display.textContent = '일반 고객 주문 (가이드 없음)';
+                display.className = 'font-mono text-slate-400';
+            }
+        }
+
+        // Final Order Submit
+        function submitFinalOrder(e) {
+            e.preventDefault();
+            const deliveryType = document.querySelector('input[name="delivery_type"]:checked').value;
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const kakao = document.getElementById('custKakao').value.trim();
+            const address = document.getElementById('custAddress').value.trim();
+            const note = document.getElementById('custNote').value.trim();
+            const customsId = document.getElementById('custCustomsId').value.trim().toUpperCase();
+
+            if (deliveryType === 'direct_korea') {
+                if (!customsId || !/^P[0-9]{12}$/.test(customsId)) {
+                    alert('한국 직배송 시 개인통관고유부호(P로 시작하는 13자리)를 정확히 입력해주세요.');
+                    document.getElementById('custCustomsId').focus();
+                    return;
+                }
+            }
+
+            const refCode = sessionStorage.getItem('referral_guide_code') || (currentGuide ? currentGuide.guide_code : null);
+
+            const payload = {
+                customer_name: name,
+                customer_phone: phone,
+                customer_kakao: kakao,
+                delivery_type: deliveryType,
+                delivery_address: address,
+                customs_id: customsId,
+                delivery_note: note,
+                guide_code: refCode || '',
+                items: cart.map(i => ({ id: i.id, qty: i.qty }))
+            };
+
+            const btn = document.getElementById('btnFinalSubmit');
+            btn.disabled = true;
+            btn.textContent = '주문 접수 및 재고 검증 중...';
+
+            fetch('/api/order/create', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`[주문 접수 완료]\n\n주문번호: ${data.order_number}\n총 결제액: $${data.total_usd.toFixed(2)} (₩${data.total_krw.toLocaleString()}원)\n\n감사합니다! 담당자가 카카오톡/문자로 주문 확인 및 결제 계좌를 안내해드립니다.`);
+                    cart = [];
+                    saveCart();
+                    closeCheckoutModal();
+                    window.location.href = `/order/track?q=${data.order_number}`;
+                } else {
+                    alert('주문 오류: ' + data.message);
+                    btn.disabled = false;
+                    btn.textContent = '최종 주문 접수하기';
+                }
+            })
+            .catch(err => {
+                alert('통신 오류가 발생했습니다: ' + err);
+                btn.disabled = false;
+                btn.textContent = '최종 주문 접수하기';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartUI();
+            if (typeof applyGuideModeUI === 'function') {
+                applyGuideModeUI();
+            }
+        });
+    </script>
+
+    
+    <!-- ==================== SHOPPING CART DRAWER / MODAL ==================== -->
+    <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs flex justify-end">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-300">
+            <!-- Header -->
+            <div class="p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-black">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-stone-900 text-base">쇼핑백 장바구니</h3>
+                        <p class="text-[11px] text-stone-500">선택하신 품목을 확인하세요 (<span id="cart-item-count-badge">0개</span>)</p>
+                    </div>
+                </div>
+                <button onclick="closeCartModal()" class="w-8 h-8 rounded-full bg-stone-200 hover:bg-stone-300 text-stone-600 flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Free Shipping Progress -->
+            <div class="bg-amber-50 p-3.5 border-b border-amber-200/60">
+                <div class="flex justify-between items-center text-xs font-black text-stone-800 mb-1.5">
+                    <span id="shippingProgressText">$100 이상 주문 시 한국 무료 직배송</span>
+                    <span id="shippingProgressPercent" class="text-amber-600 font-bold">0%</span>
+                </div>
+                <div class="w-full bg-stone-200 rounded-full h-2 overflow-hidden">
+                    <div id="shippingProgressBar" class="bg-gradient-to-r from-amber-500 to-amber-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Cart Items List -->
+            <div id="cartItemsList" class="flex-grow p-4 overflow-y-auto space-y-3">
+                <!-- Rendered by JS -->
+            </div>
+
+            <!-- Footer / Totals & Checkout Button -->
+            <div class="p-5 border-t border-stone-200 bg-stone-50 space-y-3">
+                <div class="space-y-1.5 text-xs text-stone-600">
+                    <div class="flex justify-between">
+                        <span>상품 합계</span>
+                        <span id="cartSubtotalUsd" class="font-bold text-stone-900">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>국제 항공 배송비</span>
+                        <span id="cartShippingUsd" class="font-bold text-emerald-600">무료</span>
+                    </div>
+                    <div class="flex justify-between text-base font-black text-stone-950 pt-2 border-t border-stone-200">
+                        <span>최종 결제 예상액</span>
+                        <div class="text-right">
+                            <div id="cartTotalUsd" class="text-amber-600 font-black">$0.00</div>
+                            <div id="cartTotalKrw" class="text-xs text-stone-500 font-bold">₩0원</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button onclick="closeCartModal()" class="w-full py-3 rounded-xl border border-stone-300 text-stone-700 font-black text-xs hover:bg-stone-100 transition cursor-pointer">
+                        계속 쇼핑하기
+                    </button>
+                    <button onclick="openCheckoutModal()" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-xs shadow-md shadow-amber-500/20 transition flex items-center justify-center space-x-1.5 cursor-pointer">
+                        <span>주문서 작성</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHECKOUT & ORDER MODAL ==================== -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-stone-200 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="p-5 bg-stone-950 text-white flex items-center justify-between">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center font-black">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-white text-base">주문서 작성 및 배송 정보</h3>
+                        <p class="text-[11px] text-stone-400">품목 수량: <span id="cartOrderCountText">0</span>개 · 무사통관 100% 보증</p>
+                    </div>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-stone-400 hover:text-white p-2 cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form onsubmit="submitFinalOrder(event)" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-xs">
+                <!-- Delivery Type Radio Selection -->
+                <div>
+                    <label class="block font-black text-stone-900 mb-2">배송 방식 선택 *</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label id="labelDirectKorea" class="cursor-pointer border-2 border-amber-500 bg-amber-50/50 p-3 rounded-2xl flex flex-col items-center text-center transition">
+                            <input type="radio" name="delivery_type" value="direct_korea" checked onchange="toggleDeliveryType(this.value)" class="sr-only">
+                            <i class="fa-solid fa-plane-departure text-amber-600 text-base mb-1"></i>
+                            <span class="font-black text-stone-900 text-xs">대한민국 직배송</span>
+                            <span class="text-[10px] text-stone-500 mt-0.5">$100 이상 무료 항공직송</span>
+                        </label>
+                        <label id="labelLocalPhuquoc" class="cursor-pointer border-2 border-stone-200 bg-stone-50 p-3 rounded-2xl flex flex-col items-center text-center transition">
+                            <input type="radio" name="delivery_type" value="local_phuquoc" onchange="toggleDeliveryType(this.value)" class="sr-only">
+                            <i class="fa-solid fa-hotel text-stone-600 text-base mb-1"></i>
+                            <span class="font-black text-stone-900 text-xs">푸꾸옥 리조트 배달</span>
+                            <span class="text-[10px] text-stone-500 mt-0.5">당일 2시간 그랩 퀵 직배송</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Guide Display -->
+                <div class="bg-stone-100 p-2.5 rounded-xl flex items-center justify-between text-[11px]">
+                    <span class="text-stone-600 font-bold">제휴 안내:</span>
+                    <span id="displayGuideCodeInOrder" class="font-mono text-stone-500">일반 고객 주문 (가이드 없음)</span>
+                </div>
+
+                <!-- Customer Details -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">주문자 성함 *</label>
+                        <input id="custName" type="text" required placeholder="홍길동"
+                               class="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">연락처 *</label>
+                        <input id="custPhone" type="tel" required placeholder="010-0000-0000"
+                               class="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">카카오톡 ID (주문 확인 및 배송 알림용) *</label>
+                    <input id="custKakao" type="text" required placeholder="카카오톡 아이디 또는 휴대폰 번호"
+                           class="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <!-- Quick Resort Selector (Shown when local_phuquoc is active) -->
+                <div id="quickResortSelector" class="hidden bg-amber-50/60 p-3 rounded-2xl border border-amber-200">
+                    <label class="block font-black text-amber-900 text-[11px] mb-1.5">빠른 리조트 선택 (클릭 시 자동 입력)</label>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" onclick="selectQuickResort('소나시 노보텔 리조트')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">노보텔</button>
+                        <button type="button" onclick="selectQuickResort('풀만 리조트 푸꾸옥')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">풀만</button>
+                        <button type="button" onclick="selectQuickResort('인터컨티넨탈 푸꾸옥')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">인터컨티넨탈</button>
+                        <button type="button" onclick="selectQuickResort('세일링 클럽 시그니처')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">세일링클럽</button>
+                        <button type="button" onclick="selectQuickResort('JW 메리어트 에메랄드 베이')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">JW메리어트</button>
+                        <button type="button" onclick="selectQuickResort('프리미어 빌리지 푸꾸옥')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">프리미어빌리지</button>
+                        <button type="button" onclick="selectQuickResort('빈펄 리조트 & 스파 푸꾸옥')" class="px-2 py-1 bg-white border border-amber-300 rounded-lg text-[10px] font-bold text-stone-800 hover:bg-amber-100">빈펄</button>
+                    </div>
+                </div>
+
+                <div>
+                    <label id="addressLabel" class="block font-bold text-stone-700 mb-1">배송 주소 (한국 자택 도로명 주소) *</label>
+                    <input id="custAddress" type="text" required placeholder="도로명 주소 및 상세 동호수를 입력하세요"
+                           class="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <!-- Customs ID Container -->
+                <div id="customsIdContainer">
+                    <label class="block font-bold text-stone-700 mb-1">개인통관고유부호 (한국 직배송 시 필수) *</label>
+                    <input id="custCustomsId" type="text" placeholder="P로 시작하는 13자리 (예: P123456789012)"
+                           class="w-full px-3 py-2.5 border border-stone-300 rounded-xl text-xs font-mono uppercase focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    <p class="text-[10px] text-stone-500 mt-1">관세청 통관을 위한 필수 기재 항목이며, 1인당 $150 소액 면세 혜택이 적용됩니다.</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">배송 요청 사항 (선택)</label>
+                    <textarea id="custNote" rows="2" placeholder="부재 시 문 앞 보관 또는 요청사항"
+                              class="w-full px-3 py-2 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="pt-3">
+                    <button id="btnFinalSubmit" type="submit"
+                            class="w-full py-3.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-sm shadow-lg shadow-amber-500/25 transition flex items-center justify-center space-x-2 cursor-pointer">
+                        <i class="fa-solid fa-lock text-xs"></i>
+                        <span>안심 주문 접수하기</span>
+                    </button>
+                    <p class="text-[10px] text-center text-stone-400 mt-2">
+                        주문 접수 즉시 담당자가 카카오톡/문자로 계좌 안내 및 출고 일정을 실시간 공유해드립니다.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!-- ==================== 24/7 AI SMART CONCIERGE CHATBOT MODAL ==================== -->
+    <div id="aiChatModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-end sm:justify-end sm:p-6 p-2">
+        <div class="bg-white rounded-3xl w-full sm:max-w-md h-[550px] shadow-2xl border border-stone-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-300">
+            <!-- Chatbot Header -->
+            <div class="bg-stone-950 text-white p-4 flex items-center justify-between border-b border-stone-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500 flex items-center justify-center text-stone-950 text-lg font-black shadow-md shadow-amber-500/20">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h3 class="font-black text-sm text-white">FRUIT FARM AI 컨시어지</h3>
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        </div>
+                        <p class="text-[10px] text-stone-400">24시간 무인 자동상담 (업무부담 ZERO)</p>
+                    </div>
+                </div>
+                <button onclick="closeAIChatbot()" class="text-stone-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Chat Messages Container -->
+            <div id="aiChatBody" class="flex-grow p-4 overflow-y-auto space-y-3.5 text-xs bg-stone-50">
+                <!-- Bot Welcome Message -->
+                <div class="flex items-start space-x-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center flex-shrink-0 text-xs font-black">
+                        AI
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-stone-200 text-stone-800 shadow-xs max-w-[85%] space-y-2 leading-relaxed">
+                        <p>안녕하세요! <strong>FRUIT FARM 푸꾸옥 플래그십 24시 AI 상담원</strong>입니다. 🥭</p>
+                        <p>배송, 통관, 리조트 퀵배달 등 궁금하신 점을 아래 버튼을 누르시거나 직접 물어보세요!</p>
+                    </div>
+                </div>
+
+                <!-- Quick FAQ Chips -->
+                <div class="pt-1 space-y-1.5">
+                    <span class="text-[10px] font-black text-stone-400 uppercase tracking-wider block">자주 묻는 질문 원클릭 답변:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="askAIQuestion('한국 직배송 며칠 걸려요?')" class="px-2.5 py-1 bg-white hover:bg-amber-50 text-stone-700 hover:text-amber-900 border border-stone-200 rounded-lg text-[11px] font-bold transition shadow-xs">
+                            ✈️ 한국 배송 소요기간
+                        </button>
+                        <button onclick="askAIQuestion('리조트 로비 배달은 언제 오나요?')" class="px-2.5 py-1 bg-white hover:bg-amber-50 text-stone-700 hover:text-amber-900 border border-stone-200 rounded-lg text-[11px] font-bold transition shadow-xs">
+                            🛵 푸꾸옥 리조트 당일 배달
+                        </button>
+                        <button onclick="askAIQuestion('10+2 세트는 어떻게 골라담나요?')" class="px-2.5 py-1 bg-white hover:bg-amber-50 text-stone-700 hover:text-amber-900 border border-stone-200 rounded-lg text-[11px] font-bold transition shadow-xs">
+                            🎁 10+2 골라담기 혜택
+                        </button>
+                        <button onclick="askAIQuestion('개인통관고유부호가 없어요')" class="px-2.5 py-1 bg-white hover:bg-amber-50 text-stone-700 hover:text-amber-900 border border-stone-200 rounded-lg text-[11px] font-bold transition shadow-xs">
+                            🛂 통관부호 발급 방법
+                        </button>
+                        <button onclick="askAIQuestion('설탕이나 첨가물이 들어가나요?')" class="px-2.5 py-1 bg-white hover:bg-amber-50 text-stone-700 hover:text-amber-900 border border-stone-200 rounded-lg text-[11px] font-bold transition shadow-xs">
+                            🥭 무설탕 저온건조 품질
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="aiChatForm" onsubmit="handleAIChatSubmit(event)" class="p-3 bg-white border-t border-stone-200 flex items-center gap-2">
+                <input type="text" id="aiChatInput" placeholder="질문을 입력하세요 (예: 배송비, 리조트 배달...)" required
+                       class="flex-grow p-2.5 bg-stone-100 border border-stone-300 rounded-xl text-xs focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                <button type="submit" class="px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-black rounded-xl text-xs transition shadow-sm flex items-center gap-1">
+                    <span>전송</span>
+                    <i class="fa-solid fa-paper-plane text-xs"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <script>
+    function openAIChatbot() {
+        document.getElementById('aiChatModal').classList.remove('hidden');
+        document.getElementById('aiFloatingBtn').classList.add('hidden');
+        document.getElementById('aiChatInput').focus();
+    }
+
+    function closeAIChatbot() {
+        document.getElementById('aiChatModal').classList.add('hidden');
+        document.getElementById('aiFloatingBtn').classList.remove('hidden');
+    }
+
+    function askAIQuestion(q) {
+        document.getElementById('aiChatInput').value = q;
+        handleAIChatSubmit(new Event('submit'));
+    }
+
+    function handleAIChatSubmit(e) {
+        e.preventDefault();
+        const input = document.getElementById('aiChatInput');
+        const q = input.value.trim();
+        if (!q) return;
+
+        const body = document.getElementById('aiChatBody');
+
+        // Append user question
+        const userDiv = document.createElement('div');
+        userDiv.className = 'flex items-start justify-end space-x-2';
+        userDiv.innerHTML = `
+            <div class="bg-amber-500 text-stone-950 font-bold p-3 rounded-2xl rounded-tr-none text-xs max-w-[85%] shadow-xs leading-relaxed">
+                ${q}
+            </div>
+        `;
+        body.appendChild(userDiv);
+        input.value = '';
+        body.scrollTop = body.scrollHeight;
+
+        // Simulate typing and AI response
+        setTimeout(() => {
+            const answer = generateAIAnswer(q);
+            const botDiv = document.createElement('div');
+            botDiv.className = 'flex items-start space-x-2.5';
+            botDiv.innerHTML = `
+                <div class="w-7 h-7 rounded-lg bg-amber-500 text-stone-950 flex items-center justify-center flex-shrink-0 text-xs font-black">
+                    AI
+                </div>
+                <div class="bg-white p-3 rounded-2xl rounded-tl-none border border-stone-200 text-stone-800 shadow-xs max-w-[85%] space-y-2 leading-relaxed">
+                    ${answer}
+                </div>
+            `;
+            body.appendChild(botDiv);
+            body.scrollTop = body.scrollHeight;
+        }, 500);
+    }
+
+    function generateAIAnswer(q) {
+        const query = q.toLowerCase();
+        if (query.includes('한국') || query.includes('직배송') || query.includes('택배') || query.includes('소요') || query.includes('며칠')) {
+            return `
+                <p><strong>✈️ 한국 무료 항공 직배송 안내</strong></p>
+                <p>• <strong>배송 기간</strong>: 결제 완료 후 <strong>3~5일 이내</strong> 한국 자택 문 앞까지 안전 배송됩니다.</p>
+                <p>• <strong>무료배송 혜택</strong>: $100 이상 주문 시 배송비 전액 무료 (LCC 15kg 수하물 오버차지 6만원 절약!)</p>
+                <p>• <strong>우체국 택배</strong>와 연동되어 국내 송장번호가 발급됩니다.</p>
+            `;
+        } else if (query.includes('리조트') || query.includes('호텔') || query.includes('로비') || query.includes('당일') || query.includes('시간')) {
+            return `
+                <p><strong>🛵 푸꾸옥 전지역 리조트 로비 2시간 당일 배달</strong></p>
+                <p>• <strong>대상 리조트</strong>: 노보텔, 인터컨티넨탈, 풀만, 리젠트, 세일링클럽, 빈펄 등 푸꾸옥 전지역 리조트 로비 정문</p>
+                <p>• <strong>배달 시간</strong>: 주문 후 <strong>당일 2시간 이내</strong> 그랩 퀵 라이더가 신속 전달합니다.</p>
+                <p>• <strong>운영 시간</strong>: 매일 09:00 ~ 22:00 (연중무휴)</p>
+            `;
+        } else if (query.includes('10+2') || query.includes('골라담기') || query.includes('프로모션') || query.includes('세트')) {
+            return `
+                <p><strong>🎁 10+2 내맘대로 골라담기 패키지 안내</strong></p>
+                <p>• 180g 말린과일 및 견과류 중 원하시는 품목 10봉을 자유롭게 선택하시면, 가장 인기 있는 <strong>골드망고 2봉을 무료로 증정</strong>하여 총 12봉을 안전 포장 박스에 담아 보내드립니다!</p>
+                <p><a href="#custom-builder" onclick="closeAIChatbot()" class="inline-block mt-1 px-3 py-1 bg-amber-500 text-stone-950 font-black rounded-lg text-[11px]">👉 10+2 직접 담으러 가기</a></p>
+            `;
+        } else if (query.includes('통관') || query.includes('부호') || query.includes('유니패스') || query.includes('관세')) {
+            return `
+                <p><strong>🛂 개인통관고유부호(P부호) 안내</strong></p>
+                <p>• 대한민국 관세청 <strong>1인당 $150 소액면세 규정</strong>을 엄격히 준수하여 관부가세 0원으로 무사통관됩니다.</p>
+                <p>• 통관부호가 없으신 경우, 관세청 유니패스에서 휴대폰 인증으로 <strong>1분 만에 무료 발급</strong>받으실 수 있습니다.</p>
+                <p><a href="https://unipass.customs.go.kr" target="_blank" class="inline-block mt-1 px-3 py-1 bg-stone-900 text-white font-bold rounded-lg text-[11px]">🔗 관세청 유니패스 바로가기</a></p>
+            `;
+        } else if (query.includes('설탕') || query.includes('품질') || query.includes('haccp') || query.includes('방부제') || query.includes('원산지')) {
+            return `
+                <p><strong>🥭 100% 무설탕 저온건조 & HACCP 직영공장 품질</strong></p>
+                <p>• 설탕 시럽에 절인 저가 로컬 야시장 제품과 달리, <strong>설탕 0% · 방부제 0%</strong>로 과육 자체의 깊은 천연 단맛만을 담았습니다.</p>
+                <p>• 호치민 직영 HACCP 인증 위생 공장에서 45℃ 저온 건조(Low-temperature Dehydration)하여 쫀득하고 신선합니다.</p>
+            `;
+        } else {
+            return `
+                <p>질문해 주신 내용에 대해 확인했습니다.</p>
+                <p>• <strong>한국 무료 직배송</strong>: $100 이상 결제 시 3~5일 내 무료 직배송</p>
+                <p>• <strong>푸꾸옥 리조트 배달</strong>: 당일 2시간 내 로비 그랩 퀵 배송</p>
+                <p class="pt-1">혹시 개별 맞춤 상담이 필요하시면 아래 1:1 카카오톡 채널로 문의해 주시면 매장 직원이 즉시 안내해 드립니다.</p>
+                <p><a href="https://pf.kakao.com" target="_blank" class="inline-block mt-1 px-3 py-1 bg-[#FEE500] text-black font-black rounded-lg text-[11px]"><i class="fa-solid fa-comment mr-1"></i>카카오톡 1:1 매장 상담</a></p>
+            `;
+        }
+    }
+    </script>
+
+</body>
+</html>

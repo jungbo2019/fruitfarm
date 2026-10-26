@@ -1,0 +1,374 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}상품 및 재고 관리{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-4 sm:space-y-6">
+
+    <!-- Top Action Bar (Mobile-Optimized) -->
+    <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+        <div>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px] font-black mb-1">
+                <i class="fa-solid fa-boxes-stacked text-amber-600"></i>
+                <span>실물 사진 & 재고 통합 관제 (16종)</span>
+            </div>
+            <h3 class="text-base sm:text-lg font-black text-stone-900 [word-break:keep-all]">
+                등록 상품 관리 <span class="text-xs sm:text-sm font-bold text-stone-500">(총 {{ products|length }}개 상품)</span>
+            </h3>
+            <p class="text-[11px] sm:text-xs text-stone-500 mt-0.5 [word-break:keep-all]">
+                스마트폰 카메라로 촬영한 실물 사진을 바로 업로드하거나 가격·재고를 실시간 수정할 수 있습니다.
+            </p>
+        </div>
+        <button onclick="document.getElementById('newProductModal').classList.remove('hidden')" class="w-full sm:w-auto px-5 py-3 sm:py-2.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-stone-950 rounded-xl text-xs sm:text-xs font-black transition flex items-center justify-center gap-2 shadow-md border border-amber-600 touch-manipulation">
+            <i class="fa-solid fa-plus"></i>
+            <span>새 상품 등록</span>
+        </button>
+    </div>
+
+    <!-- 4-TIER MERCHANDISING PRIORITY MATRIX & FEFO RULES (Collapsible on Mobile) -->
+    <details class="group bg-stone-50 rounded-2xl sm:rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
+        <summary class="cursor-pointer list-none p-4 sm:p-5 flex items-center justify-between hover:bg-stone-100/70 transition">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center text-sm font-black">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <div>
+                    <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest block">SOP & PRIORITIES</span>
+                    <h4 class="font-black text-xs sm:text-sm text-stone-900">상품 진열 4대 우선순위 & FEFO 원칙</h4>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-stone-500 bg-white px-2 py-0.5 rounded border border-stone-200 hidden sm:inline-block">FEFO 선입선출</span>
+                <i class="fa-solid fa-chevron-down text-stone-400 text-xs transition-transform duration-200 group-open:rotate-180"></i>
+            </div>
+        </summary>
+
+        <div class="p-4 sm:p-6 pt-0 border-t border-stone-200/80 mt-2 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs pt-2">
+                <!-- Priority 1 -->
+                <div class="p-3.5 rounded-xl bg-white border-2 border-amber-400 shadow-sm space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="px-2 py-0.5 rounded-full bg-amber-500 text-stone-950 font-black text-[10px]">최우선 1위</span>
+                        <span class="text-[10px] font-bold text-amber-800">$100 패키지</span>
+                    </div>
+                    <h5 class="font-black text-stone-900 text-xs sm:text-sm">10+2 기획선물세트</h5>
+                    <p class="text-[11px] text-stone-500 leading-relaxed [word-break:keep-all]">
+                        한국 자택 무료 직배송($100+)을 충족시키는 핵심 패키지. 전체 매출의 65% 이상 차지.
+                    </p>
+                    <div class="pt-1 text-[10px] font-bold text-stone-700">권장 안전재고: 150세트+</div>
+                </div>
+
+                <!-- Priority 2 -->
+                <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-sm space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="px-2 py-0.5 rounded-full bg-stone-900 text-white font-black text-[10px]">시그니처 2위</span>
+                        <span class="text-[10px] font-bold text-stone-500">전환율 88%</span>
+                    </div>
+                    <h5 class="font-black text-stone-900 text-xs sm:text-sm">100% 무설탕 건망고</h5>
+                    <p class="text-[11px] text-stone-500 leading-relaxed [word-break:keep-all]">
+                        무료 시식 후 구매 전환율이 가장 높은 시그니처 단품. 저온건조 특허 기술 차별화.
+                    </p>
+                    <div class="pt-1 text-[10px] font-bold text-stone-700">권장 안전재고: 각 300봉+</div>
+                </div>
+
+                <!-- Priority 3 -->
+                <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-sm space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 font-bold text-[10px]">구색 3위</span>
+                        <span class="text-[10px] font-bold text-stone-500">객단가 보강</span>
+                    </div>
+                    <h5 class="font-black text-stone-900 text-xs sm:text-sm">프리미엄 견과류</h5>
+                    <p class="text-[11px] text-stone-500 leading-relaxed [word-break:keep-all]">
+                        HACCP 통캐슈넛, 통마카다미아 등 건망고와 함께 선물 바구니를 구성하는 필수 구색 상품.
+                    </p>
+                    <div class="pt-1 text-[10px] font-bold text-stone-700">권장 안전재고: 각 100봉+</div>
+                </div>
+
+                <!-- Priority 4 -->
+                <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-sm space-y-1.5">
+                    <div class="flex justify-between items-center">
+                        <span class="px-2 py-0.5 rounded-full bg-stone-100 text-stone-700 font-bold text-[10px]">경험 4위</span>
+                        <span class="text-[10px] font-bold text-stone-500">참여형 만족도</span>
+                    </div>
+                    <h5 class="font-black text-stone-900 text-xs sm:text-sm">DIY 10+2 골라담기</h5>
+                    <p class="text-[11px] text-stone-500 leading-relaxed [word-break:keep-all]">
+                        고객이 원하는 12봉을 마음대로 조합하는 빌더. 개별 단품 대비 이탈률 40% 감소.
+                    </p>
+                    <div class="pt-1 text-[10px] font-bold text-stone-700">원클릭 프리셋 빌더 연동</div>
+                </div>
+            </div>
+        </div>
+    </details>
+
+    <!-- Products Grid (Mobile Friendly Cards) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        {% for p in products %}
+        <div class="bg-white rounded-2xl sm:rounded-3xl border border-stone-200 shadow-sm overflow-hidden flex flex-col justify-between hover:border-amber-400 transition">
+            <div>
+                <!-- Real Fruit Image Container with Direct Photo Edit -->
+                <div class="relative h-52 sm:h-48 bg-stone-100 overflow-hidden group">
+                    <img id="prodImg_{{ p.id }}" src="{{ p.image_url }}" alt="{{ p.name }}" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                    
+                    <span class="absolute top-3 left-3 bg-stone-950/90 text-white text-[10px] font-black px-2 py-1 rounded-md border border-stone-700">
+                        {{ p.category }}
+                    </span>
+                    {% if p.badge %}
+                    <span class="absolute top-3 right-3 bg-amber-500 text-stone-950 text-[10px] font-black px-2.5 py-1 rounded-md shadow-sm border border-amber-600">
+                        {{ p.badge }}
+                    </span>
+                    {% endif %}
+                    
+                    <!-- Direct Photo Change Overlay Button (Touch friendly) -->
+                    <label for="imgUpload_{{ p.id }}" class="absolute bottom-3 right-3 bg-stone-950/90 active:bg-amber-600 hover:bg-black text-white text-xs font-black px-3.5 py-2 rounded-xl border border-stone-600 shadow-lg cursor-pointer flex items-center space-x-1.5 transition transform active:scale-95 touch-manipulation">
+                        <i class="fa-solid fa-camera text-amber-400"></i>
+                        <span>사진 교체</span>
+                    </label>
+                    <input type="file" id="imgUpload_{{ p.id }}" accept="image/*" class="hidden" onchange="uploadProductImageFile(this, {{ p.id }})">
+                </div>
+
+                <div class="p-4 sm:p-5 space-y-2">
+                    <div class="text-[11px] text-amber-800 font-black">{{ p.sub_title }}</div>
+                    <h4 class="font-black text-sm sm:text-base text-stone-900 leading-snug [word-break:keep-all]">{{ p.name }}</h4>
+                    <p class="text-xs text-stone-500 line-clamp-2 leading-relaxed [word-break:keep-all]">{{ p.description }}</p>
+                    <div class="pt-2 flex items-center justify-between text-[11px] text-stone-400 font-mono border-t border-stone-100">
+                        <span>바코드: {{ p.barcode or 'N/A' }}</span>
+                        <span>중량: {{ p.weight_g }}g</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Form in Card -->
+            <form method="POST" action="{{ url_for('admin_products') }}" onsubmit="submitProductEdit(event, this)" class="p-3.5 sm:p-4 bg-stone-50 border-t border-stone-100 space-y-2.5 text-xs">
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="product_id" value="{{ p.id }}">
+
+                <!-- Direct Image Edit Field -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[10px] font-bold text-stone-600">사진 경로 / URL</label>
+                        <label for="imgUpload_{{ p.id }}" class="text-[10px] font-black text-amber-600 hover:text-amber-700 cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>사진 파일 선택</span>
+                        </label>
+                    </div>
+                    <input type="text" name="image_url" id="imgUrlInput_{{ p.id }}" value="{{ p.image_url }}" oninput="updateImagePreview({{ p.id }}, this.value)" class="w-full p-2 border rounded-xl bg-white font-mono text-[11px] text-stone-700 focus:ring-2 focus:ring-amber-500 focus:outline-none" placeholder="/static/images/products/... 또는 URL">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-stone-600 mb-0.5">상품명</label>
+                    <input type="text" name="name" value="{{ p.name }}" required class="w-full p-2.5 border rounded-xl bg-white font-bold text-stone-900 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-stone-600 mb-0.5">판매가 ($ USD)</label>
+                        <input type="number" step="0.5" name="price_usd" value="{{ p.price_usd }}" required class="w-full p-2 border rounded-xl bg-white font-black text-amber-700 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-stone-600 mb-0.5">판매가 (₩ KRW)</label>
+                        <input type="number" name="price_krw" value="{{ p.price_krw }}" required class="w-full p-2 border rounded-xl bg-white font-bold text-stone-900 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[10px] font-bold text-stone-600 mb-0.5">재고 수량</label>
+                        <input type="number" name="stock" value="{{ p.stock }}" required class="w-full p-2 border rounded-xl bg-white font-black {% if p.stock < 25 %}border-red-400 bg-red-50 text-red-700{% else %}text-stone-900{% endif %} focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-stone-600 mb-0.5">뱃지 (예: BEST)</label>
+                        <input type="text" name="badge" value="{{ p.badge or '' }}" placeholder="뱃지 없음" class="w-full p-2 border rounded-xl bg-white text-stone-900 font-bold focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 pt-1.5">
+                    <button type="submit" class="submit-btn flex-grow py-3 bg-stone-950 hover:bg-black active:bg-amber-600 text-white font-black rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5 touch-manipulation">
+                        <i class="fa-solid fa-floppy-disk text-amber-400"></i>
+                        <span>수정 저장</span>
+                    </button>
+                    <button type="submit" name="action" value="delete" onclick="return confirm('정말 이 상품을 삭제하시겠습니까?');" class="px-4 py-3 bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border border-red-200 font-bold rounded-xl transition text-xs touch-manipulation" title="상품 삭제">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<!-- New Product Modal -->
+<div id="newProductModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl sm:rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-2xl border border-stone-200">
+        <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-stone-200 mb-4">
+            <h3 class="font-black text-sm sm:text-base text-stone-900">새 상품 등록</h3>
+            <button onclick="document.getElementById('newProductModal').classList.add('hidden')" class="text-stone-400 hover:text-stone-900 p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <form method="POST" action="{{ url_for('admin_products') }}" class="space-y-3 sm:space-y-4 text-xs">
+            <input type="hidden" name="action" value="add">
+
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">상품명 *</label>
+                <input type="text" name="name" required placeholder="예: 프리미엄 골드망고 (180g)" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 sm:gap-3">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">카테고리 *</label>
+                    <select name="category" required class="w-full p-2.5 border rounded-xl bg-white">
+                        <option value="promo_set">프로모션 기획 세트</option>
+                        <option value="dried_fruit">말린과일 (건조)</option>
+                        <option value="nuts">견과류</option>
+                        <option value="fruit_syrup">과일청</option>
+                        <option value="tea_etc">유기농 차/기타</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">뱃지 (선택)</label>
+                    <input type="text" name="badge" placeholder="예: BEST" class="w-full p-2.5 border rounded-xl">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">소제목 (강조 문구)</label>
+                <input type="text" name="sub_title" placeholder="예: 베트남 최상위 품종 골드망고 100%" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">상세 설명</label>
+                <textarea name="description" rows="2" placeholder="상품 특징 및 장점을 입력하세요" class="w-full p-2.5 border rounded-xl"></textarea>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">가격 ($ USD) *</label>
+                    <input type="number" step="0.5" name="price_usd" required placeholder="10.0" class="w-full p-2.5 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">가격 (₩ KRW) *</label>
+                    <input type="number" name="price_krw" required placeholder="13800" class="w-full p-2.5 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">초기 재고 *</label>
+                    <input type="number" name="stock" value="100" required class="w-full p-2.5 border rounded-xl">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">이미지 경로</label>
+                <input type="text" name="image_url" value="/static/images/products/gold_mango_180.jpg" class="w-full p-2.5 border rounded-xl">
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-3 border-t border-stone-200">
+                <button type="button" onclick="document.getElementById('newProductModal').classList.add('hidden')" class="px-4 py-2.5 border rounded-xl text-stone-600 font-bold hover:bg-stone-50">
+                    취소
+                </button>
+                <button type="submit" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-xl shadow-md border border-amber-600">
+                    상품 등록하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateImagePreview(prodId, url) {
+    const img = document.getElementById(`prodImg_${prodId}`);
+    if (img && url) {
+        img.src = url;
+    }
+}
+
+function uploadProductImageFile(fileInput, prodId) {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    // 1. Instant local preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = document.getElementById(`prodImg_${prodId}`);
+        if (img) img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+
+    // 2. Upload via AJAX FormData
+    const formData = new FormData();
+    formData.append('product_id', prodId);
+    formData.append('image_file', file);
+
+    const toast = document.createElement('div');
+    toast.className = 'fixed bottom-5 right-5 z-50 bg-stone-900 text-amber-400 px-4 py-3 rounded-2xl text-xs font-bold shadow-2xl flex items-center gap-2 border border-stone-700';
+    toast.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>새 사진 서버 업로드 중...</span>';
+    document.body.appendChild(toast);
+
+    fetch('/api/admin/product/upload-image', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        toast.remove();
+        if (data.success) {
+            const urlInput = document.getElementById(`imgUrlInput_${prodId}`);
+            if (urlInput) urlInput.value = data.image_url;
+            const img = document.getElementById(`prodImg_${prodId}`);
+            if (img) img.src = data.image_url;
+
+            const successToast = document.createElement('div');
+            successToast.className = 'fixed bottom-5 right-5 z-50 bg-emerald-600 text-white px-4 py-3 rounded-2xl text-xs font-black shadow-2xl flex items-center gap-2 border border-emerald-400';
+            successToast.innerHTML = '<i class="fa-solid fa-circle-check"></i><span>사진이 성공적으로 변경되었습니다!</span>';
+            document.body.appendChild(successToast);
+            setTimeout(() => successToast.remove(), 2500);
+        } else {
+            alert('사진 업로드 실패: ' + data.message);
+        }
+    })
+    .catch(err => {
+        toast.remove();
+        alert('업로드 오류: ' + err);
+    });
+}
+
+function submitProductEdit(event, form) {
+    event.preventDefault();
+    const btn = form.querySelector('.submit-btn');
+    const origHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>저장 중...</span>';
+
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            btn.className = btn.className.replace('bg-stone-950', 'bg-emerald-600').replace('hover:bg-black', 'hover:bg-emerald-700');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>수정 완료!</span>';
+            setTimeout(() => {
+                btn.className = btn.className.replace('bg-emerald-600', 'bg-stone-950').replace('hover:bg-emerald-700', 'hover:bg-black');
+                btn.innerHTML = origHtml;
+                btn.disabled = false;
+            }, 2000);
+        } else {
+            alert('저장 실패: ' + data.message);
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+        }
+    })
+    .catch(err => {
+        form.submit(); // fallback to normal form submit
+    });
+}
+</script>
+{% endblock %}

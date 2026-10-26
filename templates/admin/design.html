@@ -1,0 +1,517 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}사이트 디자인 시안 & 배치·글자 커스텀 센터 | FRUIT FARM 관리자{% endblock %}
+{% block page_title %}🎨 사이트 디자인 시안 & 배치·글자 CMS{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Top Hero Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-stone-200 gap-4">
+        <div>
+            <div class="flex items-center space-x-2">
+                <span class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm">
+                    FULL CMS & LAYOUT ENGINE
+                </span>
+                <span class="text-xs text-stone-500 font-bold">푸꾸옥 플래그십 실시간 통합 비주얼 관리</span>
+            </div>
+            <h1 class="text-2xl font-black text-stone-900 mt-1">사이트 디자인 시안 & 배치·글자 수정 센터</h1>
+            <p class="text-xs text-stone-500 mt-0.5">
+                4대 디자인 시안 선택부터 섹션 배치 순서 변경, 모든 화면 문구(글자) 수정을 마우스 클릭으로 실시간 적용합니다.
+            </p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('index') }}" target="_blank" class="bg-stone-900 hover:bg-black text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow flex items-center space-x-2">
+                <i class="fa-solid fa-arrow-up-right-from-square text-amber-400"></i>
+                <span>고객 쇼핑몰 화면 확인</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs for Customizer -->
+    <div class="flex border-b border-stone-200 space-x-2 text-xs font-bold">
+        <button type="button" onclick="switchCmsTab('tab-presets')" id="btn-tab-presets"
+                class="px-5 py-3 border-b-2 border-purple-600 text-purple-700 bg-purple-50/50 rounded-t-xl transition flex items-center space-x-2">
+            <i class="fa-solid fa-swatchbook"></i>
+            <span>1. 4대 디자인 시안 선택</span>
+        </button>
+        <button type="button" onclick="switchCmsTab('tab-layout')" id="btn-tab-layout"
+                class="px-5 py-3 border-b-2 border-transparent text-stone-600 hover:text-stone-900 rounded-t-xl transition flex items-center space-x-2">
+            <i class="fa-solid fa-arrows-up-down"></i>
+            <span>2. 섹션 배치 순서 변경</span>
+        </button>
+        <button type="button" onclick="switchCmsTab('tab-texts')" id="btn-tab-texts"
+                class="px-5 py-3 border-b-2 border-transparent text-stone-600 hover:text-stone-900 rounded-t-xl transition flex items-center space-x-2">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>3. 전체 화면 글자·문구 수정</span>
+        </button>
+    </div>
+
+    <!-- Main CMS Form -->
+    <form action="{{ url_for('admin_design_update') }}" method="POST" id="cmsMainForm" class="space-y-6">
+
+        <!-- Hidden input storing ordered section IDs (e.g. gallery,competitor,promo,builder,catalog,sample,location) -->
+        <input type="hidden" name="section_order" id="inputSectionOrder" value="{{ settings.get('section_order', 'gallery,competitor,promo,builder,catalog,sample,location') }}">
+
+        <!-- ========================================================================================= -->
+        <!-- TAB 1: 4 DESIGN PROPOSALS & THEMES -->
+        <!-- ========================================================================================= -->
+        <div id="tab-presets" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <div class="pb-3 border-b border-stone-100 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-sm font-black text-stone-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i>
+                            <span>4대 대표 디자인 시안 선택 (원클릭 전환)</span>
+                        </h3>
+                        <p class="text-[11px] text-stone-500 mt-0.5">시안을 선택하시면 전체 배경 톤, 카드 질감, 폰트 명도, 버튼 색상이 즉시 일괄 전환됩니다.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4" id="presetThemesContainer">
+                    <!-- Proposal S: Fresh Warm Cream & Mango Honey (Consumer Favorite #1) -->
+                    <label class="cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between {% if settings.get('theme_preset', 'fresh_cream_mango') == 'fresh_cream_mango' %}border-amber-500 bg-amber-50/50 shadow-md ring-2 ring-amber-400/50{% else %}border-stone-200 hover:border-stone-300 bg-white{% endif %}">
+                        <input type="radio" name="theme_preset" value="fresh_cream_mango" {% if settings.get('theme_preset', 'fresh_cream_mango') == 'fresh_cream_mango' %}checked{% endif %} class="sr-only" onchange="selectPresetTheme('fresh_cream_mango', '#F59E0B')">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs font-black text-amber-900">★ 웜 크림 & 망고 골드</span>
+                                <span class="text-[10px] bg-amber-500 text-white font-black px-2 py-0.5 rounded shadow-sm">선호도 1위</span>
+                            </div>
+                            <div class="h-20 rounded-xl bg-[#FAF7F2] p-3 flex flex-col justify-between border border-amber-200 shadow-inner">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-4 h-4 rounded-full bg-[#F59E0B] shadow"></div>
+                                    <div class="w-16 h-2 rounded bg-amber-200"></div>
+                                </div>
+                                <div class="text-[10px] text-amber-800 font-black">WARM CREAM & MANGO</div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-stone-600 mt-3 leading-relaxed">마켓컬리·현대식품관 스타일의 맑고 식욕을 돋우는 웜크림 & 탐스러운 골드망고</p>
+                    </label>
+
+                    <!-- Proposal A: Dark Luxury Gold -->
+                    <label class="cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between {% if settings.get('theme_preset', 'luxury_dark') == 'luxury_dark' %}border-amber-500 bg-amber-50/20 shadow-md ring-2 ring-amber-400/40{% else %}border-stone-200 hover:border-stone-300 bg-white{% endif %}">
+                        <input type="radio" name="theme_preset" value="luxury_dark" {% if settings.get('theme_preset', 'luxury_dark') == 'luxury_dark' %}checked{% endif %} class="sr-only" onchange="selectPresetTheme('luxury_dark', '#E6A23C')">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs font-black text-stone-900">시안 A: 다크 럭셔리 골드</span>
+                                <span class="text-[10px] bg-stone-900 text-amber-400 font-bold px-2 py-0.5 rounded">대표 플래그십</span>
+                            </div>
+                            <div class="h-20 rounded-xl bg-[#070A12] p-3 flex flex-col justify-between border border-amber-500/40 shadow-inner">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3.5 h-3.5 rounded-full bg-[#E6A23C]"></div>
+                                    <div class="w-16 h-2 rounded bg-stone-800"></div>
+                                </div>
+                                <div class="text-[10px] text-amber-300 font-black">OBSIDIAN & GOLD</div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-stone-500 mt-3 leading-relaxed">최고급 면세점/백화점 VIP 라운지 감성의 딥 차콜 & 샴페인 골드</p>
+                    </label>
+
+                    <!-- Proposal B: Clean Modern White -->
+                    <label class="cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between {% if settings.get('theme_preset') == 'modern_light' %}border-amber-500 bg-amber-50/20 shadow-md ring-2 ring-amber-400/40{% else %}border-stone-200 hover:border-stone-300 bg-white{% endif %}">
+                        <input type="radio" name="theme_preset" value="modern_light" {% if settings.get('theme_preset') == 'modern_light' %}checked{% endif %} class="sr-only" onchange="selectPresetTheme('modern_light', '#2563EB')">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs font-black text-stone-900">시안 B: 클린 모던 화이트</span>
+                                <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">애플/컬리 감성</span>
+                            </div>
+                            <div class="h-20 rounded-xl bg-[#F8FAFC] p-3 flex flex-col justify-between border border-stone-300 shadow-inner">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3.5 h-3.5 rounded-full bg-[#2563EB]"></div>
+                                    <div class="w-16 h-2 rounded bg-stone-300"></div>
+                                </div>
+                                <div class="text-[10px] text-stone-900 font-black">CLEAN MINIMAL WHITE</div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-stone-500 mt-3 leading-relaxed">가독성이 극대화된 깨끗한 화이트 배경과 세련된 로얄 블루 액센트</p>
+                    </label>
+
+                    <!-- Proposal C: Tropical Emerald -->
+                    <label class="cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between {% if settings.get('theme_preset') == 'tropical_emerald' %}border-amber-500 bg-amber-50/20 shadow-md ring-2 ring-amber-400/40{% else %}border-stone-200 hover:border-stone-300 bg-white{% endif %}">
+                        <input type="radio" name="theme_preset" value="tropical_emerald" {% if settings.get('theme_preset') == 'tropical_emerald' %}checked{% endif %} class="sr-only" onchange="selectPresetTheme('tropical_emerald', '#10B981')">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs font-black text-stone-900">시안 C: 트로피컬 에메랄드</span>
+                                <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded">리조트 보태니컬</span>
+                            </div>
+                            <div class="h-20 rounded-xl bg-[#061A14] p-3 flex flex-col justify-between border border-emerald-500/40 shadow-inner">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3.5 h-3.5 rounded-full bg-[#10B981]"></div>
+                                    <div class="w-16 h-2 rounded bg-emerald-900"></div>
+                                </div>
+                                <div class="text-[10px] text-emerald-300 font-black">PHU QUOC RESORT</div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-stone-500 mt-3 leading-relaxed">푸꾸옥 5성급 리조트의 싱그러운 보태니컬 자연 감성과 딥그린</p>
+                    </label>
+
+                    <!-- Proposal D: Sunset Amber -->
+                    <label class="cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between {% if settings.get('theme_preset') == 'sunset_amber' %}border-amber-500 bg-amber-50/20 shadow-md ring-2 ring-amber-400/40{% else %}border-stone-200 hover:border-stone-300 bg-white{% endif %}">
+                        <input type="radio" name="theme_preset" value="sunset_amber" {% if settings.get('theme_preset') == 'sunset_amber' %}checked{% endif %} class="sr-only" onchange="selectPresetTheme('sunset_amber', '#F97316')">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs font-black text-stone-900">시안 D: 선셋 앰버 테라코타</span>
+                                <span class="text-[10px] bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded">망고 테라코타</span>
+                            </div>
+                            <div class="h-20 rounded-xl bg-[#1A0F08] p-3 flex flex-col justify-between border border-orange-500/40 shadow-inner">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3.5 h-3.5 rounded-full bg-[#F97316]"></div>
+                                    <div class="w-16 h-2 rounded bg-amber-950"></div>
+                                </div>
+                                <div class="text-[10px] text-orange-300 font-black">MANGO SUNSET WARM</div>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-stone-500 mt-3 leading-relaxed">달콤한 골드망고 원육의 탐스러운 주황빛과 푸꾸옥 노을빛의 따스한 무드</p>
+                    </label>
+                </div>
+
+                <!-- Custom Color & Hero Background Picker -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-stone-100">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1.5">포인트 컬러 세부 조정 (HEX)</label>
+                        <div class="flex items-center space-x-2">
+                            <input type="color" id="primaryColorPicker" name="theme_primary_color" value="{{ settings.get('theme_primary_color', '#E6A23C') }}"
+                                   oninput="syncPrimaryColor(this.value)" class="w-12 h-10 rounded-xl cursor-pointer border border-stone-300 p-1 bg-white">
+                            <input type="text" id="primaryColorHex" value="{{ settings.get('theme_primary_color', '#E6A23C') }}"
+                                   oninput="syncPrimaryColor(this.value)" class="w-28 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-mono font-bold uppercase text-stone-800">
+                            <div class="flex items-center space-x-1.5 ml-2">
+                                <button type="button" onclick="syncPrimaryColor('#E6A23C')" class="w-6 h-6 rounded-full bg-[#E6A23C] border border-stone-300 shadow-sm" title="골드"></button>
+                                <button type="button" onclick="syncPrimaryColor('#2563EB')" class="w-6 h-6 rounded-full bg-[#2563EB] border border-stone-300 shadow-sm" title="블루"></button>
+                                <button type="button" onclick="syncPrimaryColor('#10B981')" class="w-6 h-6 rounded-full bg-[#10B981] border border-stone-300 shadow-sm" title="그린"></button>
+                                <button type="button" onclick="syncPrimaryColor('#F97316')" class="w-6 h-6 rounded-full bg-[#F97316] border border-stone-300 shadow-sm" title="오렌지"></button>
+                                <button type="button" onclick="syncPrimaryColor('#8B5CF6')" class="w-6 h-6 rounded-full bg-[#8B5CF6] border border-stone-300 shadow-sm" title="퍼플"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 mb-1.5">메인 배경 사진 선택</label>
+                        <input type="hidden" name="hero_bg_image" id="selectedHeroBg" value="{{ settings.get('hero_bg_image', '/static/images/store/store_exterior.png') }}">
+                        <div class="grid grid-cols-4 gap-2">
+                            {% for img in available_images %}
+                            <div onclick="selectHeroImage('{{ img }}')" id="img-tile-{{ loop.index }}"
+                                 class="cursor-pointer border-2 rounded-xl overflow-hidden relative group transition {% if settings.get('hero_bg_image') == img %}border-amber-500 shadow-md ring-2 ring-amber-400/40{% else %}border-stone-200 hover:border-stone-400{% endif %}">
+                                <img src="{{ img }}" alt="매장 사진" class="w-full h-14 object-cover">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- TAB 2: SECTION LAYOUT & ORDER REARRANGEMENT -->
+        <!-- ========================================================================================= -->
+        <div id="tab-layout" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <div class="pb-3 border-b border-stone-100 flex justify-between items-center">
+                    <div>
+                        <h3 class="text-sm font-black text-stone-900 flex items-center space-x-2">
+                            <i class="fa-solid fa-arrows-up-down text-blue-600"></i>
+                            <span>섹션 노출 순서 & 배치 실시간 재배열</span>
+                        </h3>
+                        <p class="text-[11px] text-stone-500 mt-0.5">
+                            우측의 <strong>[ ▲ 위로 ]</strong> / <strong>[ ▼ 아래로 ]</strong> 버튼을 눌러 고객 쇼핑몰 화면에 노출될 섹션의 순서를 원하는 대로 자유롭게 바꾸세요.
+                        </p>
+                    </div>
+                    <button type="button" onclick="resetSectionOrderDefault()" class="text-xs text-stone-500 hover:text-stone-800 underline">
+                        기본 순서로 초기화
+                    </button>
+                </div>
+
+                <!-- Reorderable Sections List Container -->
+                <div id="reorderableListContainer" class="space-y-2.5">
+                    <!-- Populated dynamically via JS from inputSectionOrder -->
+                </div>
+
+                <div class="p-3.5 bg-blue-50/60 rounded-xl border border-blue-200/60 text-xs text-blue-800 flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-info text-blue-600"></i>
+                    <span>위 순서대로 고객 화면 상단(히어로 직후)부터 하단까지 순서대로 배치됩니다.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================================= -->
+        <!-- TAB 3: FULL TEXT & COPYWRITING CMS -->
+        <!-- ========================================================================================= -->
+        <div id="tab-texts" class="hidden space-y-6">
+
+            <!-- 1. Main Hero & Benefits Copy -->
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <div class="pb-3 border-b border-stone-100">
+                    <h3 class="text-sm font-black text-stone-900 flex items-center space-x-2">
+                        <i class="fa-solid fa-bullhorn text-amber-500"></i>
+                        <span>1. 메인 히어로 배너 & 3대 안심 보증 문구</span>
+                    </h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">상단 위치 배지</label>
+                        <input type="text" name="hero_badge_text" value="{{ settings.get('hero_badge_text', 'Phu Quoc Sonasea 12 메인 스트리트 플래그십') }}"
+                               class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">최상단 띠배너 공지 문구</label>
+                        <input type="text" name="top_announcement_text" value="{{ settings.get('top_announcement_text', '$100 이상 결제 시 한국 자택 100% 무료 직배송 (Zero Baggage 캐리어 부담 제로)') }}"
+                               class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">메인 헤드라인 1행</label>
+                        <input type="text" name="hero_title_line1" value="{{ settings.get('hero_title_line1', '베트남 최상위 1% 골드망고') }}"
+                               class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">강조 헤드라인 2행 (컬러 그라데이션)</label>
+                        <input type="text" name="hero_title_line2" value="{{ settings.get('hero_title_line2', '무설탕 저온건조의 압도적 풍미') }}"
+                               class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs font-bold text-amber-600">
+                    </div>
+                </div>
+
+                <div class="text-xs">
+                    <label class="block font-bold text-stone-700 mb-1">가치 제안 서브 설명문</label>
+                    <textarea name="hero_subtitle" rows="2" class="w-full bg-stone-50 border border-stone-200 rounded-xl px-3 py-2 text-xs">{{ settings.get('hero_subtitle') }}</textarea>
+                </div>
+
+                <!-- 3 Benefits Card Texts -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-3 border-t border-stone-100 text-xs">
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                        <span class="font-bold text-stone-800 flex items-center space-x-1.5"><i class="fa-solid fa-plane-shield text-amber-500"></i><span>보증 1</span></span>
+                        <input type="text" name="text_benefit_1_title" value="{{ settings.get('text_benefit_1_title', '대한민국 100% 무사통관 보증제') }}" class="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+                        <textarea name="text_benefit_1_desc" rows="2" class="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 text-[11px] text-stone-600">{{ settings.get('text_benefit_1_desc') }}</textarea>
+                    </div>
+
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                        <span class="font-bold text-stone-800 flex items-center space-x-1.5"><i class="fa-solid fa-suitcase-rolling text-amber-500"></i><span>보증 2</span></span>
+                        <input type="text" name="text_benefit_2_title" value="{{ settings.get('text_benefit_2_title', '수하물 초과운임 ZERO 무료 직배송') }}" class="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+                        <textarea name="text_benefit_2_desc" rows="2" class="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 text-[11px] text-stone-600">{{ settings.get('text_benefit_2_desc') }}</textarea>
+                    </div>
+
+                    <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+                        <span class="font-bold text-stone-800 flex items-center space-x-1.5"><i class="fa-solid fa-motorcycle text-amber-500"></i><span>보증 3</span></span>
+                        <input type="text" name="text_benefit_3_title" value="{{ settings.get('text_benefit_3_title', '푸꾸옥 전지역 리조트 당일 2시간 배달') }}" class="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 text-xs font-bold">
+                        <textarea name="text_benefit_3_desc" rows="2" class="w-full bg-white border border-stone-200 rounded-lg px-2.5 py-1.5 text-[11px] text-stone-600">{{ settings.get('text_benefit_3_desc') }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Section Titles & Subtitles CMS Grid -->
+            <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                <div class="pb-3 border-b border-stone-100">
+                    <h3 class="text-sm font-black text-stone-900 flex items-center space-x-2">
+                        <i class="fa-solid fa-layer-group text-indigo-500"></i>
+                        <span>2. 각 섹션별 제목(타이틀) 및 안내문 수정</span>
+                    </h3>
+                </div>
+
+                <div class="space-y-4 text-xs">
+                    <!-- Gallery Section -->
+                    <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <span class="font-black text-stone-800 block mb-1">쇼룸 갤러리 섹션</span>
+                            <input type="text" name="text_gallery_badge" value="{{ settings.get('text_gallery_badge', 'REAL STORE GALLERY') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-mono">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">메인 제목</span>
+                            <input type="text" name="text_gallery_title" value="{{ settings.get('text_gallery_title', '푸꾸옥 플래그십 실제 쇼룸 & 무료 시식 현장') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-bold">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">설명 문구</span>
+                            <input type="text" name="text_gallery_subtitle" value="{{ settings.get('text_gallery_subtitle') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2">
+                        </div>
+                    </div>
+
+                    <!-- Competitor Matrix Section -->
+                    <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <span class="font-black text-stone-800 block mb-1">타업체 비교 매트릭스</span>
+                            <input type="text" name="text_competitor_badge" value="{{ settings.get('text_competitor_badge', 'COMPETITOR BENCHMARK') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-mono">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">메인 제목</span>
+                            <input type="text" name="text_competitor_title" value="{{ settings.get('text_competitor_title', '왜 야시장이나 대형마트가 아닌 푸룻팜인가?') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-bold">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">설명 문구</span>
+                            <input type="text" name="text_competitor_subtitle" value="{{ settings.get('text_competitor_subtitle') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2">
+                        </div>
+                    </div>
+
+                    <!-- Promo Sets Section -->
+                    <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <span class="font-black text-stone-800 block mb-1">$100 추천 세트</span>
+                            <input type="text" name="text_promo_badge" value="{{ settings.get('text_promo_badge', 'BEST $100 PACKAGES') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-mono">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">메인 제목</span>
+                            <input type="text" name="text_promo_title" value="{{ settings.get('text_promo_title', '한국 무료 직배송 $100 기획 세트') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-bold">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">설명 문구</span>
+                            <input type="text" name="text_promo_subtitle" value="{{ settings.get('text_promo_subtitle') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2">
+                        </div>
+                    </div>
+
+                    <!-- DIY Builder Section -->
+                    <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <span class="font-black text-stone-800 block mb-1">10+2 DIY 빌더</span>
+                            <input type="text" name="text_builder_badge" value="{{ settings.get('text_builder_badge', 'CUSTOM DIY PACK') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-mono">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">메인 제목</span>
+                            <input type="text" name="text_builder_title" value="{{ settings.get('text_builder_title', '10+2 내 맘대로 골라담기 패키지 ($100)') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-bold">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">설명 문구</span>
+                            <input type="text" name="text_builder_subtitle" value="{{ settings.get('text_builder_subtitle') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2">
+                        </div>
+                    </div>
+
+                    <!-- Catalog Section -->
+                    <div class="p-3.5 bg-stone-50 rounded-xl border border-stone-200 grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <span class="font-black text-stone-800 block mb-1">단품 상품 카탈로그</span>
+                            <input type="text" name="text_catalog_badge" value="{{ settings.get('text_catalog_badge', 'CATALOG & FEFO') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-mono">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">메인 제목</span>
+                            <input type="text" name="text_catalog_title" value="{{ settings.get('text_catalog_title', '푸꾸옥 플래그십 단품 상품 전수 검수관') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2 font-bold">
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-700 block mb-1">설명 문구</span>
+                            <input type="text" name="text_catalog_subtitle" value="{{ settings.get('text_catalog_subtitle') }}" class="w-full bg-white border border-stone-200 rounded-lg p-2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Global Save Action Bar -->
+        <div class="flex justify-between items-center p-5 bg-white rounded-2xl border border-stone-200 shadow-sm sticky bottom-4 z-20">
+            <div class="text-xs text-stone-500">
+                <span class="font-bold text-stone-800"><i class="fa-solid fa-circle-check text-emerald-500 mr-1.5"></i>실시간 적용 준비 완료</span>
+                <span class="hidden sm:inline"> - 저장 즉시 고객 쇼핑몰 화면에 바로 반영됩니다.</span>
+            </div>
+            <button type="submit" class="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black px-8 py-3.5 rounded-xl text-sm transition shadow-lg shadow-purple-500/25 flex items-center space-x-2">
+                <i class="fa-solid fa-floppy-disk text-base"></i>
+                <span>디자인·배치·글자 설정 전체 저장하기</span>
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+// Section Metadata for Reordering
+const SECTION_INFO = {
+    'gallery': { name: '실제 쇼룸 & 시식 라운지 갤러리', icon: 'fa-images', color: 'text-amber-500', desc: '소나시 12가 매장 외관, 시식 테이블 실사' },
+    'competitor': { name: '타업체 4사 심층 비교 매트릭스', icon: 'fa-table-cells-large', color: 'text-rose-500', desc: '야시장 vs 롯데마트 vs 엘스토어 vs 푸룻팜 비교표' },
+    'promo': { name: '$100 추천 기획 세트 (10+2 / 5+1)', icon: 'fa-gift', color: 'text-emerald-500', desc: '한국 무료 직배송 100$ 대표 번들 상품' },
+    'builder': { name: '10+2 내맘대로 골라담기 DIY 빌더', icon: 'fa-sliders', color: 'text-blue-500', desc: '고객이 직접 10봉 + 2봉 보너스를 고르는 인터랙티브 빌더' },
+    'catalog': { name: '단품 상품 전수 검수관 (FEFO)', icon: 'fa-boxes-stacked', color: 'text-purple-500', desc: '말린과일, 견과류, 수제 과일청 개별 상품 리스트' },
+    'sample': { name: '가이드 무료 시식 샘플팩 지원 신청', icon: 'fa-box-open', color: 'text-amber-600', desc: '투어 가이드 전용 10종 샘플팩 로비 배달 신청 폼' },
+    'location': { name: '소나시 12가 매장 위치 & 지도 안내', icon: 'fa-location-dot', color: 'text-red-500', desc: '매장 주소, 영업시간, 전화번호 및 찾아오는 길' }
+};
+
+let currentOrder = [];
+
+function initSectionOrderList() {
+    const raw = document.getElementById('inputSectionOrder').value;
+    currentOrder = raw.split(',').map(s => s.trim()).filter(s => SECTION_INFO[s]);
+    renderOrderListUI();
+}
+
+function renderOrderListUI() {
+    const container = document.getElementById('reorderableListContainer');
+    container.innerHTML = currentOrder.map((secId, idx) => {
+        const info = SECTION_INFO[secId] || { name: secId, icon: 'fa-cube', color: 'text-stone-500', desc: '' };
+        return `
+            <div class="flex items-center justify-between p-3.5 bg-stone-50 border border-stone-200 rounded-xl hover:bg-stone-100/70 transition">
+                <div class="flex items-center space-x-3">
+                    <span class="w-6 h-6 rounded-lg bg-stone-900 text-white flex items-center justify-center text-xs font-black">
+                        ${idx + 1}
+                    </span>
+                    <i class="fa-solid ${info.icon} ${info.color} text-sm"></i>
+                    <div>
+                        <div class="font-bold text-xs text-stone-900">${info.name}</div>
+                        <div class="text-[11px] text-stone-500">${info.desc}</div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-1.5">
+                    <button type="button" onclick="moveSection(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${idx === 0 ? 'text-stone-300 bg-stone-100 cursor-not-allowed' : 'bg-white hover:bg-stone-200 text-stone-800 border border-stone-300 shadow-sm'}">
+                        <i class="fa-solid fa-chevron-up mr-1"></i>위로
+                    </button>
+                    <button type="button" onclick="moveSection(${idx}, 1)" ${idx === currentOrder.length - 1 ? 'disabled' : ''}
+                            class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${idx === currentOrder.length - 1 ? 'text-stone-300 bg-stone-100 cursor-not-allowed' : 'bg-white hover:bg-stone-200 text-stone-800 border border-stone-300 shadow-sm'}">
+                        <i class="fa-solid fa-chevron-down mr-1"></i>아래로
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('inputSectionOrder').value = currentOrder.join(',');
+}
+
+function moveSection(index, direction) {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= currentOrder.length) return;
+    const temp = currentOrder[index];
+    currentOrder[index] = currentOrder[targetIndex];
+    currentOrder[targetIndex] = temp;
+    renderOrderListUI();
+}
+
+function resetSectionOrderDefault() {
+    currentOrder = ['gallery', 'competitor', 'promo', 'builder', 'catalog', 'sample', 'location'];
+    renderOrderListUI();
+}
+
+// Tab Switching
+function switchCmsTab(tabId) {
+    ['tab-presets', 'tab-layout', 'tab-texts'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+        const btn = document.getElementById(`btn-${id}`);
+        btn.className = 'px-5 py-3 border-b-2 border-transparent text-stone-600 hover:text-stone-900 rounded-t-xl transition flex items-center space-x-2';
+    });
+    document.getElementById(tabId).classList.remove('hidden');
+    const activeBtn = document.getElementById(`btn-${tabId}`);
+    activeBtn.className = 'px-5 py-3 border-b-2 border-purple-600 text-purple-700 bg-purple-50/50 rounded-t-xl transition flex items-center space-x-2';
+}
+
+function selectPresetTheme(preset, primaryColor) {
+    syncPrimaryColor(primaryColor);
+    const container = document.getElementById('presetThemesContainer');
+    container.querySelectorAll('label').forEach(l => {
+        l.className = 'cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between border-stone-200 hover:border-stone-300 bg-white';
+    });
+    event.currentTarget.className = 'cursor-pointer border-2 rounded-2xl p-4 transition relative flex flex-col justify-between border-amber-500 bg-amber-50/20 shadow-md ring-2 ring-amber-400/40';
+}
+
+function syncPrimaryColor(color) {
+    document.getElementById('primaryColorPicker').value = color;
+    document.getElementById('primaryColorHex').value = color;
+}
+
+function selectHeroImage(imgUrl) {
+    document.getElementById('selectedHeroBg').value = imgUrl;
+    document.querySelectorAll('[id^="img-tile-"]').forEach(el => {
+        el.className = 'cursor-pointer border-2 rounded-xl overflow-hidden relative group transition border-stone-200 hover:border-stone-400';
+    });
+    event.currentTarget.className = 'cursor-pointer border-2 rounded-xl overflow-hidden relative group transition border-amber-500 shadow-md ring-2 ring-amber-400/40';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initSectionOrderList();
+});
+</script>
+{% endblock %}

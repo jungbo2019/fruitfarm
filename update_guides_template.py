@@ -1,0 +1,507 @@
+guides_template = '''{% extends 'admin/base_admin.html' %}
+
+{% block title %}가이드 B2B 수수료(RS 25%) 정산 원장 | FRUIT FARM 푸꾸옥 플래그십{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Header & Action Bar -->
+    <div class="bg-gradient-to-r from-stone-950 via-stone-900 to-stone-950 text-white p-6 sm:p-8 rounded-3xl border border-stone-800 shadow-xl flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+        <div>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-wider mb-2 border border-amber-500/30">
+                <i class="fa-solid fa-handshake-angle text-amber-400"></i>
+                <span>B2B DUAL PRICING & PARTNER AUTOMATION</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-white">
+                가이드 B2B 수수료(RS 25%) 관제 센터
+            </h1>
+            <p class="text-xs sm:text-sm text-stone-300 mt-1 max-w-2xl leading-relaxed">
+                손님에게는 $100 정가만 노출되고, 가이드 계정으로 25%($25) 마진이 실시간 자동 누적되는 이중가격 오토메이션 시스템입니다.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+            <button onclick="openNewGuideModal()" class="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-2xl text-xs font-black transition flex items-center gap-2 shadow-lg border border-amber-600">
+                <i class="fa-solid fa-user-plus text-sm"></i>
+                <span>+ 신규 파트너 가이드 등록</span>
+            </button>
+            <button onclick="openQrCardModal('GUIDE_KIM', '김철수 가이드', '하나투어 푸꾸옥 전담', 25)" class="px-4 py-3 bg-stone-800 hover:bg-stone-700 text-white rounded-2xl text-xs font-bold transition flex items-center gap-2 border border-stone-700">
+                <i class="fa-solid fa-qrcode text-amber-400 text-sm"></i>
+                <span>가이드 QR 명함 발급</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 4 KPI Metrics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 1. Total Guide Orders -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm">
+            <div class="flex justify-between items-start">
+                <span class="text-xs font-bold text-stone-500">제휴 가이드 연동 주문</span>
+                <span class="p-2 bg-stone-100 text-stone-900 rounded-xl text-xs"><i class="fa-solid fa-users"></i></span>
+            </div>
+            <div class="text-2xl font-black text-stone-900 mt-2">{{ stats.total_guide_orders }}건</div>
+            <div class="text-[11px] text-stone-500 mt-1">현지 여행사 전담 가이드 유치</div>
+        </div>
+
+        <!-- 2. Total Guide Sales -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm">
+            <div class="flex justify-between items-start">
+                <span class="text-xs font-bold text-stone-500">가이드 연동 총 매출액</span>
+                <span class="p-2 bg-amber-50 text-amber-700 rounded-xl text-xs"><i class="fa-solid fa-dollar-sign"></i></span>
+            </div>
+            <div class="text-2xl font-black text-stone-900 mt-2">${{ "%.0f"|format(stats.total_guide_sales_usd) }}</div>
+            <div class="text-[11px] text-stone-500 mt-1">₩{{ "{:,}".format((stats.total_guide_sales_usd * settings.get('usd_krw_rate', 1380)|float)|int) }} 원</div>
+        </div>
+
+        <!-- 3. Total Guide RS Commission -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm">
+            <div class="flex justify-between items-start">
+                <span class="text-xs font-bold text-stone-500">총 발생 가이드 수수료 (RS 25%)</span>
+                <span class="p-2 bg-amber-100 text-amber-800 rounded-xl text-xs"><i class="fa-solid fa-coins"></i></span>
+            </div>
+            <div class="text-2xl font-black text-amber-700 mt-2">${{ "%.0f"|format(stats.total_guide_commission_usd) }}</div>
+            <div class="text-[11px] text-stone-500 mt-1">₩{{ "{:,}".format((stats.total_guide_commission_usd * settings.get('usd_krw_rate', 1380)|float)|int) }} 원</div>
+        </div>
+
+        <!-- 4. Pending Settlement (Alert Red) -->
+        <div class="bg-white p-5 rounded-3xl border-2 border-red-300 shadow-sm bg-red-50/20">
+            <div class="flex justify-between items-start">
+                <span class="text-xs font-black text-red-600">미지급 대기 수수료 (정산대상)</span>
+                <span class="p-2 bg-red-100 text-red-700 rounded-xl text-xs"><i class="fa-solid fa-hand-holding-dollar"></i></span>
+            </div>
+            <div class="text-2xl font-black text-red-600 mt-2">${{ "%.0f"|format(stats.pending_commission_usd) }}</div>
+            <div class="text-[11px] text-stone-600 font-bold mt-1">정산 완료: ${{ "%.0f"|format(stats.total_settled_commission_usd) }}</div>
+        </div>
+    </div>
+
+    <!-- Guide Workflow SOP Banner -->
+    <div class="bg-stone-50 p-5 rounded-3xl border border-stone-200 space-y-3">
+        <div class="flex items-center space-x-2 text-xs font-black text-stone-900 uppercase">
+            <i class="fa-solid fa-route text-amber-500"></i>
+            <span>관리자를 위한 가이드 제휴 & 정산 5단계 표준 운영 절차 (SOP)</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-xs">
+            <div class="p-3 bg-white rounded-2xl border border-stone-200 space-y-1">
+                <span class="font-black text-amber-600 block">1. 신규 제휴 등록</span>
+                <p class="text-[11px] text-stone-500">여행사/가이드 정보 입력 및 고유 코드(`GUIDE_XXX`) 발급</p>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-stone-200 space-y-1">
+                <span class="font-black text-amber-600 block">2. 시식 샘플 키트 지원</span>
+                <p class="text-[11px] text-stone-500">10팩 무료 시식 샘플 박스 지급하여 손님 시식 유도</p>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-stone-200 space-y-1">
+                <span class="font-black text-amber-600 block">3. 전용 QR 링크 배포</span>
+                <p class="text-[11px] text-stone-500">손님에게 카톡 또는 QR 명함 전달 (손님은 $100 정가만 노출)</p>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-stone-200 space-y-1">
+                <span class="font-black text-amber-600 block">4. 자동 25% 적립</span>
+                <p class="text-[11px] text-stone-500">주문 접수 즉시 가이드 원장에 25% 수수료 자동 누적</p>
+            </div>
+            <div class="p-3 bg-white rounded-2xl border border-stone-200 space-y-1">
+                <span class="font-black text-amber-600 block">5. 원클릭 정산 & 전표</span>
+                <p class="text-[11px] text-stone-500">투어 종료 시 현금/계좌 송금 및 정산 영수증 즉시 발행</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guides Roster Table -->
+    <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-stone-200 bg-stone-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div>
+                <h3 class="text-sm font-black text-stone-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-address-book text-amber-500"></i>
+                    <span>등록 파트너 가이드 목록 & RS 수수료 원장</span>
+                </h3>
+                <p class="text-[11px] text-stone-500 mt-0.5">가이드 코드가 포함된 URL로 손님이 접속하여 주문 시 자동으로 해당 가이드에게 25% 누적</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-stone-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-300">총 {{ guides|length }}명 제휴중</span>
+                <button onclick="openNewGuideModal()" class="px-3 py-1.5 bg-stone-900 text-white rounded-xl text-xs font-bold hover:bg-black transition">
+                    + 가이드 추가
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-stone-50 text-stone-600 font-bold uppercase border-b border-stone-200">
+                    <tr>
+                        <th class="py-3 px-4">가이드 코드</th>
+                        <th class="py-3 px-4">가이드 성명</th>
+                        <th class="py-3 px-4">소속 여행사</th>
+                        <th class="py-3 px-4">연락처 / 카카오톡</th>
+                        <th class="py-3 px-4 text-center">시식 샘플 지원</th>
+                        <th class="py-3 px-4 text-center">RS 요율</th>
+                        <th class="py-3 px-4 text-right">누적 건수</th>
+                        <th class="py-3 px-4 text-right">총 유치 매출</th>
+                        <th class="py-3 px-4 text-right">발생 수수료</th>
+                        <th class="py-3 px-4 text-right">미정산 잔여금</th>
+                        <th class="py-3 px-4 text-center">정산 및 액션</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100 font-medium">
+                    {% for g in guides %}
+                    {% set pending = g.total_commission_usd - g.settled_commission_usd %}
+                    <tr class="hover:bg-amber-50/40 transition">
+                        <td class="py-3.5 px-4">
+                            <span class="font-mono font-black text-stone-900 bg-stone-100 px-2.5 py-1 rounded-lg border border-stone-300">
+                                {{ g.guide_code }}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 font-bold text-stone-900">
+                            <div>{{ g.name }}</div>
+                            <span class="text-[10px] text-amber-700 font-semibold">파트너 가이드</span>
+                        </td>
+                        <td class="py-3.5 px-4 text-stone-600 font-medium">{{ g.agency }}</td>
+                        <td class="py-3.5 px-4 text-stone-500">
+                            <div>{{ g.phone }}</div>
+                            <div class="text-[10px] text-amber-700 font-semibold"><i class="fa-solid fa-comment mr-1"></i>{{ g.kakao_id or '-' }}</div>
+                        </td>
+                        <td class="py-3.5 px-4 text-center">
+                            <button onclick="toggleSampleKit({{ g.id }}, this)" class="px-2.5 py-1 rounded-full text-[10px] font-bold border transition {% if g.sample_kit_issued == 1 %}bg-emerald-50 text-emerald-800 border-emerald-300{% else %}bg-stone-100 text-stone-500 border-stone-200 hover:bg-stone-200{% endif %}">
+                                {% if g.sample_kit_issued == 1 %}
+                                <i class="fa-solid fa-check text-emerald-600 mr-1"></i>10팩 지급완료
+                                {% else %}
+                                <i class="fa-solid fa-gift text-stone-400 mr-1"></i>미지급 (클릭시 지급)
+                                {% endif %}
+                            </button>
+                        </td>
+                        <td class="py-3.5 px-4 text-center font-black text-amber-600 text-sm">
+                            {{ (g.commission_rate * 100)|int }}%
+                        </td>
+                        <td class="py-3.5 px-4 text-right font-bold text-stone-800">{{ g.total_orders }}건</td>
+                        <td class="py-3.5 px-4 text-right font-black text-stone-900">${{ "%.0f"|format(g.total_sales_usd) }}</td>
+                        <td class="py-3.5 px-4 text-right font-black text-amber-700">${{ "%.0f"|format(g.total_commission_usd) }}</td>
+                        <td class="py-3.5 px-4 text-right font-black {% if pending > 0 %}text-red-600 text-sm{% else %}text-stone-400{% endif %}">
+                            ${{ "%.0f"|format(pending) }}
+                        </td>
+                        <td class="py-3.5 px-4 text-center space-x-1">
+                            {% if pending > 0 %}
+                            <button onclick="settleGuideAll('{{ g.guide_code }}', '{{ g.name }}', {{ pending }})" class="bg-red-600 hover:bg-red-700 text-white font-black text-[10px] px-2.5 py-1.5 rounded-lg shadow-sm transition">
+                                <i class="fa-solid fa-check-double mr-1"></i>정산지급
+                            </button>
+                            {% else %}
+                            <span class="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-1 rounded-lg">정산완료</span>
+                            {% endif %}
+                            <button onclick="openQrCardModal('{{ g.guide_code }}', '{{ g.name }}', '{{ g.agency }}', {{ (g.commission_rate * 100)|int }})" class="bg-stone-900 hover:bg-black text-white font-bold text-[10px] px-2 py-1.5 rounded-lg transition" title="가이드 QR 명함 보기">
+                                <i class="fa-solid fa-qrcode text-amber-400"></i>
+                            </button>
+                            <button onclick="copyGuideCustomLink('{{ g.guide_code }}')" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-[10px] px-2 py-1.5 rounded-lg border border-stone-300 transition" title="손님 주문용 링크 복사">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Linked Orders Audit Table -->
+    <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-stone-200 bg-stone-50 flex justify-between items-center">
+            <div>
+                <h3 class="text-sm font-black text-stone-900 flex items-center space-x-2">
+                    <i class="fa-solid fa-receipt text-amber-500"></i>
+                    <span>가이드 연동 실시간 주문 수불 원장</span>
+                </h3>
+                <p class="text-[11px] text-stone-500 mt-0.5">손님 결제 완료 시 가이드별 25% RS 수수료가 즉시 계산된 실거래 내역</p>
+            </div>
+            <span class="text-xs font-bold text-stone-400">최근 주문 내역</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-stone-50 text-stone-600 font-bold uppercase border-b border-stone-200">
+                    <tr>
+                        <th class="py-3 px-4">주문번호</th>
+                        <th class="py-3 px-4">주문일시</th>
+                        <th class="py-3 px-4">고객 정보</th>
+                        <th class="py-3 px-4">배송 유형</th>
+                        <th class="py-3 px-4 text-right">고객 결제액 ($)</th>
+                        <th class="py-3 px-4 text-center">연동 가이드</th>
+                        <th class="py-3 px-4 text-right">가이드 RS 수수료 ($)</th>
+                        <th class="py-3 px-4 text-center">정산 상태</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100 font-medium">
+                    {% for o in guide_orders %}
+                    <tr class="hover:bg-stone-50 transition">
+                        <td class="py-3 px-4 font-mono font-bold text-stone-900">{{ o.order_number }}</td>
+                        <td class="py-3 px-4 text-stone-500 text-[11px]">{{ o.created_at }}</td>
+                        <td class="py-3 px-4">
+                            <div class="font-bold text-stone-900">{{ o.customer_name }}</div>
+                            <div class="text-[10px] text-stone-400">{{ o.customer_phone }}</div>
+                        </td>
+                        <td class="py-3 px-4">
+                            {% if o.delivery_type == 'direct_korea' %}
+                            <span class="bg-stone-900 text-white text-[10px] font-bold px-2 py-0.5 rounded">한국 직배송</span>
+                            {% else %}
+                            <span class="bg-amber-500 text-stone-950 text-[10px] font-black px-2 py-0.5 rounded">푸꾸옥 로비</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-right font-black text-stone-900">
+                            ${{ "%.0f"|format(o.total_amount_usd) }}
+                            <div class="text-[10px] text-stone-400 font-normal">₩{{ "{:,}".format(o.total_amount_krw) }}</div>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="font-mono font-bold text-amber-800 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded">
+                                {{ o.guide_code }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-right font-black text-amber-700 text-sm">
+                            +${{ "%.0f"|format(o.guide_commission_usd) }}
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            {% if o.guide_settled == 1 %}
+                            <span class="bg-stone-900 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">정산완료</span>
+                            {% else %}
+                            <span class="bg-red-50 text-red-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-red-200">미정산 대기</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="py-8 text-center text-stone-400 text-xs">
+                            현재 가이드 연동 주문 내역이 없습니다.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal 1: New Guide Modal -->
+<div id="newGuideModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+            <div>
+                <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest">PARTNER ONBOARDING</span>
+                <h3 class="font-black text-base text-stone-900">신규 파트너 가이드 등록</h3>
+            </div>
+            <button onclick="closeNewGuideModal()" class="text-stone-400 hover:text-stone-900">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <form id="newGuideForm" onsubmit="submitNewGuide(event)" class="space-y-3 text-xs">
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">가이드 코드 (영문/대문자) *</label>
+                <input type="text" id="gCode" placeholder="예: GUIDE_CHOI" required class="w-full p-2.5 border rounded-xl font-mono uppercase font-bold">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">가이드 성명 *</label>
+                    <input type="text" id="gName" placeholder="홍길동" required class="w-full p-2.5 border rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">소속 여행사</label>
+                    <input type="text" id="gAgency" placeholder="하나투어 / 모두투어" class="w-full p-2.5 border rounded-xl">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">연락처</label>
+                    <input type="text" id="gPhone" placeholder="010-1234-5678" class="w-full p-2.5 border rounded-xl">
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">카카오톡 ID</label>
+                    <input type="text" id="gKakao" placeholder="kakao_id" class="w-full p-2.5 border rounded-xl">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">RS 수수료율 (%)</label>
+                <select id="gRate" class="w-full p-2.5 border rounded-xl font-bold text-amber-700">
+                    <option value="25" selected>25% (기본 파트너 가이드)</option>
+                    <option value="28">28% (우수 파트너 가이드)</option>
+                    <option value="30">30% (VIP 탑티어 가이드)</option>
+                </select>
+            </div>
+
+            <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center space-x-2">
+                <input type="checkbox" id="gSampleKit" checked class="w-4 h-4 text-amber-500 rounded">
+                <label for="gSampleKit" class="text-stone-700 font-bold">웰컴 무료 시식 샘플 키트(10팩) 즉시 지급</label>
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="w-full py-3 bg-stone-950 hover:bg-black text-white font-black rounded-xl shadow-md transition">
+                    가이드 제휴 등록 및 전용 링크 생성
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Guide QR Card Modal -->
+<div id="guideQrModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-stone-200 text-center space-y-4">
+        <div class="flex justify-between items-center pb-2 border-b border-stone-100">
+            <span class="text-[10px] font-black text-amber-600 uppercase tracking-widest">DIGITAL BUSINESS CARD</span>
+            <button onclick="closeQrCardModal()" class="text-stone-400 hover:text-stone-900">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <div class="p-5 bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950 text-white rounded-2xl border border-stone-800 shadow-md space-y-3">
+            <div class="flex items-center justify-between text-xs">
+                <span class="font-black text-amber-400">FRUIT FARM PHU QUOC</span>
+                <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">공식 파트너</span>
+            </div>
+            
+            <div class="w-36 h-36 mx-auto bg-white p-2.5 rounded-xl shadow-inner flex items-center justify-center">
+                <img id="qrImageTag" src="" alt="QR" class="w-full h-full object-contain">
+            </div>
+
+            <div>
+                <h4 id="qrGuideName" class="font-black text-base text-white">홍길동 가이드</h4>
+                <p id="qrAgencyName" class="text-xs text-stone-300">하나투어 푸꾸옥 전담</p>
+                <div class="mt-1 font-mono text-[11px] text-amber-400 font-bold" id="qrGuideCode">GUIDE_KIM</div>
+            </div>
+
+            <p class="text-[10px] text-stone-400 pt-1">
+                카메라로 스캔 시 손님은 $100 정가만 노출되며, 주문 시 가이드님께 25% RS가 자동 적립됩니다.
+            </p>
+        </div>
+
+        <div class="space-y-2 text-xs">
+            <button onclick="copyQrLinkDirect()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-xl transition shadow flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-copy"></i>
+                <span>전용 주문 링크 복사</span>
+            </button>
+            <button onclick="copyKakaoGuidePitch()" class="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-xl transition flex items-center justify-center gap-1.5 border border-stone-200">
+                <i class="fa-solid fa-comment text-amber-600"></i>
+                <span>손님 카톡 전송용 추천 문구 복사</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let activeGuideCodeForQr = '';
+let activeGuideNameForQr = '';
+
+function openNewGuideModal() {
+    document.getElementById('newGuideModal').classList.remove('hidden');
+}
+function closeNewGuideModal() {
+    document.getElementById('newGuideModal').classList.add('hidden');
+}
+
+function openQrCardModal(code, name, agency, rate) {
+    activeGuideCodeForQr = code;
+    activeGuideNameForQr = name;
+    document.getElementById('qrGuideCode').innerText = code;
+    document.getElementById('qrGuideName').innerText = name + ' 가이드';
+    document.getElementById('qrAgencyName').innerText = agency + ' (RS ' + rate + '%)';
+    
+    const targetUrl = encodeURIComponent(window.location.origin + '/?ref=' + code);
+    document.getElementById('qrImageTag').src = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + targetUrl;
+    document.getElementById('guideQrModal').classList.remove('hidden');
+}
+function closeQrCardModal() {
+    document.getElementById('guideQrModal').classList.add('hidden');
+}
+
+function copyQrLinkDirect() {
+    const link = window.location.origin + '/?ref=' + activeGuideCodeForQr;
+    navigator.clipboard.writeText(link).then(() => {
+        alert('[' + activeGuideCodeForQr + '] 가이드 전용 주문 링크가 복사되었습니다:\n' + link);
+    });
+}
+
+function copyKakaoGuidePitch() {
+    const link = window.location.origin + '/?ref=' + activeGuideCodeForQr;
+    const msg = `[푸꾸옥 현지 가이드 추천 🌴 프리미엄 건망고 선물]\n\n손님 여러분, 푸꾸옥 즈엉동 야시장에서 설탕 범벅된 건망고 사서 후회하지 마세요!\n소나시 상가에 있는 FRUIT FARM 직영점은 100% 무설탕 저온건조 골드망고만 정직하게 취급합니다.\n\n✨ 가이드 전용 혜택 링크:\n${link}\n\n✔️ $100 이상 구매 시 10+2 세트 + 한국 집 앞까지 무료 직배송\n✔️ 무거운 짐 없이 캐리어 15kg 수하물 무게 걱정 제로!\n호텔 로비로 오늘 밤 2시간 내 당일 퀵 배달도 가능합니다.`;
+    navigator.clipboard.writeText(msg).then(() => {
+        alert('손님 카톡 전송용 추천 문구가 복사되었습니다!\n손님 단체방에 바로 붙여넣기(Ctrl+V) 하세요.');
+    });
+}
+
+function copyGuideCustomLink(guideCode) {
+    const link = `${window.location.origin}/?ref=${guideCode}`;
+    navigator.clipboard.writeText(link).then(() => {
+        alert(`[${guideCode}] 가이드 전용 손님 주문 링크가 복사되었습니다!\n\n링크: ${link}\n\n* 이 링크를 손님 카카오톡으로 전달하시면 손님은 $100 정가만 보고, 주문 시 해당 가이드에게 25% RS 수수료가 자동 적립됩니다.`);
+    });
+}
+
+function submitNewGuide(e) {
+    e.preventDefault();
+    const payload = {
+        guide_code: document.getElementById('gCode').value.trim(),
+        name: document.getElementById('gName').value.trim(),
+        agency: document.getElementById('gAgency').value.trim(),
+        phone: document.getElementById('gPhone').value.trim(),
+        kakao_id: document.getElementById('gKakao').value.trim(),
+        commission_rate: document.getElementById('gRate').value,
+        sample_kit_issued: document.getElementById('gSampleKit').checked ? 1 : 0
+    };
+
+    fetch('/api/admin/guide/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            alert(d.message);
+            location.reload();
+        } else {
+            alert('등록 실패: ' + d.message);
+        }
+    })
+    .catch(err => alert('통신 오류: ' + err));
+}
+
+function toggleSampleKit(guideId, btn) {
+    fetch('/api/admin/guide/toggle-sample', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ guide_id: guideId })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            alert(d.message);
+            location.reload();
+        } else {
+            alert('오류: ' + d.message);
+        }
+    })
+    .catch(err => alert('통신 오류: ' + err));
+}
+
+function settleGuideAll(guideCode, name, amount) {
+    if (!confirm(`[${guideCode}] ${name} 가이드의 미정산 수수료 $${amount}를 전액 정산(지급) 처리하시겠습니까?`)) return;
+
+    fetch('/api/admin/guide/settle', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ guide_code: guideCode })
+    })
+    .then(r => r.json())
+    .then(d => {
+        if (d.success) {
+            alert(`[정산 완료]\n${name} 가이드에게 $${amount} 정산 처리가 안전하게 완료되었습니다.\n정산 전표가 기록되었습니다.`);
+            location.reload();
+        } else {
+            alert('오류: ' + d.message);
+        }
+    })
+    .catch(e => alert('통신 오류 발생: ' + e));
+}
+</script>
+{% endblock %}
+'''
+
+with open(r'E:\fruitfarm\templates\admin\guides.html', 'w', encoding='utf-8') as f:
+    f.write(guides_template)
+
+print("Updated templates/admin/guides.html successfully.")

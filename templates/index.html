@@ -1,0 +1,951 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- 1. Hero Section with Real Store Exterior Visual -->
+<section class="relative min-h-[580px] sm:min-h-[640px] flex items-center justify-center overflow-hidden border-b border-amber-200">
+    <!-- Background Image with Natural Storefront Lighting Overlay -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ settings.get('hero_bg_image', '/static/images/store/store_exterior.png') }}" alt="FRUIT FARM 푸꾸옥 플래그십 매장 외관" class="w-full h-full object-cover object-center filter brightness-[0.70] contrast-[1.05] scale-105 transform hover:scale-100 transition duration-1000">
+        <div class="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/60 to-transparent"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-stone-900/85 via-stone-900/50 to-transparent"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 text-center sm:text-left flex flex-col lg:flex-row items-center justify-between gap-12">
+        <div class="max-w-2xl space-y-6">
+            <!-- Location Badge -->
+            <div class="inline-flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-gold-500/20 border border-gold-500/40 text-gold-300 text-xs font-black tracking-wider uppercase backdrop-blur-md">
+                <i class="fa-solid fa-location-dot text-gold-400"></i>
+                <span>{{ settings.get('hero_badge_text', 'Phu Quoc Sonasea 12 메인 스트리트 플래그십') }}</span>
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-3xl sm:text-5xl lg:text-5xl font-black text-white hero-keep-white tracking-tight leading-[1.2] [word-break:keep-all]">
+                {{ settings.get('hero_title_line1', '베트남 최상위 1% 골드망고') }}<br>
+                <span class="gold-gradient-text">{{ settings.get('hero_title_line2', '무설탕 저온건조의 압도적 풍미') }}</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-slate-300 hero-keep-white text-sm sm:text-base leading-relaxed max-w-xl">
+                {{ settings.get('hero_subtitle', '호치민 직영 HACCP 공장 가공 · 전 품목 100% 무설탕 저온건조 프리미엄 특산품. $100 이상 결제 시 한국 자택 무료 직배송으로 15kg 항공 수하물 초과운임 없이 가볍게 여행하세요.') }}
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="grid grid-cols-1 sm:flex items-center gap-2.5 pt-2 w-full sm:w-auto">
+                <a href="#promo" class="w-full sm:w-auto bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-dark-900 font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm transition shadow-lg shadow-gold-500/25 flex items-center justify-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-gift text-base"></i>
+                    <span>$100 면세 추천세트 보기</span>
+                </a>
+                <a href="#custom-builder" style="color: #FFFFFF !important;" class="w-full sm:w-auto btn-keep-white bg-stone-950 hover:bg-black text-white font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm border-2 border-amber-400 shadow-xl transition flex items-center justify-center space-x-2 cursor-pointer">
+                    <i class="fa-solid fa-sliders text-amber-400 text-sm"></i>
+                    <span style="color: #FFFFFF !important;" class="btn-keep-white font-extrabold tracking-wide">10+2 내맘대로 골라담기</span>
+                </a>
+            </div>
+
+            <!-- Real Store Address snippet with high contrast -->
+            <div class="pt-2">
+                <div class="inline-flex items-center space-x-2 bg-stone-950/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-stone-700 text-white text-[11px] font-bold shadow-md">
+                    <i class="fa-solid fa-store text-amber-400"></i>
+                    <span>실제 매장: 소나시 메인 스트리트 SV2A-V07 (노보텔·풀만 도보 5분) · 상시 무료 시식</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Quick Value Card -->
+        <div class="w-full max-w-md bg-white p-6 sm:p-7 rounded-3xl border-2 border-amber-300 relative shadow-2xl">
+            <div class="flex items-center justify-between pb-4 border-b border-stone-200">
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 rounded-full bg-amber-500 animate-pulse"></span>
+                    <span class="text-xs font-black text-stone-900 uppercase tracking-wider">안심 보증 & 특급 혜택</span>
+                </div>
+                <span class="text-[11px] text-amber-900 font-black bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-full">HACCP 100%</span>
+            </div>
+
+            <div class="space-y-4 py-4 text-xs">
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center flex-shrink-0 font-black text-sm shadow-xs">
+                        <i class="fa-solid fa-shield-halved text-stone-950"></i>
+                    </div>
+                    <div>
+                        <div class="font-black text-stone-900 text-sm leading-tight">{{ settings.get('text_benefit_1_title', '대한민국 100% 무사통관 보증제') }}</div>
+                        <div class="text-[11px] text-stone-600 mt-0.5">{{ settings.get('text_benefit_1_desc', '식물검역법 적합 밀봉 가공식품 · 1인당 $150 소액면세 엄격 준수') }}</div>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center flex-shrink-0 font-black text-sm shadow-xs">
+                        <i class="fa-solid fa-suitcase-rolling text-stone-950"></i>
+                    </div>
+                    <div>
+                        <div class="font-black text-stone-900 text-sm leading-tight">{{ settings.get('text_benefit_2_title', '수하물 초과운임 ZERO 무료 직배송') }}</div>
+                        <div class="text-[11px] text-stone-600 mt-0.5">{{ settings.get('text_benefit_2_desc', '$100 이상 구매 시 한국 자택 문 앞까지 3~5일 안전 배송') }}</div>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center flex-shrink-0 font-black text-sm shadow-xs">
+                        <i class="fa-solid fa-motorcycle text-stone-950"></i>
+                    </div>
+                    <div>
+                        <div class="font-black text-stone-900 text-sm leading-tight">{{ settings.get('text_benefit_3_title', '푸꾸옥 전지역 리조트 당일 2시간 배달') }}</div>
+                        <div class="text-[11px] text-stone-600 mt-0.5">{{ settings.get('text_benefit_3_desc', '빈펄, 풀만, 인터컨티넨탈, 노보텔 로비로 그랩 퀵 직배송') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 24h Concierge Replacement (Zero Customer Service Burden) -->
+            <div class="pt-3.5 border-t border-stone-200 flex justify-between items-center text-xs">
+                <span class="text-stone-500 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-headset text-amber-600"></i>
+                    <span>24시간 고객지원:</span>
+                </span>
+                                <a href="{{ settings.get('kakao_channel_url', 'https://pf.kakao.com') }}" target="_blank"
+                   class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-black px-3.5 py-1.5 rounded-xl transition shadow-md flex items-center gap-1.5 text-xs">
+                    <i class="fa-solid fa-comment"></i>
+                    <span>카톡 24시간 실시간 상담</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- DYNAMIC CMS SECTION ORDERING LOOP -->
+{% set section_order_list = settings.get('section_order', 'gallery,competitor,promo,builder,catalog,sample,location').split(',') %}
+
+{% for sec_id in section_order_list %}
+    {% set s = sec_id.strip() %}
+
+    {# ---------------- SECTION: GALLERY ---------------- #}
+    {% if s == 'gallery' and settings.get('show_store_gallery', '1') == '1' %}
+    <section id="store-gallery" data-tab="store" class="py-16 bg-dark-900 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span class="text-xs font-black text-gold-400 tracking-widest uppercase">{{ settings.get('text_gallery_badge', 'REAL STORE GALLERY') }}</span>
+                    <h2 class="text-xl sm:text-4xl font-black text-stone-900 mt-1 [word-break:keep-all] break-keep leading-snug">{{ settings.get('text_gallery_title', '푸꾸옥 플래그십 실제 쇼룸 & 무료 시식 현장') }}</h2>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-2">
+                        {{ settings.get('text_gallery_subtitle', '컴퓨터 속 가상 상점이 아닙니다. 소나시 12가 메인 스트리트에 위치한 직영 플래그십 매장에서 눈으로 확인하고 시식하세요.') }}
+                    </p>
+                </div>
+                <div class="text-xs text-slate-400">
+                    <span class="bg-dark-800 px-3 py-1.5 rounded-xl border border-slate-700">
+                        <i class="fa-solid fa-utensils text-gold-400 mr-1.5"></i>전 품목 위생 시식대 상시 운영
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="luxury-card rounded-2xl overflow-hidden group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="/static/images/store/store_exterior.png" alt="소나시 12가 매장 외관" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute bottom-2.5 left-2.5 bg-dark-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">
+                            소나시 12가 매장 전경
+                        </span>
+                    </div>
+                    <div class="p-3.5">
+                        <div class="font-bold text-xs text-white">푸꾸옥 플래그십 단독 플래그십</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">SV2A-V07 Sonasea Bãi Trường</div>
+                    </div>
+                </div>
+
+                <div class="luxury-card rounded-2xl overflow-hidden group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="/static/images/store/store_interior_tasting.jpg" alt="무료 시식 라운지 & 진열장" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute bottom-2.5 left-2.5 bg-dark-900/80 backdrop-blur-md text-gold-300 text-[10px] font-bold px-2 py-0.5 rounded border border-gold-500/40">
+                            무료 시식 바 & 우드 진열장
+                        </span>
+                    </div>
+                    <div class="p-3.5">
+                        <div class="font-bold text-xs text-white">청결한 위생 시식 테이블</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">망고, 용안, 용과 전품목 무제한 맛보기</div>
+                    </div>
+                </div>
+
+                <div class="luxury-card rounded-2xl overflow-hidden group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="/static/images/store/store_shelves_promo.jpg" alt="10+2 / 5+1 기획세트 진열대" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute bottom-2.5 left-2.5 bg-dark-900/80 backdrop-blur-md text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/40">
+                            10+2 / 5+1 기획 진열
+                        </span>
+                    </div>
+                    <div class="p-3.5">
+                        <div class="font-bold text-xs text-white">현장 정찰제 공식 프로모션</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">매장과 온라인 완전 동일한 투명 가격</div>
+                    </div>
+                </div>
+
+                <div class="luxury-card rounded-2xl overflow-hidden group">
+                    <div class="h-56 overflow-hidden relative">
+                        <img src="/static/images/store/store_window_display.jpg" alt="감성 쇼룸 & 플랜테리어" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute bottom-2.5 left-2.5 bg-dark-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded border border-slate-700">
+                            자연 채광 쇼룸
+                        </span>
+                    </div>
+                    <div class="p-3.5">
+                        <div class="font-bold text-xs text-white">쾌적한 원목 쇼핑 공간</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5">에어컨 완비, 캐리어 무료 보관 서비스</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ---------------- SECTION: COMPETITOR MATRIX ---------------- #}
+    {% elif s == 'competitor' and settings.get('show_competitor_matrix', '1') == '1' %}
+    <section id="competitor-matrix" data-tab="quality" class="py-12 sm:py-16 bg-dark-800 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <!-- Section Header: Clear, Narrative Title -->
+            <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-12">
+                <span class="text-xs font-black text-gold-400 tracking-widest uppercase">{{ settings.get('text_competitor_badge', 'WHY FRUIT FARM?') }}</span>
+                <h2 class="text-2xl sm:text-4xl font-black text-stone-900 mt-1 [word-break:keep-all] break-keep leading-snug">
+                    왜 야시장이나 킹콩마트가 아닌<br class="sm:hidden"> <span class="text-amber-600">FRUIT FARM(후르츠팜)</span>인가?
+                </h2>
+                <p class="text-xs sm:text-sm text-stone-600 mt-2 [word-break:keep-all] break-keep">
+                    현지 재래시장, 마트 시판 건망고와 당사 FRUIT FARM 직영 플래그십의 <strong>3대 핵심 차이점</strong>을 투명하게 안내해드립니다.
+                </p>
+            </div>
+
+            <!-- =========================================================================
+                 1. MOBILE INTUITIVE 3-CARD COMPARISON (Shown on Mobile, hidden on md+)
+                 ========================================================================= -->
+            <div class="block md:hidden space-y-4 mb-8">
+                <!-- Card 1: Sugar & Processing -->
+                <div class="bg-white rounded-2xl border-2 border-stone-200 p-4 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between pb-2 border-b border-stone-100">
+                        <span class="text-xs font-black text-stone-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-lemon text-amber-500"></i>
+                            <span>1. 가공 방식 & 설탕 첨가</span>
+                        </span>
+                        <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">맛과 품질 비교</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-stone-50 p-2.5 rounded-xl border border-stone-200">
+                            <div class="text-[10px] font-bold text-red-600 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-xmark"></i> 시판 마트 / 야시장
+                            </div>
+                            <div class="text-[11px] text-stone-600 font-medium leading-relaxed">
+                                정제 설탕 5~10% 절임으로 <strong>인공적인 단맛</strong>, 출처 불명 위생 우려
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 p-2.5 rounded-xl border-2 border-amber-400">
+                            <div class="text-[10px] font-black text-amber-900 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-crown text-amber-500"></i> 후르츠팜 플래그십
+                            </div>
+                            <div class="text-[11px] text-stone-900 font-bold leading-relaxed">
+                                <strong>100% 무설탕 저온건조!</strong> 순수 16.5 Brix 특등급 생망고 천연 단맛
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Airport Baggage & Shipping -->
+                <div class="bg-white rounded-2xl border-2 border-stone-200 p-4 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between pb-2 border-b border-stone-100">
+                        <span class="text-xs font-black text-stone-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-plane-departure text-amber-500"></i>
+                            <span>2. 귀국 수하물 & 배송 방식</span>
+                        </span>
+                        <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">여행 편의 비교</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-stone-50 p-2.5 rounded-xl border border-stone-200">
+                            <div class="text-[10px] font-bold text-red-600 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-xmark"></i> 시판 마트 / 야시장
+                            </div>
+                            <div class="text-[11px] text-stone-600 font-medium leading-relaxed">
+                                무거운 짐 직접 운반, 15kg 초과 시 <strong>공항 벌금 kg당 1.5만원</strong>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 p-2.5 rounded-xl border-2 border-amber-400">
+                            <div class="text-[10px] font-black text-amber-900 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-crown text-amber-500"></i> 후르츠팜 플래그십
+                            </div>
+                            <div class="text-[11px] text-stone-900 font-bold leading-relaxed">
+                                <strong>$100 이상 한국 무료 직배송!</strong> 공항 캐리어 무게 부담 0kg 완벽 실현
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Customs & Exchange Guarantee -->
+                <div class="bg-white rounded-2xl border-2 border-stone-200 p-4 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between pb-2 border-b border-stone-100">
+                        <span class="text-xs font-black text-stone-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-shield-halved text-amber-500"></i>
+                            <span>3. 세관 통관 및 사후 교환 보증</span>
+                        </span>
+                        <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">안심 보증 비교</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-stone-50 p-2.5 rounded-xl border border-stone-200">
+                            <div class="text-[10px] font-bold text-red-600 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-xmark"></i> 시판 마트 / 야시장
+                            </div>
+                            <div class="text-[11px] text-stone-600 font-medium leading-relaxed">
+                                귀국 후 변질·파손 시 연락 두절, 비위생 포장 세관 적발 폐기 위험
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 p-2.5 rounded-xl border-2 border-amber-400">
+                            <div class="text-[10px] font-black text-amber-900 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-crown text-amber-500"></i> 후르츠팜 플래그십
+                            </div>
+                            <div class="text-[11px] text-stone-900 font-bold leading-relaxed">
+                                <strong>관세청 $150 면세 100% 무사통관</strong>, 배송 중 파손 시 1:1 즉시 맞교환
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toggle Button to show full desktop matrix on mobile if desired -->
+                <div class="text-center pt-1">
+                    <button type="button" onclick="document.getElementById('mobileFullTableWrapper').classList.toggle('hidden')" class="inline-flex items-center gap-1.5 text-xs font-bold text-stone-600 bg-stone-100 hover:bg-stone-200 px-4 py-2 rounded-xl transition border border-stone-300">
+                        <i class="fa-solid fa-table-list text-amber-600"></i>
+                        <span>상세 비교표(5개 열 전체 매트릭스) 펼쳐보기</span>
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- =========================================================================
+                 2. FULL DESKTOP TABLE (Always shown on md+, expandable on mobile)
+                 ========================================================================= -->
+            <div id="mobileFullTableWrapper" class="hidden md:block overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 mb-8">
+                <!-- Mobile Swipe Guide Badge -->
+                <div class="block sm:hidden mb-3">
+                    <div class="bg-amber-100 text-amber-950 border border-amber-300 rounded-xl px-3.5 py-2.5 text-xs font-black flex items-center justify-between shadow-xs">
+                        <span>👉 표를 좌우로 넘겨 전체 비교표를 확인하세요</span>
+                        <i class="fa-solid fa-arrows-left-right text-amber-600 animate-pulse text-sm"></i>
+                    </div>
+                </div>
+                <table class="min-w-[760px] w-full text-left text-xs border border-stone-300 rounded-2xl overflow-hidden shadow-sm bg-white [word-break:keep-all]">
+                    <thead class="bg-stone-900 text-stone-200 font-bold uppercase border-b border-stone-300">
+                        <tr>
+                            <th class="py-4 px-3 sm:px-4 min-w-[120px] text-stone-300 font-black">비교 핵심 기준</th>
+                            <th class="py-4 px-3 sm:px-4 min-w-[150px] text-stone-400 font-bold">푸꾸옥 킹콩마트<br><span class="text-[10px] text-stone-500">(즈엉동/소나시)</span></th>
+                            <th class="py-4 px-3 sm:px-4 min-w-[140px] text-stone-400 font-bold">즈엉동·소나시 야시장<br><span class="text-[10px] text-stone-500">(로컬 가판)</span></th>
+                            <th class="py-4 px-3 sm:px-4 min-w-[140px] text-stone-400 font-bold">추후 진입 모방업체<br><span class="text-[10px] text-stone-500">(단순 소매상)</span></th>
+                            <th class="py-4 px-3 sm:px-4 min-w-[210px] bg-amber-500 text-stone-950 font-black text-sm border-l-2 border-amber-600 shadow-md">
+                                <div class="flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-crown text-stone-950"></i>
+                                    <span>FRUIT FARM 푸꾸옥 플래그십</span>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-200 font-medium">
+                        <tr class="hover:bg-stone-50 transition">
+                            <td class="py-4 px-4 font-black text-stone-900 bg-stone-100">가공 & 위생 인증</td>
+                            <td class="py-4 px-4 text-red-600 font-medium">Vinahe 등 시판 건망고 대부분 <strong>정제 설탕 5~10% 절임</strong> (인공 단맛)</td>
+                            <td class="py-4 px-4 text-stone-600">출처 불명 비닐 소분, 설탕 범벅, 당도 불균일</td>
+                            <td class="py-4 px-4 text-stone-600">도매상 설탕 절임 제품 납품받아 라벨만 교체</td>
+                            <td class="py-4 px-4 bg-amber-50/90 text-stone-900 border-l-2 border-amber-400">
+                                <div class="text-amber-800 font-black text-[11px] mb-0.5">★ 호치민 직영 HACCP 자체공장 가공</div>
+                                <div class="font-bold text-stone-900">100% 무설탕 저온건조 (순수 16.5 Brix 특등급 생망고만 사용)</div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-stone-50 transition">
+                            <td class="py-4 px-4 font-black text-stone-900 bg-stone-100">한국 세관 통관 & 검역</td>
+                            <td class="py-4 px-4 text-red-600 font-medium">무거운 박스를 직접 운반 (공항 15kg 초과 벌금 1kg당 1.5만원 고객 부담)</td>
+                            <td class="py-4 px-4 text-stone-600">포장 부실로 캐리어 내 짓눌림 및 파손 위험</td>
+                            <td class="py-4 px-4 text-stone-600">한국 직배송 물류망 전무 (현장 포장만 지원)</td>
+                            <td class="py-4 px-4 bg-amber-50/90 text-stone-900 border-l-2 border-amber-400">
+                                <div class="text-amber-800 font-black text-[11px] mb-0.5">★ $100 이상 한국 무료 직배송</div>
+                                <div class="font-bold text-stone-900">자택 문앞 배송 · 공항 캐리어 무게 부담 0kg (수하물 초과벌금 ZERO)</div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-stone-50 transition">
+                            <td class="py-4 px-4 font-black text-stone-900 bg-stone-100">배송 및 물류 편의</td>
+                            <td class="py-4 px-4 text-red-600 font-medium">일반 휴대품 반입 (세관/검역 문제 발생 시 고객 본인 책임)</td>
+                            <td class="py-4 px-4 text-stone-600">비위생 비닐 포장 검역 불합격 적발 시 몰수 폐기 위험</td>
+                            <td class="py-4 px-4 text-stone-600">정식 통관 라이선스 부재로 항공 직배송 통관 불가</td>
+                            <td class="py-4 px-4 bg-amber-50/90 text-stone-900 border-l-2 border-amber-400">
+                                <div class="text-amber-800 font-black text-[11px] mb-0.5">★ 정식 수출입 통관 라이선스</div>
+                                <div class="font-bold text-stone-900">식품검역법 정식 수출입 승인 + 관세청 $150 소액면세 100% 무사통관 보증</div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-stone-50 transition">
+                            <td class="py-4 px-4 font-black text-stone-900 bg-stone-100">가격 체계 & 정찰제</td>
+                            <td class="py-4 px-4 text-red-600 font-medium">외국인 바가지 흥정, 카드 불가 (현금 강요)</td>
+                            <td class="py-4 px-4 text-stone-600">정찰제, 카드 결제 가능, 번들 할인 미미</td>
+                            <td class="py-4 px-4 text-stone-600">정찰제, 여행카페 회원 3% 할인 바우처</td>
+                            <td class="py-4 px-4 bg-amber-50/90 text-stone-900 border-l-2 border-amber-400">
+                                <div class="text-amber-800 font-black text-[11px] mb-0.5">★ 투명한 정찰제 & 보너스 패키지</div>
+                                <div class="font-bold text-stone-900">$100 기획세트 (10+2 / 5+1) + 카드/원화 이체 지원</div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-stone-50 transition">
+                            <td class="py-4 px-4 font-black text-stone-900 bg-stone-100">고객 안심 & 사후 보장</td>
+                            <td class="py-4 px-4 text-red-600 font-medium">귀국 후 파손/변질 발생 시 교환·환불 불가</td>
+                            <td class="py-4 px-4 text-stone-600">로컬 가판 특성상 구매 즉시 연락 두절, 환불 불가</td>
+                            <td class="py-4 px-4 text-stone-600">자체 CS 인력 부재로 교환 처리 지연</td>
+                            <td class="py-4 px-4 bg-amber-50/90 text-stone-900 border-l-2 border-amber-400">
+                                <div class="text-amber-800 font-black text-[11px] mb-0.5">★ 100% 고객 안심 무상 보장</div>
+                                <div class="font-bold text-stone-900">100% 무상 재발송 보증 (배송 중 파손·변질 시 즉시 1:1 맞교환)</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- =========================================================================
+                 3. SMART BAGGAGE SAVINGS CALCULATOR (Narrative Bridge)
+                 ========================================================================= -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border-2 border-amber-300 shadow-2xl space-y-6">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-stone-200">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-black tracking-wider uppercase border border-red-200">
+                            <i class="fa-solid fa-plane-circle-exclamation text-red-600"></i>
+                            <span>한국인 여행객 공감 100% 귀국 수하물 팩트체크</span>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-black text-stone-900 leading-snug [word-break:keep-all] break-keep">
+                            🧳 LCC 공항 수하물 초과요금 폭탄 피하는 스마트 직배송 계산기
+                        </h3>
+                        <p class="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed [word-break:keep-all] break-keep">
+                            제주항공·진에어·티웨이·비엣젯 15kg 기본 수하물 초과 시 <strong class="text-red-600 font-black bg-red-50 px-1 py-0.5 rounded border border-red-200">1kg당 15,000원 벌금</strong>이 부과됩니다. 무겁게 들고 가지 마시고 호텔에서 주문하면 한국 집 문 앞으로 무료 직배송됩니다.
+                        </p>
+                    </div>
+
+                    <!-- Live Real-Time Ticker (High Contrast) -->
+                    <div class="bg-stone-950 border-2 border-amber-400 rounded-2xl p-4 flex items-center space-x-3.5 flex-shrink-0 shadow-lg w-full lg:w-auto">
+                        <span class="w-3 h-3 rounded-full bg-amber-400 animate-ping flex-shrink-0"></span>
+                        <div class="text-xs">
+                            <div class="text-amber-400 font-black flex items-center gap-1">
+                                <i class="fa-solid fa-bell"></i>
+                                <span id="mainLiveTickerTime">방금 전</span>
+                            </div>
+                            <div class="font-bold text-white mt-0.5" id="mainLiveTickerText">
+                                [소나시 노보텔 304호] 10+2 세트 로비 배달 접수
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slider and Comparison -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 pt-2 items-center">
+                    <div class="lg:col-span-6 space-y-3">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-stone-700 font-bold">기념품 구매 예상 무게:</span>
+                            <span class="text-xl font-black text-amber-600"><span id="mainWeightVal">5</span> kg</span>
+                        </div>
+                        <input type="range" min="2" max="15" value="5" step="1" id="mainWeightSlider"
+                               class="w-full accent-amber-500 cursor-pointer h-3 bg-stone-200 rounded-lg"
+                               oninput="updateMainBaggageCalc(this.value)">
+                        <div class="flex justify-between text-[11px] text-stone-500 font-bold">
+                            <span>가벼운 단품 (2kg)</span>
+                            <span>10+2 1박스 (5kg)</span>
+                            <span>2세트 (10kg)</span>
+                            <span>초과 한도 (15kg)</span>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- Penalty Box (Alert Red) -->
+                        <div class="p-4 rounded-2xl bg-red-50 border-2 border-red-200 space-y-1">
+                            <div class="text-[11px] font-bold text-red-700 flex items-center justify-between">
+                                <span>LCC 공항 현장 초과 벌금</span>
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div class="text-2xl font-black text-red-600" id="mainPenaltyDisplay">₩75,000원</div>
+                            <div class="text-[10px] text-red-500 font-medium">공항 카운터에서 생돈 낭비</div>
+                        </div>
+
+                        <!-- Fruit Farm Free Shipping (Mango Highlight) -->
+                        <div class="p-4 rounded-2xl bg-amber-500 text-stone-950 border border-amber-600 space-y-1 shadow-md shadow-amber-500/20">
+                            <div class="text-[11px] font-bold text-stone-900 flex items-center justify-between">
+                                <span>FRUIT FARM 항공 직배송</span>
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <div class="text-2xl font-black text-stone-950">₩0원 (완전 무료)</div>
+                            <div class="text-[11px] text-stone-900 font-black" id="mainSavingsDisplay">$100 결제 시 ₩75,000원 즉시 절약!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Narrative Call-To-Action Link to $100 Packages -->
+                <div class="pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-amber-50/50 p-4 rounded-2xl">
+                    <div class="text-xs font-bold text-stone-800 text-center sm:text-left">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mr-1.5"></i>
+                        <span>단 1박스만 주문해도 <strong>한국 자택 100% 무료 직배송</strong> 혜택이 적용됩니다.</span>
+                    </div>
+                    <a href="#promo" class="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-stone-950 hover:bg-black text-white font-black px-6 py-3 rounded-xl text-xs transition shadow-md border border-stone-800 cursor-pointer">
+                        <span>인기 $100 기획 세트 둘러보기</span>
+                        <i class="fa-solid fa-arrow-down text-amber-400"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Legal Compliance Note: Placed discreetly at bottom -->
+            <div class="mt-6 text-center">
+                <p class="text-[10px] text-stone-400 leading-relaxed max-w-2xl mx-auto">
+                    ※ <strong>[공정거래 및 표시광고법 준수 고지]</strong> 상기 비교는 베트남 시중 유통 건망고의 원재료 표시사항(통상 정제설탕 5~10% 첨가) 및 푸꾸옥 현지 물류 특성을 사실에 근거하여 객관적으로 정리한 것이며, 당사 제품은 설탕 무첨가(No Added Sugar) 및 식물검역법·관세청 소액면세 규정을 엄격히 준수합니다.
+                </p>
+            </div>
+        </div>
+    </section>
+    {# ---------------- SECTION: PROMO SETS ---------------- #}
+    {% elif s == 'promo' %}
+    <section id="promo" data-tab="promo" class="py-16 bg-dark-900 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
+                <div>
+                    <span class="text-xs font-black text-gold-400 tracking-widest uppercase">{{ settings.get('text_promo_badge', 'BEST $100 PACKAGES') }}</span>
+                    <h2 class="text-xl sm:text-4xl font-black text-stone-900 mt-1 [word-break:keep-all] break-keep leading-snug">{{ settings.get('text_promo_title', '한국 무료 직배송 $100 기획 세트') }}</h2>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-2">
+                        {{ settings.get('text_promo_subtitle', '단 하나의 세트만 주문해도 한국 자택 무료 직배송 혜택이 적용되는 베스트 선물 패키지입니다.') }}
+                    </p>
+                </div>
+                <div class="text-xs font-black text-amber-900 bg-amber-100 border border-amber-300 px-4 py-2 rounded-xl flex items-center space-x-2 shadow-xs">
+                    <i class="fa-solid fa-gift text-amber-600"></i>
+                    <span>선물용 쇼핑백 & 위생 박스 무료 동봉</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for p in promo_sets %}
+                <div class="luxury-card rounded-3xl p-6 flex flex-col justify-between border border-gold-500/30 hover:border-gold-400 transition duration-300 group">
+                    <div>
+                        <div class="h-64 rounded-2xl overflow-hidden relative mb-5 bg-dark-800 border border-slate-700/60">
+                            <img src="{{ p.image_url }}" alt="{{ p.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-3 left-3 bg-gradient-to-r from-gold-500 to-amber-600 text-dark-900 font-black text-xs px-3 py-1 rounded-full shadow-lg">
+                                {{ p.badge or 'BEST SELLER' }}
+                            </span>
+                            <span class="absolute bottom-3 right-3 bg-dark-900/80 backdrop-blur-md text-[10px] font-bold text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                                {{ p.weight_g }}g 세트
+                            </span>
+                        </div>
+
+                        <h3 class="text-lg font-black text-white group-hover:text-gold-300 transition">{{ p.name }}</h3>
+                        <p class="text-xs text-gold-400 font-bold mt-1">{{ p.sub_title }}</p>
+                        <p class="text-xs text-slate-400 mt-2.5 leading-relaxed">{{ p.description }}</p>
+                    </div>
+
+                    <div class="mt-6 pt-5 border-t border-slate-700/80">
+                        <div class="flex items-baseline justify-between mb-3">
+                            <span class="text-xs text-slate-400 font-medium">소비자 판매가</span>
+                            <div class="text-right">
+                                <span class="text-2xl font-black text-stone-900">${{ p.price_usd|int }}</span>
+                                <span class="text-xs text-slate-400 ml-1">(₩{{ "{:,}".format(p.price_krw) }})</span>
+                                <div class="text-[11px] text-amber-400 font-mono font-bold">≈ {{ "{:,}".format((p.price_usd * (settings.get('usd_vnd_rate', '25400')|float))|int) }} ₫ (VND)</div>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="addToCart({{ p.id }}, '{{ p.name }}', {{ p.price_usd }}, {{ p.price_krw }}, '{{ p.image_url }}', 1)"
+                                    class="bg-amber-500 hover:bg-amber-600 text-stone-950 font-black py-3 rounded-xl text-xs transition shadow flex items-center justify-center space-x-1.5 cursor-pointer">
+                                <i class="fa-solid fa-cart-plus"></i>
+                                <span>바로 담기</span>
+                            </button>
+                            <a href="#custom-builder" class="bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 font-black py-3 rounded-xl text-xs transition flex items-center justify-center space-x-1 shadow-xs cursor-pointer">
+                                <i class="fa-solid fa-sliders text-amber-600"></i>
+                                <span>직접 맛 선택</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {# ---------------- SECTION: DIY BUILDER ---------------- #}
+    {% elif s == 'builder' and settings.get('show_diy_builder', '1') == '1' %}
+    <section id="custom-builder" data-tab="builder" class="py-10 sm:py-16 bg-dark-800 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-xs font-black text-gold-400 tracking-widest uppercase">{{ settings.get('text_builder_badge', 'CUSTOM DIY PACK') }}</span>
+                    <h2 class="text-2xl sm:text-4xl font-black text-white mt-1">{{ settings.get('text_builder_title', '10+2 내 맘대로 골라담기 패키지 ($100)') }}</h2>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-2">
+                        {{ settings.get('text_builder_subtitle', '180g 말린과일과 견과류 중 원하는 10봉을 고르면, 2봉을 무료로 추가 증정하여 총 12봉을 한국 자택으로 무료 직배송해드립니다.') }}
+                    </p>
+                </div>
+                <div class="bg-dark-900 border border-gold-500/30 p-3.5 rounded-2xl flex items-center space-x-4">
+                    <div class="text-center">
+                        <div class="text-[10px] text-slate-400">선택한 기본팩</div>
+                        <div class="text-lg font-black text-white"><span id="builderRegularCount">0</span> / 10</div>
+                    </div>
+                    <div class="text-center border-l border-slate-700 pl-4">
+                        <div class="text-[10px] text-gold-400 font-bold">+2 무료 보너스팩</div>
+                        <div class="text-lg font-black text-gold-400"><span id="builderBonusCount">0</span> / 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="luxury-card p-4 rounded-2xl mb-8">
+                <div class="flex justify-between text-xs font-bold mb-2">
+                    <span id="builderStatusText" class="text-slate-300">원하시는 상품 10봉을 먼저 선택해주세요.</span>
+                    <span id="builderProgressPercent" class="text-gold-400 font-black">0%</span>
+                </div>
+                <div class="w-full bg-dark-900 h-3 rounded-full overflow-hidden border border-slate-700">
+                    <div id="builderProgressBar" class="bg-gradient-to-r from-gold-500 to-amber-400 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <div class="mb-10">
+                <h3 class="text-sm font-black text-white mb-4 flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-gold-400"></span>
+                    <span>STEP 1. 기본 10봉 선택 (자유롭게 조합 가능)</span>
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                    {% for item in dried_fruits + nuts_items %}
+                    {% if item.weight_g == 180 %}
+                    <div class="bg-white p-3 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between text-center hover:border-amber-400 transition">
+                        <div>
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-24 object-cover rounded-xl mb-2">
+                            <div class="font-black text-xs text-stone-900 line-clamp-1 mb-1">{{ item.name.split('(')[0] }}</div>
+                            <div class="text-[11px] text-stone-500 font-bold mt-0.5">180g / $10 상당</div>
+                        </div>
+                        <div class="flex items-center justify-center space-x-2 mt-3 pt-2 border-t border-slate-700/60">
+                            <button onclick="updateBuilderRegular({{ item.id }}, -1)" class="w-7 h-7 rounded-lg bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-800 font-black text-xs cursor-pointer">-</button>
+                            <span id="builder-reg-qty-{{ item.id }}" class="text-xs font-black text-white w-4">0</span>
+                            <button onclick="updateBuilderRegular({{ item.id }}, 1)" class="w-6 h-6 rounded-lg bg-gold-500/20 border border-gold-500/40 text-gold-300 hover:bg-gold-500 hover:text-dark-900 text-xs font-bold">+</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="bonusSection" class="p-6 rounded-3xl border-2 border-dashed border-slate-700 bg-dark-900/60 mb-8 transition-all">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-black text-gold-300 flex items-center space-x-2">
+                        <i class="fa-solid fa-gift text-gold-400"></i>
+                        <span>STEP 2. 무료 추가 증정 2봉 선택 (보너스 선물팩)</span>
+                    </h3>
+                    <span id="bonusUnlockNotice" class="text-xs text-slate-400">기본 10봉을 먼저 채우시면 활성화됩니다.</span>
+                </div>
+                <div id="bonusItemsGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 opacity-40 pointer-events-none transition-opacity">
+                    {% for item in (dried_fruits + nuts_items)[:4] %}
+                    <div class="luxury-card p-3 rounded-2xl border border-gold-500/30 flex items-center space-x-3">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-12 h-12 object-cover rounded-xl">
+                        <div class="flex-grow text-left">
+                            <div class="font-bold text-xs text-white truncate">{{ item.name.split('(')[0] }}</div>
+                            <div class="text-[10px] text-gold-400 font-bold">무료 증정</div>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <button onclick="updateBuilderBonus({{ item.id }}, -1)" class="w-5 h-5 rounded bg-dark-800 text-slate-300 text-xs">-</button>
+                            <span id="builder-bonus-qty-{{ item.id }}" class="text-xs font-black text-white w-3 text-center">0</span>
+                            <button onclick="updateBuilderBonus({{ item.id }}, 1)" class="w-5 h-5 rounded bg-gold-500 text-dark-900 font-bold text-xs">+</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button id="btnCompleteDIY" onclick="completeDIYPackage()" disabled
+                        class="bg-slate-700 text-slate-400 font-black px-8 py-4 rounded-2xl text-sm transition shadow-lg cursor-not-allowed">
+                    10+2 총 12봉 패키지 장바구니 담기 ($100 / 한국 무료 직배송)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    {# ---------------- SECTION: CATALOG ---------------- #}
+    {% elif s == 'catalog' %}
+    <section id="products" data-tab="catalog" class="py-16 bg-dark-900 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                <div>
+                    <span class="text-xs font-black text-gold-400 tracking-widest uppercase">{{ settings.get('text_catalog_badge', 'CATALOG & FEFO') }}</span>
+                    <h2 class="text-xl sm:text-4xl font-black text-stone-900 mt-1 [word-break:keep-all] break-keep leading-snug">{{ settings.get('text_catalog_title', 'FRUIT FARM 푸꾸옥 직영 플래그십 전 상품') }}</h2>
+                    <p class="text-xs sm:text-sm text-stone-600 mt-2">
+                        {{ settings.get('text_catalog_subtitle', '호치민 직영 HACCP 공장에서 무설탕 저온건조로 정직하게 가공한 프리미엄 특산품입니다.') }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+                {% for prod in products %}
+                {% if prod.category != 'promo_set' %}
+                <div class="bg-white rounded-2xl p-4 flex flex-col justify-between border border-stone-200 shadow-sm hover:border-amber-400 hover:shadow-md transition group">
+                    <div>
+                        <div class="h-44 rounded-xl overflow-hidden relative mb-3 bg-dark-800 border border-slate-700/60">
+                            <img src="{{ prod.image_url }}" alt="{{ prod.name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            {% if prod.badge %}
+                            <span class="absolute top-2 left-2 bg-dark-900/90 text-gold-300 font-bold text-[10px] px-2 py-0.5 rounded border border-gold-500/40">
+                                {{ prod.badge }}
+                            </span>
+                            {% endif %}
+                            <span class="absolute bottom-2 right-2 bg-dark-900/80 text-slate-400 text-[10px] px-2 py-0.5 rounded border border-slate-700">
+                                {{ prod.weight_g }}g
+                            </span>
+                        </div>
+
+                        <h4 class="font-black text-sm text-stone-900 group-hover:text-amber-600 transition line-clamp-1">{{ prod.name }}</h4>
+                        <p class="text-xs text-stone-500 mt-1 line-clamp-2 leading-relaxed">{{ prod.description }}</p>
+
+                        <div class="mt-2.5 pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-500">
+                            <span><i class="fa-solid fa-barcode text-gold-400 mr-1"></i>{{ prod.barcode or '893600100' }}</span>
+                            <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-check mr-0.5"></i>FEFO 검수</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800">
+                        <div class="flex items-baseline justify-between mb-2">
+                            <span class="text-[11px] text-slate-400">정상 판매가</span>
+                            <div class="text-right">
+                                <span class="text-lg font-black text-stone-900">${{ prod.price_usd|int }}</span>
+                                <span class="text-xs text-stone-500 font-bold ml-1">(₩{{ "{:,}".format(prod.price_krw) }})</span>
+                                <div class="text-[10px] text-amber-400 font-mono font-bold">≈ {{ "{:,}".format((prod.price_usd * (settings.get('usd_vnd_rate', '25400')|float))|int) }} ₫</div>
+                            </div>
+                        </div>
+
+                        
+
+                        <button onclick="addToCart({{ prod.id }}, '{{ prod.name }}', {{ prod.price_usd }}, {{ prod.price_krw }}, '{{ prod.image_url }}', 1)"
+                                class="w-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center space-x-1.5 cursor-pointer">
+                            <i class="fa-solid fa-cart-plus text-[11px]"></i>
+                            <span>장바구니 담기</span>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {# -------- SECTION: LOCATION ---------------- #}
+    {% elif s == 'location' %}
+    <section <section id="store-location" data-tab="location" class="py-16 bg-stone-100 border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm flex flex-col lg:flex-row items-center gap-10">
+                <div class="lg:w-1/2 space-y-4">
+                    <span class="text-xs font-black text-amber-600 tracking-widest uppercase">FLAGSHIP STORE</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-stone-900 mt-1">FRUIT FARM 푸꾸옥 직영 플래그십</h2>
+                    <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                        푸꾸옥 최고의 리조트 밀집 지역인 소나시(Sonasea) 야시장 메인 스트리트에 위치하고 있습니다. 노보텔, 풀만, 인터컨티넨탈에서 도보 5분 거리에 위치하여 언제든 편하게 무료 시식하러 오실 수 있습니다.
+                    </p>
+
+                    <div class="space-y-3 pt-4 border-t border-stone-100 text-xs text-stone-800">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <strong class="text-stone-900 font-black">공식 매장 주소:</strong>
+                                <span class="text-stone-700 font-bold ml-1">SV2A - V07 Khu Sonasea Bãi Trường, Phú Quốc (소나시 12가 메인 스트리트)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
+                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div>
+                                <strong class="text-stone-900 font-black">운영 시간:</strong>
+                                <span class="text-stone-700 font-bold ml-1">매일 09:00 ~ 22:00 (연중무휴 · 전 품목 무료 시식 상시 운영)</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
+                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid fa-comment"></i>
+                            </div>
+                            <div>
+                                <strong class="text-stone-900 font-black">실시간 고객 상담:</strong>
+                                <span class="text-stone-700 font-bold ml-1">카카오톡 채널 @fruitfarm (24시간 리조트 배달 및 주문 안내)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex flex-wrap gap-3">
+                        <a href="https://www.google.com/maps/search/?api=1&query=Sonasea+Shopping+Center+Phu+Quoc" target="_blank" rel="noopener noreferrer" target="_blank"
+                           class="inline-flex items-center space-x-2 bg-stone-900 hover:bg-black text-white px-5 py-3 rounded-xl text-xs font-black transition shadow">
+                            <i class="fa-solid fa-map-location-dot text-amber-400"></i>
+                            <span>구글 지도에서 매장 찾기</span>
+                        </a>
+                        <a href="{{ settings.get('kakao_channel_url', 'https://pf.kakao.com') }}" target="_blank"
+                           class="inline-flex items-center space-x-2 bg-[#FEE500] hover:bg-[#edd500] text-black px-5 py-3 rounded-xl text-xs font-black border border-yellow-300 transition shadow">
+                            <i class="fa-solid fa-comment"></i>
+                            <span>카톡으로 리조트 배달 요청</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="lg:w-1/2 w-full h-80 rounded-2xl overflow-hidden shadow-md border border-stone-200">
+                    <img src="/static/images/store/store_exterior.png" alt="FRUIT FARM 푸꾸옥 플래그십 매장 전경" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+{% endfor %}
+
+<!-- DIY Builder Script -->
+<script>
+    let builderRegular = {};
+    let builderBonus = {};
+
+    function updateBuilderRegular(id, delta) {
+        const cur = builderRegular[id] || 0;
+        const total = Object.values(builderRegular).reduce((a, b) => a + b, 0);
+
+        if (delta > 0 && total >= 10) {
+            alert('기본팩 10봉이 이미 모두 채워졌습니다! 이제 하단의 +2 보너스팩을 골라주세요.');
+            return;
+        }
+
+        const next = Math.max(0, cur + delta);
+        if (next === 0) delete builderRegular[id];
+        else builderRegular[id] = next;
+
+        const el = document.getElementById(`builder-reg-qty-${id}`);
+        if (el) el.textContent = builderRegular[id] || 0;
+
+        refreshBuilderState();
+    }
+
+    function updateBuilderBonus(id, delta) {
+        const totalReg = Object.values(builderRegular).reduce((a, b) => a + b, 0);
+        if (totalReg < 10) {
+            alert('기본팩 10봉을 먼저 채워주세요!');
+            return;
+        }
+
+        const cur = builderBonus[id] || 0;
+        const totalBonus = Object.values(builderBonus).reduce((a, b) => a + b, 0);
+
+        if (delta > 0 && totalBonus >= 2) {
+            alert('무료 보너스팩 2봉이 모두 선택되었습니다!');
+            return;
+        }
+
+        const next = Math.max(0, cur + delta);
+        if (next === 0) delete builderBonus[id];
+        else builderBonus[id] = next;
+
+        const el = document.getElementById(`builder-bonus-qty-${id}`);
+        if (el) el.textContent = builderBonus[id] || 0;
+
+        refreshBuilderState();
+    }
+
+    function refreshBuilderState() {
+        const regTotal = Object.values(builderRegular).reduce((a, b) => a + b, 0);
+        const bonusTotal = Object.values(builderBonus).reduce((a, b) => a + b, 0);
+
+        const rEl = document.getElementById('builderRegularCount');
+        if (rEl) rEl.textContent = regTotal;
+        const bEl = document.getElementById('builderBonusCount');
+        if (bEl) bEl.textContent = bonusTotal;
+
+        const progress = Math.min(100, Math.round(((regTotal + bonusTotal) / 12) * 100));
+        const pBar = document.getElementById('builderProgressBar');
+        if (pBar) pBar.style.width = `${progress}%`;
+        const pPct = document.getElementById('builderProgressPercent');
+        if (pPct) pPct.textContent = `${progress}%`;
+
+        const bonusGrid = document.getElementById('bonusItemsGrid');
+        const bonusNotice = document.getElementById('bonusUnlockNotice');
+        const btn = document.getElementById('btnCompleteDIY');
+
+        if (bonusGrid && bonusNotice) {
+            if (regTotal >= 10) {
+                bonusGrid.classList.remove('opacity-40', 'pointer-events-none');
+                bonusNotice.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i>무료 2봉 선택 가능!</span>';
+            } else {
+                bonusGrid.classList.add('opacity-40', 'pointer-events-none');
+                bonusNotice.textContent = `기본 10봉을 먼저 채우시면 활성화됩니다. (${10 - regTotal}봉 남음)`;
+            }
+        }
+
+        if (btn) {
+            if (regTotal === 10 && bonusTotal === 2) {
+                btn.disabled = false;
+                btn.className = 'bg-gradient-to-r from-gold-500 to-amber-600 hover:from-gold-400 hover:to-amber-500 text-dark-900 font-black px-8 py-4 rounded-2xl text-sm transition shadow-lg shadow-gold-500/25 cursor-pointer transform hover:scale-105';
+                btn.textContent = '10+2 총 12봉 패키지 장바구니 담기 ($100 / 한국 무료 직배송)';
+            } else {
+                btn.disabled = true;
+                btn.className = 'bg-slate-700 text-slate-400 font-black px-8 py-4 rounded-2xl text-sm transition shadow-lg cursor-not-allowed';
+                btn.textContent = `기본 ${regTotal}/10봉, 보너스 ${bonusTotal}/2봉 선택 중...`;
+            }
+        }
+    }
+
+    function completeDIYPackage() {
+        addToCart(
+            1,
+            '[DIY 10+2 기획 세트] 180G 총 12봉 맞춤 구성',
+            100.0,
+            138000,
+            '/static/images/products/promo_10_2.jpg',
+            1
+        );
+        alert('10+2 맞춤 패키지가 장바구니에 담겼습니다!\n$100 이상 결제 시 한국 자택 무료 직배송 혜택이 적용됩니다.');
+    }
+
+    function submitGuideSampleForm(e) {
+        e.preventDefault();
+        const payload = {
+            guide_name: document.getElementById('sampleGuideName').value.trim(),
+            agency_name: document.getElementById('sampleAgencyName').value.trim(),
+            phone: document.getElementById('samplePhone').value.trim(),
+            kakao_id: document.getElementById('sampleKakao').value.trim(),
+            team_type: document.getElementById('sampleTeamType').value,
+            hotel_or_location: document.getElementById('sampleLocation').value.trim()
+        };
+
+        fetch('/api/sample/request', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(d => {
+            if (d.success) {
+                alert('[가이드 무료 샘플 신청 접수 완료]\n\n담당자가 확인 후 푸꾸옥 현지 그랩으로 2시간 이내에 로비로 전달해드립니다.\n감사합니다!');
+                e.target.reset();
+            } else {
+                alert('오류: ' + d.message);
+            }
+        })
+        .catch(err => alert('통신 오류: ' + err));
+    }
+
+    // Main LCC Baggage Penalty Calculator
+    function updateMainBaggageCalc(val) {
+        document.getElementById('mainWeightVal').textContent = val;
+        const penalty = val * 15000;
+        document.getElementById('mainPenaltyDisplay').textContent = '₩' + penalty.toLocaleString() + '원';
+        document.getElementById('mainSavingsDisplay').textContent = '$100 결제 시 ₩' + penalty.toLocaleString() + '원 즉시 절약!';
+    }
+
+    // Main Social Proof Order Ticker
+    const mainTickers = [
+        { hotel: '소나시 노보텔 304호', item: '10+2 세트 2박스 로비 배달 접수', time: '방금 전' },
+        { hotel: '인터컨티넨탈 풀빌라', item: '무설탕 골드망고 10봉 한국 직배송', time: '2분 전' },
+        { hotel: '풀만 리조트 정문', item: '골드망고 5+1 선물세트 접수', time: '4분 전' },
+        { hotel: '리젠트 푸꾸옥 201호', item: '10+2 기획세트 로비 픽업', time: '7분 전' },
+        { hotel: '베스트웨스턴 소나시', item: '푸꾸옥 특산 캐슈넛 12봉 세트', time: '11분 전' }
+    ];
+    let mainTickerIdx = 0;
+    setInterval(() => {
+        mainTickerIdx = (mainTickerIdx + 1) % mainTickers.length;
+        const t = mainTickers[mainTickerIdx];
+        const textEl = document.getElementById('mainLiveTickerText');
+        const timeEl = document.getElementById('mainLiveTickerTime');
+        if (textEl && timeEl) {
+            textEl.style.opacity = '0';
+            setTimeout(() => {
+                textEl.textContent = `[${t.hotel}] ${t.item}`;
+                timeEl.textContent = t.time;
+                textEl.style.opacity = '1';
+            }, 300);
+        }
+    }, 4500);
+
+    // Natural Full Page Flow (All sections accessible by scrolling)
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('section[data-tab]').forEach(sec => {
+            sec.style.display = 'block';
+            sec.classList.remove('hidden');
+        });
+    });</script>
+
+{% endblock %}

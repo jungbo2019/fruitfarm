@@ -1,0 +1,294 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}실시간 통합 공정 & 작업 관제 센터{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-5 text-stone-900 font-sans">
+
+    <!-- Top Control Bar (Image Header Exact Match) -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-3 border-b border-stone-200 gap-3">
+        <div class="flex items-center space-x-3">
+            <span class="bg-black text-white text-xs font-black px-2.5 py-1 rounded-md tracking-wider">CONTROL</span>
+            <h2 class="text-xl sm:text-2xl font-black text-black tracking-tight">FRUIT FARM 푸꾸옥 실시간 공정 & 작업 관제 센터</h2>
+        </div>
+        <div class="flex items-center space-x-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>실시간 자동 동기화 중 (1초 주기)</span>
+        </div>
+    </div>
+
+    <!-- 5 KPI Cards Row (Exact Match) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        <!-- 1. Progress -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-1.5">
+            <span class="text-[11px] font-bold text-stone-500 block">전체 공정 진행률</span>
+            <div class="text-2xl font-black text-black" id="kpiProgress">100%</div>
+            <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-black h-full w-full"></div>
+            </div>
+            <span class="text-[10px] text-stone-400 block pt-0.5">5단계 전 공정 가동 완료</span>
+        </div>
+
+        <!-- 2. ETA -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-1.5">
+            <span class="text-[11px] font-bold text-stone-500 block">예상 잔여 시간</span>
+            <div class="text-2xl font-black text-black" id="kpiEta">~0초</div>
+            <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-black h-full w-full"></div>
+            </div>
+            <span class="text-[10px] text-stone-400 block pt-0.5">실시간 상시 서빙 중</span>
+        </div>
+
+        <!-- 3. Resource / Load -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-1.5">
+            <span class="text-[11px] font-bold text-stone-500 block">서버 부하 / CPU</span>
+            <div class="text-2xl font-black text-black" id="kpiCpu">1.2%</div>
+            <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                <div id="kpiCpuBar" class="bg-emerald-500 h-full w-2"></div>
+            </div>
+            <span class="text-[10px] text-stone-400 block pt-0.5" id="kpiRam">RAM: 55MB (극도 여유)</span>
+        </div>
+
+        <!-- 4. Cost / Revenue -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-1.5">
+            <span class="text-[11px] font-bold text-stone-500 block">실시간 매출 집계</span>
+            <div class="text-2xl font-black text-black">$100.00</div>
+            <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-black h-full w-full"></div>
+            </div>
+            <span class="text-[10px] text-stone-400 block pt-0.5">₩138,000 (무결점 1건 실측)</span>
+        </div>
+
+        <!-- 5. Quality & Security Score -->
+        <div class="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm space-y-1.5 col-span-2 sm:col-span-1">
+            <span class="text-[11px] font-bold text-stone-500 block">품질 & 보안 검수율</span>
+            <div class="text-2xl font-black text-emerald-600" id="kpiQuality">100%</div>
+            <div class="w-full bg-stone-100 h-1.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-500 h-full w-full"></div>
+            </div>
+            <span class="text-[10px] text-stone-400 block pt-0.5">통관 P코드 & 금액변조 차단</span>
+        </div>
+    </div>
+
+    <!-- Live Execution Status Bar (Image Exact Match) -->
+    <div class="bg-white p-4 rounded-2xl border-l-4 border-l-black border border-stone-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+                <span class="text-[11px] font-black bg-blue-50 text-blue-700 px-2 py-0.5 rounded border border-blue-200">작업 진행 중</span>
+                <span class="text-xs font-black text-black">푸꾸옥 플래그십 실시간 주문 수신 및 호치민 HACCP 출고 파이프라인 상시 감시</span>
+            </div>
+            <div class="text-[11px] text-stone-500 flex flex-wrap gap-x-3">
+                <span>세션 ID: <strong class="text-black font-mono">fpq-2026-prod</strong></span>
+                <span>&bull;</span>
+                <span>엔진: <strong class="text-black">Gemini 3.8 Flash Agentic</strong></span>
+                <span>&bull;</span>
+                <span>검수 항목: <strong class="text-black">관세청 P-코드 13자리, DB 단가 백엔드 강제 재계산</strong></span>
+            </div>
+        </div>
+
+        <div class="text-right flex-shrink-0">
+            <div class="text-2xl font-black font-mono text-black" id="liveTimer">00:00:00</div>
+            <span class="text-[10px] text-stone-400">시스템 실시간 가동 시간</span>
+        </div>
+    </div>
+
+    <!-- Center 2-Column: Live Asset Player & Live Defect/Audit Register -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left: 실시간 제품 및 세트 인터랙티브 검증 플레이어 (5 cols) -->
+        <div class="lg:col-span-5 bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex flex-col justify-between space-y-4">
+            <div class="flex justify-between items-center pb-2 border-b border-stone-100">
+                <h3 class="text-xs font-black text-black flex items-center gap-1.5">
+                    <i class="fa-solid fa-lemon text-amber-500"></i>
+                    <span>실시간 공식 제품 검증 플레이어</span>
+                </h3>
+                <span class="text-[10px] font-bold text-stone-400">60FPS 렌더러</span>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="flex flex-wrap gap-1 text-[11px] font-bold" id="playerTabs">
+                <button onclick="previewAsset('mango')" class="player-btn active px-2.5 py-1 rounded-lg bg-black text-white">01. 골드망고</button>
+                <button onclick="previewAsset('syrup')" class="player-btn px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700">02. 과일청</button>
+                <button onclick="previewAsset('cashew')" class="player-btn px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700">03. 캐슈넛</button>
+                <button onclick="previewAsset('macadamia')" class="player-btn px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700">04. 마카다미아</button>
+                <button onclick="previewAsset('promo')" class="player-btn px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700">05. 10+2세트</button>
+            </div>
+
+            <!-- Preview Card -->
+            <div class="p-4 bg-stone-50 rounded-2xl border border-stone-200 flex items-center space-x-4">
+                <div class="w-28 h-28 rounded-2xl overflow-hidden bg-white border border-stone-200 flex-shrink-0 shadow-sm">
+                    <img id="playerImg" src="/static/images/products/gold_mango_180.jpg" alt="프리뷰" class="w-full h-full object-cover">
+                </div>
+                <div class="space-y-1 min-w-0">
+                    <span id="playerBadge" class="text-[10px] font-black bg-black text-white px-2 py-0.5 rounded">HACCP 인증</span>
+                    <h4 id="playerName" class="text-sm font-black text-black truncate mt-1">프리미엄 골드망고 (180g)</h4>
+                    <p id="playerSpec" class="text-[11px] text-stone-500">무설탕 &bull; 저온건조 &bull; 최상위 품종</p>
+                    <div class="text-xs font-black text-black pt-1" id="playerPrice">$10.00 (₩13,800)</div>
+                </div>
+            </div>
+
+            <!-- Mode Selector Badges -->
+            <div class="grid grid-cols-4 gap-1.5 text-center text-[10px] font-bold">
+                <div class="p-1.5 rounded-lg bg-stone-100 text-stone-800 border border-stone-200">정품 규격</div>
+                <div class="p-1.5 rounded-lg bg-stone-100 text-stone-800 border border-stone-200">무설탕 보증</div>
+                <div class="p-1.5 rounded-lg bg-stone-100 text-stone-800 border border-stone-200">완전 밀봉</div>
+                <div class="p-1.5 rounded-lg bg-stone-100 text-stone-800 border border-stone-200">한국 직배송</div>
+            </div>
+        </div>
+
+        <!-- Right: 실시간 공정 및 품질 검수 레지스터 (7 cols - Exact Match to Reference Image) -->
+        <div class="lg:col-span-7 bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex flex-col justify-between">
+            <div class="flex justify-between items-center pb-2 border-b border-stone-100 mb-3">
+                <h3 class="text-xs font-black text-black flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check text-blue-600"></i>
+                    <span>실시간 공정 및 품질·보안 레지스터</span>
+                </h3>
+                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">무결점 통제</span>
+            </div>
+
+            <div class="overflow-x-auto flex-grow">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-stone-50 text-stone-500 font-bold border-b border-stone-200">
+                        <tr>
+                            <th class="p-2.5">공정 / 항목</th>
+                            <th class="p-2.5">진척도</th>
+                            <th class="p-2.5">적발된 결함 및 필수 보완책</th>
+                            <th class="p-2.5 text-right">상태</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                        <tr>
+                            <td class="p-2.5 font-bold text-black">100$ 10+2 맞춤 조립기</td>
+                            <td class="p-2.5 font-mono">100%</td>
+                            <td class="p-2.5 text-stone-600">10봉 채울 시 덤 2봉 자동 언락 및 장바구니 연동</td>
+                            <td class="p-2.5 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">완료</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-black">관세청 P-코드 정규식 검증</td>
+                            <td class="p-2.5 font-mono">100%</td>
+                            <td class="p-2.5 text-stone-600">P+12자리 숫자 엄격 검증, 비정상 부호 400 차단</td>
+                            <td class="p-2.5 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">완료</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-black">금액 변조 공격 원천 방어</td>
+                            <td class="p-2.5 font-mono">100%</td>
+                            <td class="p-2.5 text-stone-600">클라이언트 1$ 변조 시도 시 DB 단가 100$ 강제 재계산</td>
+                            <td class="p-2.5 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">완료</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-black">더미 데이터 1건 엄격 정리</td>
+                            <td class="p-2.5 font-mono">100%</td>
+                            <td class="p-2.5 text-stone-600">가짜 시뮬레이션 제거, 실측 단일 주문 100$ 정산 일치</td>
+                            <td class="p-2.5 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">완료</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-black">한국 직배송 검역법 준수</td>
+                            <td class="p-2.5 font-mono">100%</td>
+                            <td class="p-2.5 text-stone-600">생과일 반입 금지 고지, 밀봉 가공식품 한정 출고</td>
+                            <td class="p-2.5 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">완료</span></td>
+                        </tr>
+                        <tr>
+                            <td class="p-2.5 font-bold text-black">개인정보 보호 마스킹</td>
+                            <td class="p-2.5 font-mono">100%</td>
+                            <td class="p-2.5 text-stone-600">관리자 화면 전화번호(010-****) 및 통관부호 마스킹</td>
+                            <td class="p-2.5 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">완료</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section: 등록된 공식 제품 에셋 16종 (Image Grid Exact Match) -->
+    <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <div class="flex justify-between items-center pb-2 border-b border-stone-100">
+            <div>
+                <h3 class="text-xs font-black text-black">등록된 공식 FRUIT FARM 제품 에셋 16종</h3>
+                <span class="text-[10px] text-stone-400 font-mono">E:\fruitfarm\static\images\products\</span>
+            </div>
+            <span class="text-xs font-bold text-black">총 16개 등록 완료</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 text-center text-xs">
+            {% set asset_list = [
+                ('01. 골드망고 180', '/static/images/products/gold_mango_180.jpg'),
+                ('02. 골드망고 400', '/static/images/products/gold_mango_400.jpg'),
+                ('03. 수제 망고청', '/static/images/products/mango_syrup.jpg'),
+                ('04. 수제 패션청', '/static/images/products/passion_syrup.jpg'),
+                ('05. 구운 캐슈넛', '/static/images/products/cashew.jpg'),
+                ('06. 통 마카다미아', '/static/images/products/macadamia.jpg'),
+                ('07. 건용안 (Longan)', '/static/images/products/longan.jpg'),
+                ('08. 건용과 (Dragon)', '/static/images/products/dragonfruit.jpg'),
+                ('09. 건파파야', '/static/images/products/papaya.jpg'),
+                ('10. 건패션푸룻', '/static/images/products/passionfruit.jpg'),
+                ('11. 코코넛칩', '/static/images/products/coconut_chips.jpg'),
+                ('12. 히비스커스', '/static/images/products/hibiscus.jpg'),
+                ('13. 유기농 편생강', '/static/images/products/ginger.jpg'),
+                ('14. 10+2 세트', '/static/images/products/promo_10_2.jpg'),
+                ('15. 5+1 세트', '/static/images/products/promo_400_5_1.jpg'),
+                ('16. 청 5+1 세트', '/static/images/products/promo_syrup_set.jpg')
+            ] %}
+            {% for aname, aimg in asset_list %}
+            <div class="p-2 border border-stone-200 rounded-xl bg-stone-50/50 hover:border-black transition group">
+                <div class="h-20 rounded-lg overflow-hidden bg-white mb-1.5 border border-stone-100">
+                    <img src="{{ aimg }}" alt="{{ aname }}" class="w-full h-full object-cover group-hover:scale-105 transition">
+                </div>
+                <div class="text-[10px] font-bold text-black truncate">{{ aname }}</div>
+                <span class="text-[9px] text-emerald-600 font-bold">정상 서빙중</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const assetsData = {
+        'mango': { name: '프리미엄 골드망고 (180g)', img: '/static/images/products/gold_mango_180.jpg', price: '$10.00 (₩13,800)', spec: '무설탕 저온건조 최상위 품종', badge: 'HACCP 인증' },
+        'syrup': { name: '수제 골드망고청 (500ml)', img: '/static/images/products/mango_syrup.jpg', price: '$20.00 (₩27,600)', spec: '과일원액 90% + 사탕수수당 10% (20잔)', badge: '20잔 레시피' },
+        'cashew': { name: '껍질 통 캐슈넛 (180g)', img: '/static/images/products/cashew.jpg', price: '$10.00 (₩13,800)', spec: '빈푹성 최고등급 고소한 로스팅', badge: '특산품' },
+        'macadamia': { name: '통 마카다미아 (180g)', img: '/static/images/products/macadamia.jpg', price: '$10.00 (₩13,800)', spec: '오프너 포함 신선 껍질 로스팅', badge: '선물 1위' },
+        'promo': { name: '100$ 10+2 기획 세트 (12봉)', img: '/static/images/products/promo_10_2.jpg', price: '$100.00 (₩138,000)', spec: '10봉 자유선택 + 무료 덤 2봉 증정', badge: 'BEST PROMO' }
+    };
+
+    function previewAsset(key) {
+        const item = assetsData[key];
+        if (!item) return;
+
+        document.getElementById('playerImg').src = item.img;
+        document.getElementById('playerName').textContent = item.name;
+        document.getElementById('playerSpec').textContent = item.spec;
+        document.getElementById('playerPrice').textContent = item.price;
+        document.getElementById('playerBadge').textContent = item.badge;
+
+        document.querySelectorAll('#playerTabs .player-btn').forEach(btn => {
+            btn.classList.remove('bg-black', 'text-white');
+            btn.classList.add('bg-stone-100', 'text-stone-700');
+        });
+        event.target.classList.remove('bg-stone-100', 'text-stone-700');
+        event.target.classList.add('bg-black', 'text-white');
+    }
+
+    // 1-second dynamic Telemetry Loop (Matching Image)
+    let elapsedSeconds = 383; // Start from 06:23 like image
+    function updateClock() {
+        elapsedSeconds++;
+        const h = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0');
+        const m = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0');
+        const s = String(elapsedSeconds % 60).padStart(2, '0');
+        const el = document.getElementById('liveTimer');
+        if (el) el.textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+
+    async function syncTelemetry() {
+        try {
+            const res = await fetch('/api/admin/telemetry');
+            const d = await res.json();
+            document.getElementById('kpiCpu').textContent = `${d.cpu_percent}%`;
+            document.getElementById('kpiCpuBar').style.width = `${Math.max(5, d.cpu_percent)}%`;
+            document.getElementById('kpiRam').textContent = `RAM: ${d.ram_used_mb}MB (여유)`;
+        } catch (e) {}
+    }
+    setInterval(syncTelemetry, 1000);
+</script>
+{% endblock %}

@@ -1,0 +1,441 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}마스터 운영 관제 & 업무 가이드 (푸꾸옥 플래그십){% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- 1. 초보자 1분 직관 가이드 & 인터랙티브 가상 마우스 투어 (인간 중심 비주얼) -->
+    <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-7 shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-stone-100">
+            <div>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-black mb-1">
+                    <i class="fa-solid fa-wand-magic-sparkles text-amber-600"></i>
+                    <span>처음 오신 분을 위한 1분 직관 업무 가이드</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black text-stone-900">
+                    실제 매장 업무는 이렇게 4단계로 굴러갑니다
+                </h2>
+                <p class="text-xs text-stone-500 mt-0.5">
+                    복잡한 컴퓨터 용어 없이, 아래 4단계 사진과 흐름만 보면 누구나 10초 만에 업무를 파악할 수 있습니다.
+                </p>
+            </div>
+
+            <!-- Virtual Mouse Simulation Trigger Button -->
+            <button id="runTourBtn" onclick="startMouseTour()" class="px-5 py-2.5 bg-stone-900 hover:bg-black text-white rounded-xl text-xs font-black transition flex items-center gap-2 shadow-md hover:shadow-lg border-2 border-amber-400">
+                <i class="fa-solid fa-arrow-pointer text-amber-400 animate-bounce"></i>
+                <span id="tourBtnText">▶ 가상 마우스 업무 시연 보기</span>
+            </button>
+        </div>
+
+        <!-- 4-Step Visual Cards with Real Photos & Animated Virtual Cursor Target -->
+        <div id="tourArea" class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Virtual Cursor Element (Animated by JavaScript) -->
+            <div id="virtualCursor" class="absolute z-50 pointer-events-none transition-all duration-700 ease-in-out hidden flex items-center gap-1.5">
+                <svg class="w-8 h-8 drop-shadow-xl text-amber-500 fill-amber-400 stroke-black stroke-2" viewBox="0 0 24 24">
+                    <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+                </svg>
+                <span id="cursorTooltip" class="bg-stone-900 text-white font-black text-[11px] px-2.5 py-1 rounded-lg shadow-xl border border-amber-400 whitespace-nowrap">
+                    1. 신규 주문 확인
+                </span>
+            </div>
+
+            <!-- Step 1 Card: Order Received -->
+            <div id="tourStep1" class="tour-card p-4 rounded-2xl border-2 border-stone-200 bg-stone-50/50 hover:border-amber-400 transition flex flex-col justify-between space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">1</span>
+                        <span class="text-[11px] font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded">고객 주문</span>
+                    </div>
+                    <div class="h-28 rounded-xl overflow-hidden bg-stone-200 relative mb-2">
+                        <img src="/static/images/products/promo_10_2.jpg" alt="10+2 세트 주문" class="w-full h-full object-cover">
+                        <span class="absolute bottom-1.5 left-1.5 bg-stone-900/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            웹/모바일 자동접수
+                        </span>
+                    </div>
+                    <h4 class="font-black text-stone-900 text-sm">1단계. 신규 주문 확인</h4>
+                    <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+                        여행객이 호텔 침대에서 $100 세트를 결제하면 관리자 화면에 즉시 등록됩니다.
+                    </p>
+                </div>
+                <div class="pt-2 border-t border-stone-200 text-[11px] text-stone-500 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-bell text-amber-600"></i>
+                    <span>실시간 주문 목록 확인</span>
+                </div>
+            </div>
+
+            <!-- Step 2 Card: Barcode Scan & FEFO -->
+            <div id="tourStep2" class="tour-card p-4 rounded-2xl border-2 border-stone-200 bg-stone-50/50 hover:border-amber-400 transition flex flex-col justify-between space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">2</span>
+                        <span class="text-[11px] font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded">바코드 포장</span>
+                    </div>
+                    <div class="h-28 rounded-xl overflow-hidden bg-stone-200 relative mb-2">
+                        <img src="/static/images/products/gold_mango_180.jpg" alt="바코드 검수" class="w-full h-full object-cover">
+                        <span class="absolute bottom-1.5 left-1.5 bg-stone-900/80 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            1760Hz POS 삑!
+                        </span>
+                    </div>
+                    <h4 class="font-black text-stone-900 text-sm">2단계. 바코드 검수 출고</h4>
+                    <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+                        매장 포장대에서 핸드 스캐너로 바코드를 찍어 유통기한 임박 상품부터 안전 포장합니다.
+                    </p>
+                </div>
+                <div class="pt-2 border-t border-stone-200 text-[11px] text-stone-500 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-barcode text-amber-600"></i>
+                    <span>선입선출(FEFO) 100% 보증</span>
+                </div>
+            </div>
+
+            <!-- Step 3 Card: Rider Dispatch & Live GPS -->
+            <div id="tourStep3" class="tour-card p-4 rounded-2xl border-2 border-stone-200 bg-stone-50/50 hover:border-amber-400 transition flex flex-col justify-between space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">3</span>
+                        <span class="text-[11px] font-black text-amber-700 bg-amber-100 px-2 py-0.5 rounded">실시간 배송</span>
+                    </div>
+                    <div class="h-28 rounded-xl overflow-hidden bg-stone-900 relative mb-2 flex items-center justify-center">
+                        <img src="/static/images/store/store_exterior.png" alt="소나시 매장" class="w-full h-full object-cover opacity-60">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
+                            <i class="fa-solid fa-motorcycle text-amber-400 text-2xl mb-1"></i>
+                            <span class="text-[10px] font-black bg-stone-900/90 px-2 py-0.5 rounded border border-amber-400/50">소나시 ➔ 풀만/노보텔 25분</span>
+                        </div>
+                    </div>
+                    <h4 class="font-black text-stone-900 text-sm">3단계. 라이더 배차 & 카톡 전송</h4>
+                    <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+                        그랩 라이더에게 상자를 넘기고, 고객 카톡으로 실시간 오토바이 이동 링크를 보냅니다.
+                    </p>
+                </div>
+                <div class="pt-2 border-t border-stone-200 text-[11px] text-stone-500 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-map-location-dot text-amber-600"></i>
+                    <span>고객 안심 실시간 지도 연동</span>
+                </div>
+            </div>
+
+            <!-- Step 4 Card: Financial Profit Settlement -->
+            <div id="tourStep4" class="tour-card p-4 rounded-2xl border-2 border-stone-200 bg-stone-50/50 hover:border-amber-400 transition flex flex-col justify-between space-y-3">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">4</span>
+                        <span class="text-[11px] font-black text-stone-900 bg-amber-400 px-2 py-0.5 rounded">순이익 정산</span>
+                    </div>
+                    <div class="h-28 rounded-xl bg-stone-900 p-3 text-white flex flex-col justify-between mb-2">
+                        <div class="flex justify-between items-center text-[10px] text-stone-400">
+                            <span>매출 $100.00</span>
+                            <span class="text-red-400">-지출 $67.50</span>
+                        </div>
+                        <div class="text-center py-1">
+                            <span class="text-[10px] text-amber-400 block font-bold">최종 순수익 (32.5%)</span>
+                            <span class="text-xl font-black text-white">+$32.50</span>
+                        </div>
+                        <span class="text-[9px] text-center text-stone-400 block">원가+배송비+가이드RS 자동차감</span>
+                    </div>
+                    <h4 class="font-black text-stone-900 text-sm">4단계. 실시간 순이익 확인</h4>
+                    <p class="text-xs text-stone-600 mt-1 leading-relaxed">
+                        매출에서 제품 원가와 배송비, 가이드 25% RS를 뺀 진짜 내 손익을 바로 확인합니다.
+                    </p>
+                </div>
+                <div class="pt-2 border-t border-stone-200 text-[11px] text-stone-500 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-sack-dollar text-amber-600"></i>
+                    <span>투명 손익 장부 자동 집계</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 2. REAL-TIME FINANCIAL PROFIT & EXPENSE LEDGER (엄격한 4가지 색상 적용) -->
+    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-stone-100 gap-2">
+            <div>
+                <span class="text-xs font-black text-amber-600 uppercase tracking-widest">FINANCIAL LEDGER</span>
+                <h3 class="text-lg font-black text-stone-900 mt-0.5">실시간 매출 · 지출비용 · 순수익 장부</h3>
+            </div>
+            <span class="text-xs text-stone-500">
+                기준 환율: 1 USD = <strong class="text-stone-900">1,380 KRW</strong>
+            </span>
+        </div>
+
+        <!-- 5-Grid Ledger Breakdown (Black, Mango, Red, White) -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5 pt-1 text-xs">
+            <!-- 1. Gross Revenue (Charcoal Black) -->
+            <div class="p-4 rounded-2xl bg-stone-100 border border-stone-300 space-y-1">
+                <span class="text-stone-600 font-bold block">① 총 판매 매출</span>
+                <div class="text-xl font-black text-stone-900">${{ "%.2f"|format(finance.total_revenue_usd) }}</div>
+                <div class="text-stone-500 text-[11px]">₩{{ "{:,}".format(finance.total_revenue_krw) }}</div>
+            </div>
+
+            <!-- 2. COGS (Alert Red) -->
+            <div class="p-4 rounded-2xl bg-red-50 border border-red-200 space-y-1">
+                <span class="text-red-700 font-bold block">② 제품 원가 (COGS)</span>
+                <div class="text-xl font-black text-red-600">-${{ "%.2f"|format(finance.total_cogs_usd) }}</div>
+                <div class="text-red-400 text-[11px]">호치민 직영공장 원가</div>
+            </div>
+
+            <!-- 3. Delivery & Packaging (Alert Red) -->
+            <div class="p-4 rounded-2xl bg-red-50 border border-red-200 space-y-1">
+                <span class="text-red-700 font-bold block">③ 배송 · 포장비 지출</span>
+                <div class="text-xl font-black text-red-600">-${{ "%.2f"|format(finance.total_delivery_expense_usd + finance.total_packaging_expense_usd) }}</div>
+                <div class="text-red-400 text-[11px]">그랩 퀵 & 하드박스비</div>
+            </div>
+
+            <!-- 4. Guide Commission (Alert Red / Mango) -->
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-300 space-y-1">
+                <span class="text-amber-900 font-bold block">④ 가이드 RS 커미션</span>
+                <div class="text-xl font-black text-red-600">-${{ "%.2f"|format(finance.total_guide_commission_usd) }}</div>
+                <div class="text-amber-800 text-[11px]">제휴 25% 마진 정산</div>
+            </div>
+
+            <!-- 5. Net Profit (Mango Amber Highlight) -->
+            <div class="p-4 rounded-2xl bg-amber-500 text-stone-950 space-y-1 shadow-md shadow-amber-500/20 col-span-2 lg:col-span-1 border border-amber-600">
+                <span class="text-stone-900 font-bold block flex items-center justify-between">
+                    <span>⑤ 최종 순이익</span>
+                    <span class="text-[11px] bg-stone-950 text-white px-2 py-0.5 rounded-full font-black">{{ profit_margin }}%</span>
+                </span>
+                <div class="text-2xl font-black text-stone-950">+${{ "%.2f"|format(net_profit_usd) }}</div>
+                <div class="text-stone-900 text-[11px] font-bold">₩{{ "{:,}".format(net_profit_krw) }} 순수익</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SHORTAGE ALERT & SAFETY STOCK (부족 자원 파악 - Alert Red 테마) -->
+    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <div class="flex justify-between items-center pb-3 border-b border-stone-100">
+            <div>
+                <span class="text-xs font-black text-red-600 uppercase tracking-widest">STOCK SHORTAGE WARNING</span>
+                <h3 class="text-lg font-black text-stone-900 mt-0.5">안전 재고 부족 품목 경고 (즉시 재발주 필요)</h3>
+            </div>
+            <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 font-black text-xs border border-red-200">
+                부족 품목: {{ shortage_items|length }}건
+            </span>
+        </div>
+
+        {% if shortage_items %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {% for item in shortage_items %}
+            <div class="p-4 rounded-2xl border-2 border-red-200 bg-red-50/40 flex justify-between items-center text-xs">
+                <div>
+                    <div class="font-bold text-stone-900 text-sm">{{ item.name }}</div>
+                    <div class="text-stone-500 text-[11px]">바코드: {{ item.barcode }} ({{ item.weight_g }}g)</div>
+                    <div class="text-red-600 font-bold mt-1">
+                        현재 잔여: <strong class="text-base text-red-700">{{ item.stock }}개</strong> (안전재고 25개 미만)
+                    </div>
+                </div>
+                <a href="{{ url_for('admin_inventory_scan') }}" class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-black text-xs transition shadow-sm">
+                    입고 스캔
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="p-4 rounded-xl bg-amber-50 text-amber-900 text-xs font-bold text-center border border-amber-200">
+            <i class="fa-solid fa-circle-check text-amber-600 mr-1.5"></i>현재 모든 상품이 안전 재고(25개 이상)를 확보하고 있습니다.
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- 4. 1~10대 마스터 운영 프레임워크 (Black, Mango, Red, White) -->
+    <div class="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm space-y-6">
+        <div>
+            <span class="text-xs font-black text-amber-600 uppercase tracking-widest">1 TO 10 MASTER WORKFLOW</span>
+            <h3 class="text-xl font-black text-stone-900 mt-0.5">푸꾸옥 플래그십 1~10대 핵심 운영 프로세스</h3>
+            <p class="text-xs text-stone-500 mt-1">모든 기능이 1번부터 10번까지 유기적으로 연동되어 현황을 실시간 파악하고 제어합니다.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <!-- 1 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">1</span>
+                    <h4 class="font-black text-stone-900 text-sm">소나시 12가 매장 방문 & 상시 무료 시식대 운영</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    소나시 12가 SV2A-V07 매장에서 전 품목 위생 시식대를 365일 운영하며, 고객이 직접 맛보고 신뢰를 갖도록 유도합니다.
+                </p>
+                <div class="text-[11px] text-amber-700 font-bold">연동: 무료시식대 상시 청결 점검</div>
+            </div>
+
+            <!-- 2 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-stone-950 font-black flex items-center justify-center text-xs">2</span>
+                    <h4 class="font-black text-stone-900 text-sm">실시간 웹/모바일 주문 모니터링</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    리조트 침대에서 고객이 모바일로 접수한 주문을 실시간 감지하여 즉각 처리 대기 상태로 등록합니다.
+                </p>
+                <div class="text-[11px] text-stone-900 font-bold">연동: 신규 주문 실시간 접수 알림</div>
+            </div>
+
+            <!-- 3 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">3</span>
+                    <h4 class="font-black text-stone-900 text-sm">PC 바코드 스캔 & FEFO 유통기한 자동 출고</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    1760Hz POS 전자 비프음과 함께 유통기한이 가장 임박한 로트(FEFO)를 자동 할당하여 선입선출을 100% 보증합니다.
+                </p>
+                <div class="text-[11px] text-amber-800 font-bold">연동: POS 바코드 스캐너 연동 완료</div>
+            </div>
+
+            <!-- 4 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-stone-950 font-black flex items-center justify-center text-xs">4</span>
+                    <h4 class="font-black text-stone-900 text-sm">소나시 7대 리조트 로비 당일 2시간 배달</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    노보텔, 인터컨티넨탈, 풀만, 리젠트 등 5성급 리조트 보안 규정에 맞춰 로비 정문으로 그랩 퀵 라이더를 배차합니다.
+                </p>
+                <div class="text-[11px] text-red-700 font-bold">연동: 그랩 배송비($3.0) 실시간 지출 차감</div>
+            </div>
+
+            <!-- 5 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">5</span>
+                    <h4 class="font-black text-stone-900 text-sm">한국행 항공 직배송 유니패스 소액면세 통관</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    개인통관고유부호(P로 시작 13자리)를 자동 검증하여 관세청 1인당 $150 면세 한도를 엄격히 지켜 무사통관을 실현합니다.
+                </p>
+                <div class="text-[11px] text-stone-900 font-bold">연동: LCC 수하물 초과벌금 0원 무료 직배송</div>
+            </div>
+
+            <!-- 6 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-stone-950 font-black flex items-center justify-center text-xs">6</span>
+                    <h4 class="font-black text-stone-900 text-sm">가이드 제휴 B2B 25% RS 투명 정산</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    하나투어, 모두투어 등 제휴 가이드에게 전용 PIN 코드 및 손님용 개인화 링크를 부여하고 RS 커미션을 실시간 적립 정산합니다.
+                </p>
+                <div class="text-[11px] text-amber-800 font-bold">연동: 가이드 정산 장부 원클릭 지급</div>
+            </div>
+
+            <!-- 7 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">7</span>
+                    <h4 class="font-black text-stone-900 text-sm">일·월·년 지출비용 및 순이익 자동 산출</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    판매 매출에서 원가(COGS), 배송비, 포장비, 가이드 수수료를 1원 단위까지 실시간 차감하여 순수익을 집계합니다.
+                </p>
+                <div class="text-[11px] text-amber-700 font-bold">연동: 상단 실시간 재무 장부 반영</div>
+            </div>
+
+            <!-- 8 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-red-600 text-white font-black flex items-center justify-center text-xs">8</span>
+                    <h4 class="font-black text-stone-900 text-sm">안전 재고 부족(Shortage) 경고 및 자동 발주</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    25개 미만으로 떨어진 위험 품목을 자동 감지하여 호치민 직영공장에 즉시 추가 발주할 수 있도록 통보합니다.
+                </p>
+                <div class="text-[11px] text-red-700 font-bold">연동: 결품 방지 긴급 발주 시스템</div>
+            </div>
+
+            <!-- 9 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-amber-500 text-stone-950 font-black flex items-center justify-center text-xs">9</span>
+                    <h4 class="font-black text-stone-900 text-sm">SNS 바이럴 마케팅(인스타/네이버/틱톡) 연동 관리</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    푸꾸옥 여행객이 카페와 인스타에 후기를 남길 수 있도록 템플릿과 실시간 배송위치 링크를 자동 생성합니다.
+                </p>
+                <div class="text-[11px] text-amber-800 font-bold">연동: SNS 바이럴 마케팅 센터 연동</div>
+            </div>
+
+            <!-- 10 -->
+            <div class="p-4 rounded-2xl border border-stone-200 bg-stone-50 space-y-2">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-6 h-6 rounded-full bg-stone-900 text-white font-black flex items-center justify-center text-xs">10</span>
+                    <h4 class="font-black text-stone-900 text-sm">1:1 고객 안심 보상 및 피드백 실시간 관리</h4>
+                </div>
+                <p class="text-stone-600 leading-relaxed">
+                    파손이나 지연 발생 시 100% 무상 재발송을 보증하며 고객 리뷰와 평점을 수집해 시스템을 개선합니다.
+                </p>
+                <div class="text-[11px] text-amber-800 font-bold">연동: 카카오톡 1:1 고객센터 실시간 채널</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- JavaScript for Animated Virtual Mouse Tour -->
+<script>
+let tourRunning = false;
+let tourStep = 0;
+const steps = [
+    { id: 'tourStep1', text: '1. 고객 주문 확인 (웹/모바일)' },
+    { id: 'tourStep2', text: '2. 바코드 FEFO 스캔 출고' },
+    { id: 'tourStep3', text: '3. 라이더 배차 & 카톡 전송' },
+    { id: 'tourStep4', text: '4. 순이익 $32.5 확인!' }
+];
+
+function startMouseTour() {
+    if (tourRunning) return;
+    tourRunning = true;
+    tourStep = 0;
+    
+    const cursor = document.getElementById('virtualCursor');
+    const tooltip = document.getElementById('cursorTooltip');
+    const btnText = document.getElementById('tourBtnText');
+    btnText.innerText = '가상 마우스 작동 중...';
+    cursor.classList.remove('hidden');
+
+    runStep();
+}
+
+function runStep() {
+    if (tourStep >= steps.length) {
+        // Finished
+        setTimeout(() => {
+            const cursor = document.getElementById('virtualCursor');
+            cursor.classList.add('hidden');
+            document.querySelectorAll('.tour-card').forEach(el => el.classList.remove('ring-4', 'ring-amber-500', 'bg-amber-50'));
+            document.getElementById('tourBtnText').innerText = '▶ 가상 마우스 업무 시연 다시보기';
+            tourRunning = false;
+        }, 1200);
+        return;
+    }
+
+    const current = steps[tourStep];
+    const targetCard = document.getElementById(current.id);
+    const tourArea = document.getElementById('tourArea');
+    const cursor = document.getElementById('virtualCursor');
+    const tooltip = document.getElementById('cursorTooltip');
+
+    // Remove active style from all cards
+    document.querySelectorAll('.tour-card').forEach(el => el.classList.remove('ring-4', 'ring-amber-500', 'bg-amber-50'));
+
+    // Calculate position
+    const cardRect = targetCard.getBoundingClientRect();
+    const areaRect = tourArea.getBoundingClientRect();
+    
+    const x = cardRect.left - areaRect.left + (cardRect.width / 2) - 15;
+    const y = cardRect.top - areaRect.top + 40;
+
+    cursor.style.left = x + 'px';
+    cursor.style.top = y + 'px';
+    tooltip.innerText = current.text;
+
+    // Simulate click effect after arrival
+    setTimeout(() => {
+        targetCard.classList.add('ring-4', 'ring-amber-500', 'bg-amber-50');
+        targetCard.classList.add('scale-[1.02]');
+        setTimeout(() => targetCard.classList.remove('scale-[1.02]'), 300);
+        
+        tourStep++;
+        setTimeout(runStep, 1500);
+    }, 700);
+}
+</script>
+{% endblock %}

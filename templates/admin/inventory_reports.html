@@ -1,0 +1,204 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}일·월·년 통합 재고 수불 & 유통기한 경영 보고서{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6 text-stone-900 font-sans">
+
+    <!-- Header & Period Tabs (Daily, Monthly, Yearly) -->
+    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <div class="flex items-center space-x-2">
+                <span class="text-xs font-black bg-stone-100 text-stone-800 px-2.5 py-0.5 rounded border border-stone-300">FEFO WMS</span>
+                <span class="text-xs text-stone-400 font-bold">&bull; 선입선출고 재고 회계 시스템</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black text-black mt-1">일 &bull; 월 &bull; 년 종합 재고 수불 관리</h2>
+        </div>
+
+        <!-- Period Tabs -->
+        <div class="flex items-center space-x-1.5 bg-stone-100 p-1.5 rounded-2xl border border-stone-200 text-xs font-bold">
+            <button onclick="switchTab('daily')" id="tabDailyBtn" class="px-4 py-2 rounded-xl bg-black text-white transition">
+                일간 현황 (Daily)
+            </button>
+            <button onclick="switchTab('monthly')" id="tabMonthlyBtn" class="px-4 py-2 rounded-xl text-stone-600 hover:text-black transition">
+                월간 수불부 (Monthly)
+            </button>
+            <button onclick="switchTab('yearly')" id="tabYearlyBtn" class="px-4 py-2 rounded-xl text-stone-600 hover:text-black transition">
+                연간 통계 (Yearly)
+            </button>
+        </div>
+    </div>
+
+    <!-- TAB 1: DAILY REPORT -->
+    <div id="tabDaily" class="space-y-5">
+        <!-- Daily 4 KPI Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                <span class="text-xs text-stone-400 font-bold">오늘 입고 수량</span>
+                <div class="text-2xl font-black text-black" id="dailyInQty">{{ daily_stat.in_qty }}개</div>
+                <p class="text-[11px] text-stone-400">신규 로트 등록분</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                <span class="text-xs text-stone-400 font-bold">오늘 출고(판매) 수량</span>
+                <div class="text-2xl font-black text-emerald-600" id="dailyOutQty">{{ daily_stat.out_qty }}개</div>
+                <p class="text-[11px] text-stone-400">FEFO 선입선출 자동 차감</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                <span class="text-xs text-stone-400 font-bold">오늘 출고 매출</span>
+                <div class="text-2xl font-black text-black">${{ "%.2f"|format(daily_stat.out_revenue_usd) }}</div>
+                <p class="text-[11px] text-stone-400">₩{{ "{:,}".format((daily_stat.out_revenue_usd * 1380)|int) }}</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm space-y-1">
+                <span class="text-xs text-stone-400 font-bold">유통기한 D-60 임박 로트</span>
+                <div class="text-2xl font-black text-amber-600">{{ expiring_soon|length }}개</div>
+                <p class="text-[11px] text-stone-400">우선 출고 권장</p>
+            </div>
+        </div>
+
+        <!-- Expiring Soon Lots Warning Table -->
+        <div class="bg-white rounded-3xl border border-stone-200 shadow-sm p-6 space-y-3">
+            <div class="flex justify-between items-center pb-3 border-b border-stone-100">
+                <h3 class="font-black text-sm text-black flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500"></i>
+                    <span>유통기한 임박(D-90 이내) 우선 출고 지시 로트</span>
+                </h3>
+                <span class="text-[11px] font-bold text-stone-400">선입선출 1순위 타겟</span>
+            </div>
+
+            <div class="divide-y divide-stone-100 text-xs">
+                {% for lot in expiring_soon %}
+                <div class="py-2.5 flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <span class="font-black text-black">{{ lot.product_name }}</span>
+                        <span class="font-mono text-stone-400 ml-2">로트: {{ lot.lot_number }}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="font-bold text-red-600">유통기한: {{ lot.expiry_date }} (D-{{ lot.d_day }}일 남음)</span>
+                        <span class="font-black text-black bg-stone-100 px-2 py-0.5 rounded">잔여: {{ lot.current_qty }}개</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="py-6 text-center text-stone-400 text-xs">유통기한 90일 이내 임박 로트가 없습니다. 모든 재고가 안전합니다.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: MONTHLY REPORT (수불부 & 엑셀 다운로드) -->
+    <div id="tabMonthly" class="space-y-5 hidden">
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <label class="text-xs font-bold text-stone-600">월간 수불 연월 선택:</label>
+                <select id="monthlySelect" onchange="loadMonthlyReport(this.value)" class="p-2 border rounded-xl text-xs font-bold bg-stone-50">
+                    <option value="2026-10" selected>2026년 10월 수불부</option>
+                    <option value="2026-09">2026년 09월 수불부</option>
+                    <option value="2026-08">2026년 08월 수불부</option>
+                </select>
+            </div>
+            <a href="{{ url_for('export_sales_csv') }}" class="px-4 py-2.5 bg-black hover:bg-stone-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-file-excel"></i>
+                <span>월간 입출고 수불 원장 엑셀(CSV) 다운로드</span>
+            </a>
+        </div>
+
+        <!-- Monthly Balance Sheet Table -->
+        <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-stone-200">
+                <h3 class="text-base font-black text-black">2026년 10월 상품별 입출고 수불 총괄표</h3>
+                <p class="text-xs text-stone-400">기초 재고 + 당월 입고 - 당월 출고 = 기말 잔여 재고</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                        <tr>
+                            <th class="p-3.5">상품명 / 바코드</th>
+                            <th class="p-3.5">기초 재고</th>
+                            <th class="p-3.5">당월 입고 (+)</th>
+                            <th class="p-3.5">당월 출고 (-)</th>
+                            <th class="p-3.5">기말 재고 (=)</th>
+                            <th class="p-3.5">출고 금액 (USD)</th>
+                            <th class="p-3.5 text-right">재고 상태</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                        {% for item in monthly_items %}
+                        <tr class="hover:bg-stone-50">
+                            <td class="p-3.5">
+                                <div class="font-bold text-black text-sm">{{ item.name }}</div>
+                                <div class="text-[11px] font-mono text-stone-400">{{ item.barcode }}</div>
+                            </td>
+                            <td class="p-3.5 text-stone-600 font-bold">{{ item.beginning_qty }}개</td>
+                            <td class="p-3.5 text-blue-600 font-bold">+{{ item.inbound_qty }}개</td>
+                            <td class="p-3.5 text-emerald-600 font-bold">-{{ item.outbound_qty }}개</td>
+                            <td class="p-3.5 text-black font-black text-sm">{{ item.ending_qty }}개</td>
+                            <td class="p-3.5 font-black text-black">${{ "%.2f"|format(item.outbound_revenue) }}</td>
+                            <td class="p-3.5 text-right">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                    적정 재고
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: YEARLY REPORT -->
+    <div id="tabYearly" class="space-y-5 hidden">
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex justify-between items-center">
+            <div>
+                <h3 class="text-base font-black text-black">2026 연간 경영 & 재고 회전 분석</h3>
+                <p class="text-xs text-stone-400">분기별 누적 출고량, 연간 총매출 및 재고 회전율 통계</p>
+            </div>
+            <span class="text-xs font-black bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200">
+                기준 연도: 2026년
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+            <div class="bg-white p-6 rounded-3xl border border-stone-200 space-y-2">
+                <span class="text-stone-400 font-bold">2026 연간 누적 총 매출</span>
+                <div class="text-3xl font-black text-black">$1,280.00</div>
+                <p class="text-stone-500">₩1,766,400 (한국 직배송 72% 비중)</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-stone-200 space-y-2">
+                <span class="text-stone-400 font-bold">연간 총 출고 수량</span>
+                <div class="text-3xl font-black text-emerald-600">415개</div>
+                <p class="text-stone-500">골드망고 180g (연간 1위: 198개)</p>
+            </div>
+            <div class="bg-white p-6 rounded-3xl border border-stone-200 space-y-2">
+                <span class="text-stone-400 font-bold">연간 평균 재고 회전율</span>
+                <div class="text-3xl font-black text-black">4.8회 / 년</div>
+                <p class="text-stone-500">신선 저온건조 빠른 소진 유지</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function switchTab(tab) {
+        document.getElementById('tabDaily').classList.add('hidden');
+        document.getElementById('tabMonthly').classList.add('hidden');
+        document.getElementById('tabYearly').classList.add('hidden');
+
+        document.getElementById('tabDailyBtn').className = 'px-4 py-2 rounded-xl text-stone-600 hover:text-black transition';
+        document.getElementById('tabMonthlyBtn').className = 'px-4 py-2 rounded-xl text-stone-600 hover:text-black transition';
+        document.getElementById('tabYearlyBtn').className = 'px-4 py-2 rounded-xl text-stone-600 hover:text-black transition';
+
+        if (tab === 'daily') {
+            document.getElementById('tabDaily').classList.remove('hidden');
+            document.getElementById('tabDailyBtn').className = 'px-4 py-2 rounded-xl bg-black text-white transition';
+        } else if (tab === 'monthly') {
+            document.getElementById('tabMonthly').classList.remove('hidden');
+            document.getElementById('tabMonthlyBtn').className = 'px-4 py-2 rounded-xl bg-black text-white transition';
+        } else {
+            document.getElementById('tabYearly').classList.remove('hidden');
+            document.getElementById('tabYearlyBtn').className = 'px-4 py-2 rounded-xl bg-black text-white transition';
+        }
+    }
+</script>
+{% endblock %}

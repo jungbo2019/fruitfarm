@@ -1,0 +1,231 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}월매출 정산 대시보드 (푸꾸옥 플래그십){% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Month Selector & CSV Export Bar (Strict 4 Colors) -->
+    <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <form method="GET" action="{{ url_for('admin_sales') }}" class="flex items-center space-x-3">
+            <label class="text-xs font-bold text-stone-700 flex items-center">
+                <i class="fa-solid fa-calendar-days text-amber-500 mr-2 text-base"></i>
+                <span>정산 대상 연월 선택:</span>
+            </label>
+            <select name="month" onchange="this.form.submit()" class="px-3.5 py-2 border border-stone-300 rounded-xl text-xs font-bold text-stone-900 bg-stone-50 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                {% for ym in available_months %}
+                <option value="{{ ym }}" {% if ym == selected_month %}selected{% endif %}>
+                    {{ ym }}월 정산 내역
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <div class="flex items-center space-x-3">
+            <a href="{{ url_for('export_sales_csv', month=selected_month) }}"
+               class="px-5 py-2.5 bg-stone-950 hover:bg-black text-amber-400 border border-amber-400/80 rounded-xl text-xs font-black shadow-sm transition flex items-center gap-2">
+                <i class="fa-solid fa-file-excel text-sm text-amber-400"></i>
+                <span>{{ selected_month }} 정산 엑셀(CSV) 다운로드</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Monthly Summary KPIs (Black, Mango, Red, White) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- KPI 1: Total Gross Sales -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm space-y-1">
+            <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">총 매출액 (Gross Sales)</span>
+            <div class="text-2xl font-black text-stone-900">${{ "%.2f"|format(summary['total_usd']) }}</div>
+            <div class="text-xs text-stone-500">₩{{ "{:,}".format(summary['total_krw']) }}</div>
+            <div class="pt-2 text-[11px] text-stone-400 border-t mt-2 flex justify-between">
+                <span>총 주문 건수</span>
+                <strong class="text-stone-900">{{ summary['total_orders'] }}건</strong>
+            </div>
+        </div>
+
+        <!-- KPI 2: Direct Korea vs Local Orders -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm space-y-1">
+            <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">배송 유형별 주문</span>
+            <div class="text-lg font-bold text-stone-900 flex items-center justify-between mt-2">
+                <span class="text-stone-700 text-sm flex items-center gap-1">
+                    <i class="fa-solid fa-plane text-amber-500"></i> 한국 직배송
+                </span>
+                <strong class="text-xl font-black text-stone-900">{{ summary['korea_orders_count'] }}건</strong>
+            </div>
+            <div class="text-lg font-bold text-stone-900 flex items-center justify-between pt-1">
+                <span class="text-amber-800 text-sm flex items-center gap-1 font-bold">
+                    <i class="fa-solid fa-motorcycle text-amber-600"></i> 푸꾸옥 로비 배달
+                </span>
+                <strong class="text-xl font-black text-amber-700">{{ summary['phuquoc_orders_count'] }}건</strong>
+            </div>
+            <div class="pt-2 text-[11px] text-stone-400 border-t mt-2">
+                한국 직배송 배송비 합계: <strong class="text-stone-700">${{ "%.2f"|format(summary['total_shipping_usd']) }}</strong>
+            </div>
+        </div>
+
+        <!-- KPI 3: Net Product Sales -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm space-y-1">
+            <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">순 상품 판매액 (Net Sales)</span>
+            <div class="text-2xl font-black text-amber-700">
+                ${{ "%.2f"|format(summary['total_usd'] - summary['total_shipping_usd']) }}
+            </div>
+            <div class="text-xs text-stone-500">배송 실비를 제외한 순수 과일/청 매출</div>
+            <div class="pt-2 text-[11px] text-amber-900 bg-amber-50 px-2 py-1 rounded-lg border border-amber-200 mt-2 font-bold">
+                객단가: 평균 ${{ "%.1f"|format((summary['total_usd'] / summary['total_orders']) if summary['total_orders'] > 0 else 0) }}
+            </div>
+        </div>
+
+        <!-- KPI 4: Payment Status Breakdown -->
+        <div class="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm space-y-1">
+            <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">결제 정산 상태</span>
+            <div class="flex justify-between items-center mt-2">
+                <span class="text-xs text-stone-500">결제/입금 완료</span>
+                <strong class="text-stone-900 font-black">${{ "%.2f"|format(summary['paid_usd']) }}</strong>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-xs text-stone-500">입금 대기</span>
+                <strong class="text-amber-700 font-bold">${{ "%.2f"|format(summary['pending_usd']) }}</strong>
+            </div>
+            <div class="pt-2 text-[11px] text-stone-400 border-t mt-2">
+                정산율: <strong class="text-stone-900">{{ "%.1f"|format((summary['paid_usd'] / summary['total_usd'] * 100) if summary['total_usd'] > 0 else 100) }}%</strong> 입금 완료
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Revenue Chart for this month -->
+    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h3 class="text-base font-black text-stone-900">{{ selected_month }} 일별 매출 추이</h3>
+                <p class="text-xs text-stone-400">일자별 실시간 판매액 (USD)</p>
+            </div>
+        </div>
+        <div class="h-64">
+            <canvas id="dailyRevenueChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Detailed Order Ledger for the Month -->
+    <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-stone-100 flex flex-wrap items-center justify-between gap-2">
+            <div>
+                <h3 class="text-base font-black text-stone-900">{{ selected_month }} 정산 원장 (전체 {{ orders|length }}건)</h3>
+                <p class="text-xs text-stone-400">해당 월에 발생한 모든 주문의 정산 내역 및 통관/송장 정보</p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                    <tr>
+                        <th class="p-3.5">주문일시</th>
+                        <th class="p-3.5">주문번호</th>
+                        <th class="p-3.5">고객 / 연락처</th>
+                        <th class="p-3.5">배송방식 & 주소</th>
+                        <th class="p-3.5">주문 상품 요약</th>
+                        <th class="p-3.5">결제금액</th>
+                        <th class="p-3.5">결제상태</th>
+                        <th class="p-3.5">배송상태 / 송장</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    {% for o in orders %}
+                    <tr class="hover:bg-stone-50 transition">
+                        <td class="p-3.5 text-stone-400 whitespace-nowrap">{{ o.created_at[:10] }}<br><span class="text-[10px]">{{ o.created_at[11:16] }}</span></td>
+                        <td class="p-3.5 font-mono font-bold text-stone-900 whitespace-nowrap">{{ o.order_number }}</td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            <div class="font-bold text-stone-900">{{ o.customer_name }}</div>
+                            <div class="text-[11px] text-stone-400">{{ o.customer_phone }}</div>
+                        </td>
+                        <td class="p-3.5 max-w-xs">
+                            <div class="mb-1">
+                                {% if o.delivery_type == 'direct_korea' %}
+                                <span class="bg-stone-900 text-white text-[10px] font-bold px-2 py-0.5 rounded">
+                                    한국 직배송
+                                </span>
+                                {% if o.customs_id %}
+                                <span class="text-[10px] font-mono text-stone-500 ml-1">통관: {{ o.customs_id }}</span>
+                                {% endif %}
+                                {% else %}
+                                <span class="bg-amber-500 text-stone-950 text-[10px] font-black px-2 py-0.5 rounded">
+                                    푸꾸옥 로비 배달
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="text-stone-600 truncate text-[11px]" title="{{ o.delivery_address }}">{{ o.delivery_address }}</div>
+                        </td>
+                        <td class="p-3.5 max-w-xs text-[11px]">
+                            {% for item in o.order_items %}
+                            <div class="truncate text-stone-700">&bull; {{ item.name }} (x{{ item.qty }})</div>
+                            {% endfor %}
+                        </td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            <div class="font-black text-stone-900 text-sm">${{ "%.2f"|format(o.total_amount_usd) }}</div>
+                            <div class="text-[10px] text-stone-400">₩{{ "{:,}".format(o.total_amount_krw) }}</div>
+                            {% if o.shipping_fee_usd > 0 %}
+                            <div class="text-[10px] text-stone-400">배송비 ${{ "%.0f"|format(o.shipping_fee_usd) }} 포함</div>
+                            {% endif %}
+                        </td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            <span class="px-2 py-0.5 rounded-md text-[10px] font-black
+                                {% if o.payment_status == 'paid' %}bg-amber-100 text-amber-900 border border-amber-300
+                                {% elif o.payment_status == 'pending' %}bg-stone-100 text-stone-700 border border-stone-300
+                                {% else %}bg-red-50 text-red-700 border border-red-200{% endif %}">
+                                {% if o.payment_status == 'paid' %}입금완료{% elif o.payment_status == 'pending' %}입금대기{% else %}{{ o.payment_status }}{% endif %}
+                            </span>
+                        </td>
+                        <td class="p-3.5 whitespace-nowrap">
+                            <div class="font-bold text-stone-800 text-[11px]">{{ o.order_status }}</div>
+                            <div class="text-[10px] font-mono text-stone-500">{{ o.tracking_number or '-' }}</div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-12 text-stone-400">선택한 월에 주문 내역이 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Daily Revenue Chart (Mango Accent)
+    const dailyStats = {{ daily_stats|tojson }};
+    const dayLabels = dailyStats.map(d => d.day.slice(5));
+    const dayAmounts = dailyStats.map(d => d.day_usd);
+
+    const ctxDaily = document.getElementById('dailyRevenueChart').getContext('2d');
+    new Chart(ctxDaily, {
+        type: 'line',
+        data: {
+            labels: dayLabels,
+            datasets: [{
+                label: '일매출 (USD $)',
+                data: dayAmounts,
+                borderColor: '#F59E0B',
+                backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                tension: 0.3,
+                fill: true,
+                borderWidth: 3,
+                pointRadius: 5,
+                pointBackgroundColor: '#F59E0B'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: val => '$' + val
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

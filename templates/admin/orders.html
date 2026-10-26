@@ -1,0 +1,383 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}순차 주문 & 배송 파이프라인 관리 (푸꾸옥 플래그십){% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- 1. SEQUENTIAL 5-STAGE PIPELINE SUMMARY BAR (4가지 엄격 색상) -->
+    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-3 border-b border-stone-100 gap-2">
+            <div>
+                <span class="text-xs font-black text-amber-600 uppercase tracking-widest">ORDER PIPELINE</span>
+                <h3 class="text-lg font-black text-stone-900 mt-0.5">판매부터 배송완료까지 5단계 순차 파이프라인</h3>
+            </div>
+            <span class="text-xs text-stone-500">모든 단계는 <strong>[다음단계 전진]</strong> 및 <strong>[이전단계 되돌리기]</strong>가 상호 연동됩니다.</span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
+            <div class="p-3.5 rounded-2xl bg-stone-100 border border-stone-300 text-center">
+                <span class="text-stone-500 font-bold block mb-1">1단계: 신규 접수</span>
+                <span class="text-xl font-black text-stone-900">대기중</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-amber-50 border border-amber-300 text-center">
+                <span class="text-amber-800 font-bold block mb-1">2단계: FEFO 검수</span>
+                <span class="text-xl font-black text-amber-700">바코드 매칭</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-stone-900 text-white text-center">
+                <span class="text-stone-400 font-bold block mb-1">3단계: 배차 출발</span>
+                <span class="text-xl font-black text-amber-400">라이더 인계</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-amber-500 text-stone-950 text-center shadow-md shadow-amber-500/20">
+                <span class="text-stone-900 font-bold block mb-1">4단계: 실시간 배송</span>
+                <span class="text-xl font-black text-stone-950">GPS 관제</span>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-stone-100 border border-stone-300 text-center">
+                <span class="text-stone-600 font-bold block mb-1">5단계: 배송 완료</span>
+                <span class="text-xl font-black text-stone-900">로비 전달</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. ORDERS LIST TABLE (Human-centered Visual Cards, Photos, Rollback & Customer Messenger) -->
+    <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-stone-100 flex flex-wrap justify-between items-center gap-4">
+            <h3 class="font-black text-stone-900 text-base flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-amber-500"></i>
+                <span>실시간 주문 목록 (총 {{ orders|length }}건)</span>
+            </h3>
+
+            <div class="text-xs text-stone-500">
+                실수 시 언제든 <strong>[◀ 이전단계 되돌리기]</strong>로 복구할 수 있으며, <strong>[고객 메신저 연결]</strong>로 1초 안내가 가능합니다.
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                    <tr>
+                        <th class="p-4">주문번호 / 일시</th>
+                        <th class="p-4">고객정보 & 메신저 연결</th>
+                        <th class="p-4">주문 상품 (실물)</th>
+                        <th class="p-4">매출 & 손익 장부</th>
+                        <th class="p-4">현재 단계</th>
+                        <th class="p-4 text-center">단계 전진 및 되돌아가기</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100">
+                    {% for o in orders %}
+                    <tr class="hover:bg-stone-50/80 transition">
+                        <!-- Order Number & Tracking Link -->
+                        <td class="p-4 align-top whitespace-nowrap">
+                            <span class="font-mono font-black text-stone-900 text-sm block">{{ o.order_number }}</span>
+                            <span class="text-[11px] text-stone-400">{{ o.created_at }}</span>
+                            <div class="mt-2.5">
+                                <a href="/order/track?query={{ o.order_number }}" target="_blank"
+                                   class="text-[11px] text-amber-800 hover:text-amber-900 font-black inline-flex items-center gap-1.5 bg-amber-100/80 px-2.5 py-1.5 rounded-lg border border-amber-300 transition shadow-2xs">
+                                    <i class="fa-solid fa-map-location-dot text-amber-600"></i>
+                                    <span>고객 실시간 GPS 보기</span>
+                                </a>
+                            </div>
+                        </td>
+
+                        <!-- Customer Info & DIRECT CUSTOMER MESSENGER -->
+                        <td class="p-4 align-top max-w-xs space-y-2">
+                            <div>
+                                <div class="font-black text-stone-900 text-sm">{{ o.customer_name }}</div>
+                                <div class="text-stone-500 font-mono text-xs">{{ o.customer_phone }}</div>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                {% if o.delivery_type == 'direct_korea' %}
+                                <span class="bg-stone-900 text-white font-bold text-[10px] px-2 py-0.5 rounded">
+                                    <i class="fa-solid fa-plane mr-1 text-amber-400"></i>한국 직배송
+                                </span>
+                                {% else %}
+                                <span class="bg-amber-500 text-stone-950 font-black text-[10px] px-2 py-0.5 rounded">
+                                    <i class="fa-solid fa-motorcycle mr-1"></i>푸꾸옥 로비 배달
+                                </span>
+                                {% endif %}
+                            </div>
+
+                            <p class="text-stone-700 text-xs leading-relaxed">{{ o.delivery_address }}</p>
+
+                            {% if o.rider_name and o.delivery_type != 'direct_korea' %}
+                            <div class="text-[11px] text-stone-600 font-mono font-bold">
+                                🛵 라이더: {{ o.rider_name }} ({{ o.rider_plate }})
+                            </div>
+                            {% endif %}
+
+                            <!-- DIRECT CUSTOMER MESSENGER CONNECT BUTTONS -->
+                            <div class="pt-2 border-t border-stone-200 flex flex-wrap gap-1.5">
+                                <button onclick="openCustomerMessengerModal('{{ o.order_number }}', '{{ o.customer_name }}', '{{ o.customer_phone }}', '{{ o.delivery_address }}', '{{ o.order_status }}')"
+                                        class="px-2.5 py-1.5 bg-[#FEE500] hover:bg-[#edd500] text-black font-black rounded-lg text-[11px] transition shadow-xs flex items-center gap-1.5 border border-amber-300">
+                                    <i class="fa-solid fa-comment text-xs"></i>
+                                    <span>카톡 메신저 연결</span>
+                                </button>
+                                <a href="tel:{{ o.customer_phone }}" class="px-2 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-lg text-[11px] border border-stone-300 transition flex items-center gap-1">
+                                    <i class="fa-solid fa-phone text-xs"></i>
+                                    <span>전화</span>
+                                </a>
+                            </div>
+                        </td>
+
+                        <!-- Items with Real Photos -->
+                        <td class="p-4 align-top max-w-xs space-y-2">
+                            {% for item in o.order_items %}
+                            <div class="flex items-center gap-2.5">
+                                <img src="/static/images/products/promo_10_2.jpg" alt="상품 사진" class="w-11 h-11 rounded-xl object-cover border border-stone-200 shadow-xs flex-shrink-0">
+                                <div>
+                                    <span class="font-bold text-stone-900 block leading-tight">{{ item.name }}</span>
+                                    <span class="text-[11px] text-amber-800 font-black">수량: {{ item.qty }}개</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </td>
+
+                        <!-- Financial Ledger per order -->
+                        <td class="p-4 align-top whitespace-nowrap">
+                            <div class="font-black text-stone-900 text-base">${{ "%.2f"|format(o.total_amount_usd) }}</div>
+                            <div class="text-[11px] text-stone-500 mt-0.5 space-y-0.5">
+                                <div class="text-red-600 font-medium">원가: -${{ "%.2f"|format(o.cogs_usd or 45.0) }}</div>
+                                <div class="text-red-600 font-medium">배송·포장: -${{ "%.2f"|format((o.expense_delivery_usd or 3.0) + (o.expense_packaging_usd or 1.5)) }}</div>
+                                {% if o.guide_commission_usd and o.guide_commission_usd > 0 %}
+                                <div class="text-red-600 font-medium">가이드 RS: -${{ "%.2f"|format(o.guide_commission_usd) }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="text-xs font-black text-stone-950 mt-1.5 pt-1 border-t border-stone-200 bg-amber-50/80 px-2 py-0.5 rounded">
+                                순수익: <span class="text-amber-800">+${{ "%.2f"|format(o.total_amount_usd - (o.cogs_usd or 45.0) - (o.expense_delivery_usd or 3.0) - (o.expense_packaging_usd or 1.5) - (o.guide_commission_usd or 0)) }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Current Stage Badge -->
+                        <td class="p-4 align-top whitespace-nowrap">
+                            <span class="px-3 py-1.5 rounded-xl text-xs font-black inline-block
+                                {% if o.order_status == 'delivered' %}bg-stone-950 text-white border border-stone-800
+                                {% elif o.order_status in ['shipping', 'dispatched'] %}bg-amber-500 text-stone-950 border border-amber-600 shadow-sm
+                                {% elif o.order_status in ['checked', 'preparing'] %}bg-amber-100 text-amber-900 border border-amber-300
+                                {% else %}bg-stone-100 text-stone-700 border border-stone-300{% endif %}">
+                                {% if o.order_status == 'received' %}1단계: 신규 접수
+                                {% elif o.order_status in ['checked', 'preparing'] %}2단계: FEFO 검수완료
+                                {% elif o.order_status == 'dispatched' %}3단계: 라이더 배차출발
+                                {% elif o.order_status == 'shipping' %}4단계: 실시간 이동중
+                                {% elif o.order_status == 'delivered' %}5단계: 배송완료
+                                {% else %}{{ o.order_status }}{% endif %}
+                            </span>
+                        </td>
+
+                        <!-- Sequential 1-Click Action Button & ROLLBACK (되돌아가기 상호작용) -->
+                        <td class="p-4 align-top whitespace-nowrap space-y-2">
+                            {% if o.order_status == 'received' %}
+                            <!-- 1단계: 접수 -> 2단계 전진 -->
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="checked">
+                                <input type="hidden" name="action_type" value="advance">
+                                <button type="submit" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-xl text-xs transition shadow-sm border border-amber-600 flex items-center justify-center gap-1.5">
+                                    <span>▶ 2단계: FEFO 검수 시작</span>
+                                </button>
+                            </form>
+
+                            {% elif o.order_status in ['checked', 'preparing'] %}
+                            <!-- 2단계: 검수 -> 3단계 전진 & 1단계 되돌리기 -->
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="dispatched">
+                                <input type="hidden" name="action_type" value="advance">
+                                <button type="submit" class="w-full px-4 py-2 bg-stone-900 hover:bg-black text-amber-400 font-black rounded-xl text-xs transition shadow-sm border border-amber-400 flex items-center justify-center gap-1.5">
+                                    <span>▶ 3단계: 라이더 배차 출발</span>
+                                </button>
+                            </form>
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="received">
+                                <input type="hidden" name="action_type" value="rollback">
+                                <button type="submit" class="w-full px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold rounded-lg text-[11px] transition border border-stone-300 flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-arrow-rotate-left text-xs"></i>
+                                    <span>◀ 1단계(신규접수)로 되돌리기</span>
+                                </button>
+                            </form>
+
+                            {% elif o.order_status == 'dispatched' %}
+                            <!-- 3단계: 배차 -> 4단계 전진 & 2단계 되돌리기 -->
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="shipping">
+                                <input type="hidden" name="action_type" value="advance">
+                                <button type="submit" class="w-full px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 font-black rounded-xl text-xs transition shadow-md border border-amber-600 flex items-center justify-center gap-1.5">
+                                    <span>▶ 4단계: 실시간 배송중 전환</span>
+                                </button>
+                            </form>
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="checked">
+                                <input type="hidden" name="action_type" value="rollback">
+                                <button type="submit" class="w-full px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold rounded-lg text-[11px] transition border border-stone-300 flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-arrow-rotate-left text-xs"></i>
+                                    <span>◀ 2단계(FEFO검수)로 되돌리기</span>
+                                </button>
+                            </form>
+
+                            {% elif o.order_status == 'shipping' %}
+                            <!-- 4단계: 배송중 -> 5단계 전진 & 3단계 되돌리기 -->
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="delivered">
+                                <input type="hidden" name="action_type" value="advance">
+                                <button type="submit" class="w-full px-4 py-2 bg-stone-950 hover:bg-black text-white font-black rounded-xl text-xs transition shadow-sm border border-stone-800 flex items-center justify-center gap-1.5">
+                                    <span>▶ 5단계: 로비 전달 완료</span>
+                                </button>
+                            </form>
+                            <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                <input type="hidden" name="order_id" value="{{ o.id }}">
+                                <input type="hidden" name="next_stage" value="dispatched">
+                                <input type="hidden" name="action_type" value="rollback">
+                                <button type="submit" class="w-full px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold rounded-lg text-[11px] transition border border-stone-300 flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-arrow-rotate-left text-xs"></i>
+                                    <span>◀ 3단계(배차출발)로 되돌리기</span>
+                                </button>
+                            </form>
+
+                            {% else %}
+                            <!-- 5단계: 완료 상태 -> 4단계 되돌리기 & 1단계 리셋 버튼 제공! -->
+                            <div class="space-y-1.5">
+                                <div class="text-xs text-stone-900 font-black py-1.5 px-3 bg-amber-100 rounded-xl border border-amber-300 flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check text-amber-700 text-sm"></i>
+                                    <span>최종 전달 완료됨</span>
+                                </div>
+                                <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                    <input type="hidden" name="order_id" value="{{ o.id }}">
+                                    <input type="hidden" name="next_stage" value="shipping">
+                                    <input type="hidden" name="action_type" value="rollback">
+                                    <button type="submit" class="w-full px-3 py-1 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold rounded-lg text-[11px] transition border border-stone-300 flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-arrow-rotate-left text-xs"></i>
+                                        <span>◀ 4단계(배송중)로 되돌리기</span>
+                                    </button>
+                                </form>
+                                <form action="{{ url_for('admin_advance_order_stage') }}" method="POST">
+                                    <input type="hidden" name="order_id" value="{{ o.id }}">
+                                    <input type="hidden" name="next_stage" value="received">
+                                    <input type="hidden" name="action_type" value="rollback">
+                                    <button type="submit" onclick="return confirm('이 주문을 1단계(신규접수) 상태로 다시 리셋하시겠습니까?');" class="w-full px-2.5 py-0.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold rounded text-[10px] transition border border-red-200 flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                                        <span>1단계 접수로 완전 리셋</span>
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-12 text-stone-400 text-xs">등록된 주문 내역이 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- ==================== CUSTOMER DIRECT MESSENGER MODAL ==================== -->
+<div id="customerMessengerModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+        <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 rounded-xl bg-[#FEE500] text-black flex items-center justify-center font-black text-base shadow-xs">
+                    <i class="fa-solid fa-comment"></i>
+                </div>
+                <div>
+                    <h3 class="font-black text-stone-900 text-base">고객 1:1 메신저 연결</h3>
+                    <p class="text-[11px] text-stone-500" id="messengerCustomerInfo">고객명 (연락처)</p>
+                </div>
+            </div>
+            <button onclick="closeCustomerMessengerModal()" class="text-stone-400 hover:text-stone-900 p-1">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Pre-composed Template Selector -->
+        <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold text-stone-700">전송할 상황별 템플릿 선택:</label>
+            <div class="grid grid-cols-3 gap-2">
+                <button type="button" onclick="setMessengerTemplate('dispatch')" class="p-2 rounded-xl border border-stone-200 hover:border-amber-400 bg-stone-50 text-[11px] font-bold text-stone-800 text-center transition">
+                    📍 배송출발 & GPS
+                </button>
+                <button type="button" onclick="setMessengerTemplate('approaching')" class="p-2 rounded-xl border border-stone-200 hover:border-amber-400 bg-stone-50 text-[11px] font-bold text-stone-800 text-center transition">
+                    🏨 로비 5분 전 도착
+                </button>
+                <button type="button" onclick="setMessengerTemplate('delivered')" class="p-2 rounded-xl border border-stone-200 hover:border-amber-400 bg-stone-50 text-[11px] font-bold text-stone-800 text-center transition">
+                    ✅ 전달완료 & 후기
+                </button>
+            </div>
+        </div>
+
+        <!-- Editable Message Box -->
+        <div>
+            <label class="block text-[11px] font-bold text-stone-700 mb-1">메시지 내용 (자동 생성됨):</label>
+            <textarea id="messengerTextarea" rows="6" class="w-full p-3 rounded-2xl border border-stone-300 text-xs text-stone-800 bg-stone-50 font-mono leading-relaxed focus:ring-2 focus:ring-amber-500 focus:outline-none"></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 border-t border-stone-200 flex justify-between items-center gap-2">
+            <span class="text-[11px] text-stone-400 font-mono" id="messengerOrderNumber">#주문번호</span>
+            <div class="flex items-center space-x-2">
+                <button onclick="copyMessengerContent()" class="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold rounded-xl text-xs transition border border-stone-300 flex items-center gap-1.5">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>문구 복사</span>
+                </button>
+                <button onclick="openKakaoAndSend()" class="px-4 py-2 bg-[#FEE500] hover:bg-[#edd500] text-black font-black rounded-xl text-xs transition shadow-sm flex items-center gap-1.5 border border-amber-300">
+                    <i class="fa-solid fa-comment"></i>
+                    <span>카카오톡 전송</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentMessengerData = {};
+
+function openCustomerMessengerModal(orderNo, name, phone, address, status) {
+    currentMessengerData = { orderNo, name, phone, address, status };
+    document.getElementById('messengerCustomerInfo').innerText = `${name} 고객님 (${phone})`;
+    document.getElementById('messengerOrderNumber').innerText = `#${orderNo}`;
+    setMessengerTemplate('dispatch');
+    document.getElementById('customerMessengerModal').classList.remove('hidden');
+}
+
+function closeCustomerMessengerModal() {
+    document.getElementById('customerMessengerModal').classList.add('hidden');
+}
+
+function setMessengerTemplate(type) {
+    const { orderNo, name, address } = currentMessengerData;
+    const origin = window.location.origin;
+    const trackingUrl = `${origin}/order/track?query=${orderNo}`;
+    let text = '';
+
+    if (type === 'dispatch') {
+        text = `[FRUIT FARM 푸꾸옥 플래그십 실시간 배송 안내]\n\n안녕하세요 ${name} 고객님!\n주문하신 프리미엄 건망고 세트가 포장되어 그랩 라이더에게 안전하게 인계되었습니다.\n\n📍 실시간 기사님 이동 위치 확인:\n${trackingUrl}\n\n리조트 로비 도착 5분 전에 다시 알림톡 드리겠습니다. 즐거운 여행 되세요! 🌴`;
+    } else if (type === 'approaching') {
+        text = `[FRUIT FARM 푸꾸옥] 기사님 로비 도착 5분 전 안내\n\n${name} 고객님! 배송 기사님이 ${address} 로비 정문에 약 5분 후 도착 예정입니다.\n\n📍 실시간 위치 확인: ${trackingUrl}\n로비에서 상품을 수령해 주시기 바랍니다. 감사합니다!`;
+    } else if (type === 'delivered') {
+        text = `[FRUIT FARM 푸꾸옥] 배송 완료 및 감사 안내\n\n${name} 고객님, 주문하신 상품이 로비에 안전하게 전달되었습니다!\n\n100% 무설탕 저온건조 골드망고와 함께 달콤한 여행 되세요. 여행 카페(푸꿕고스트/알럽푸꾸옥)나 인스타에 후기를 남겨주시면 감사 쿠폰을 드립니다. ✨`;
+    }
+
+    document.getElementById('messengerTextarea').value = text;
+}
+
+function copyMessengerContent() {
+    const text = document.getElementById('messengerTextarea').value;
+    navigator.clipboard.writeText(text).then(() => {
+        alert('고객 안내 메시지가 클립보드에 복사되었습니다!\n고객 카톡방이나 문자 메시지에 바로 붙여넣기(Ctrl+V) 하세요.');
+    });
+}
+
+function openKakaoAndSend() {
+    copyMessengerContent();
+    window.open('https://pf.kakao.com', '_blank');
+}
+</script>
+{% endblock %}

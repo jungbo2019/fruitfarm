@@ -1,0 +1,79 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}푸꾸옥 플래그십 매장 및 시스템 설정{% endblock %}
+
+{% block admin_content %}
+<div class="max-w-3xl space-y-6">
+
+    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+        <h3 class="text-base font-bold text-stone-900 mb-1">환율 및 배송 정책 설정</h3>
+        <p class="text-xs text-stone-400 mb-6">주문 시 실시간 원화 환산 및 직배송비 기준을 조정합니다.</p>
+
+        <form method="POST" action="{{ url_for('admin_settings') }}" class="space-y-4 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">기준 환율 (1 USD = ? KRW) *</label>
+                    <input type="number" name="usd_krw_rate" value="{{ settings_dict.get('usd_krw_rate', '1380') }}" required class="w-full p-2.5 border rounded-xl font-bold text-amber-700">
+                    <p class="text-[11px] text-stone-400 mt-1">고객 결제 시 적용되는 원화 환산 기준 환율입니다.</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">한국 직배송 무료배송 기준 ($) *</label>
+                    <input type="number" name="korea_shipping_free_threshold_usd" value="{{ settings_dict.get('korea_shipping_free_threshold_usd', '100') }}" required class="w-full p-2.5 border rounded-xl font-bold text-emerald-700">
+                    <p class="text-[11px] text-stone-400 mt-1">이 금액 이상 주문 시 한국 무료 직배송이 적용됩니다. (기본: 100$)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">한국 직배송 기본 배송비 (USD $) *</label>
+                    <input type="number" name="korea_shipping_fee_usd" value="{{ settings_dict.get('korea_shipping_fee_usd', '15') }}" required class="w-full p-2.5 border rounded-xl font-bold">
+                    <p class="text-[11px] text-stone-400 mt-1">기준 금액 미만 주문 시 부과되는 기본 국제 배송비</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">카카오톡 채널 상담 URL *</label>
+                    <input type="text" name="kakao_channel_url" value="{{ settings_dict.get('kakao_channel_url', 'https://pf.kakao.com') }}" required class="w-full p-2.5 border rounded-xl font-mono">
+                    <p class="text-[11px] text-stone-400 mt-1">고객이 카톡 상담 버튼 클릭 시 연결될 채널 주소</p>
+                </div>
+
+                
+            </div>
+
+            <div class="pt-4 border-t border-stone-100">
+                <h4 class="font-bold text-sm text-stone-900 mb-3">푸꾸옥 플래그십 매장 정보</h4>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">매장명</label>
+                        <input type="text" name="store_branch_name" value="{{ settings_dict.get('store_branch_name', 'FRUIT FARM 푸꾸옥 플래그십') }}" class="w-full p-2.5 border rounded-xl">
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">매장 주소 (오프라인 위치)</label>
+                        <input type="text" name="store_address" value="{{ settings_dict.get('store_address', '베트남 푸꾸옥 즈엉동 야시장 인근 FRUIT FARM 푸꾸옥 플래그십 (Phu Quoc)') }}" class="w-full p-2.5 border rounded-xl">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">매장 연락처</label>
+                            <input type="text" name="store_phone" value="{{ settings_dict.get('store_phone', '+84 90 123 4567') }}" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-stone-700 mb-1">영업 시간</label>
+                            <input type="text" name="business_hours" value="{{ settings_dict.get('business_hours', '매일 09:00 ~ 22:00 (연중무휴, 무료 시식 상시 운영)') }}" class="w-full p-2.5 border rounded-xl">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full py-3 bg-stone-900 hover:bg-black text-white font-bold rounded-xl shadow transition">
+                    시스템 설정 변경사항 저장
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

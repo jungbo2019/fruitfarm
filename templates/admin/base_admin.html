@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}FRUIT FARM 푸꾸옥 플래그십 관리자 포털{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --brand-black: #111827;
+            --brand-mango: #F59E0B;
+            --brand-mango-dark: #D97706;
+            --brand-red: #EF4444;
+            --brand-white: #FFFFFF;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-900 antialiased min-h-screen flex flex-col md:flex-row">
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobileDrawerBackdrop" onclick="toggleMobileDrawer()" class="fixed inset-0 bg-stone-950/70 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileDrawer" class="fixed inset-y-0 left-0 w-72 bg-stone-950 text-stone-300 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between shadow-2xl border-r border-stone-800">
+        <div>
+            <!-- Mobile Drawer Header -->
+            <div class="p-5 border-b border-stone-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-stone-950 text-lg font-black shadow-md shadow-amber-500/20">
+                        <i class="fa-solid fa-lemon"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-black text-sm tracking-tight">FRUIT FARM</h2>
+                        <span class="text-[9px] bg-amber-500/20 text-amber-400 font-bold px-1.5 py-0.5 rounded border border-amber-500/30">
+                            푸꾸옥 플래그십 직영
+                        </span>
+                    </div>
+                </div>
+                <button onclick="toggleMobileDrawer()" class="text-stone-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="px-5 py-3 border-b border-stone-800/80 text-[11px] text-stone-400 space-y-1 bg-stone-900/50">
+                <div>환율: <strong class="text-white">1 USD = {{ settings.get('usd_krw_rate', 1380) }} KRW</strong></div>
+                <div class="text-amber-400 font-medium"><i class="fa-solid fa-plane-departure mr-1"></i>한국 직배송 시스템 가동중</div>
+            </div>
+
+            <!-- Mobile Nav Links -->
+            <nav class="p-3.5 space-y-4 text-xs font-semibold overflow-y-auto max-h-[calc(100vh-210px)]">
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">① 운영 총괄 & 주문 파이프라인</span>
+                    <a href="{{ url_for('admin_operations') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/operations' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-compass text-sm"></i>
+                        <span>1~10 마스터 관제 & 가이드</span>
+                    </a>
+                    <a href="{{ url_for('admin_orders') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/orders' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-dolly text-sm"></i>
+                        <span>주문 & 실시간 배송 현황</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">② 상품 사진 & 재고 관리</span>
+                    <a href="{{ url_for('admin_products') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/products' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-boxes-stacked text-sm"></i>
+                        <span>등록 상품 & 사진 (16종)</span>
+                    </a>
+                    <a href="{{ url_for('admin_inventory_scan') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/inventory/scan' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-barcode text-sm"></i>
+                        <span>바코드 스캔 & FEFO 출고</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">③ 매출 정산 & 가이드 B2B</span>
+                    <a href="{{ url_for('admin_sales') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/sales' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-calculator text-sm"></i>
+                        <span>월매출·지출·순익 정산</span>
+                    </a>
+                    <a href="{{ url_for('admin_guides') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/guides' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-handshake-angle text-sm"></i>
+                        <span>가이드 25% RS 정산</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">④ SNS 홍보 & 매장 설정</span>
+                    <a href="{{ url_for('admin_marketing') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/marketing' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-bullhorn text-sm"></i>
+                        <span>SNS 바이럴 & 카톡 전송</span>
+                    </a>
+                    <a href="{{ url_for('admin_crm') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/crm' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-heart text-sm"></i>
+                        <span>고객 사후관리 & 재구매 CRM</span>
+                    </a>
+                    <a href="{{ url_for('admin_settings') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/settings' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-gear text-sm"></i>
+                        <span>매장 정보 & 환율 관리</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Mobile Drawer Bottom -->
+        <div class="p-4 border-t border-stone-800 space-y-1 text-xs">
+            <a href="{{ url_for('index') }}" target="_blank" class="flex items-center space-x-2 text-stone-400 hover:text-amber-400 px-3 py-2 rounded-lg transition font-bold">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <span>고객 쇼핑몰 바로가기</span>
+            </a>
+            <a href="{{ url_for('admin_logout') }}" class="flex items-center space-x-2 text-red-400 hover:text-red-300 px-3 py-2 rounded-lg transition font-bold">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>로그아웃</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Desktop Sidebar Navigation -->
+    <aside class="w-64 bg-stone-950 text-stone-300 flex flex-col justify-between hidden md:flex flex-shrink-0 border-r border-stone-800">
+        <div>
+            <!-- Admin Logo & Branch Info -->
+            <div class="p-5 border-b border-stone-800">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-stone-950 text-xl font-black shadow-md shadow-amber-500/20">
+                        <i class="fa-solid fa-lemon"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-black text-base tracking-tight">FRUIT FARM</h2>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-400 font-bold px-2 py-0.5 rounded border border-amber-500/30">
+                            푸꾸옥 플래그십 직영
+                        </span>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-stone-800/80 text-[11px] text-stone-400 space-y-1">
+                    <div>환율: <strong class="text-white">1 USD = {{ settings.get('usd_krw_rate', 1380) }} KRW</strong></div>
+                    <div class="text-amber-400 font-medium"><i class="fa-solid fa-plane-departure mr-1"></i>한국 직배송 시스템 가동중</div>
+                </div>
+            </div>
+
+            <!-- Nav Links -->
+            <nav class="p-3.5 space-y-4 text-xs font-semibold overflow-y-auto max-h-[calc(100vh-190px)]">
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">① 운영 총괄 & 주문 파이프라인</span>
+                    <a href="{{ url_for('admin_operations') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/operations' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-compass text-sm"></i>
+                        <span>1~10 마스터 관제 & 가이드</span>
+                    </a>
+                    <a href="{{ url_for('admin_orders') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/orders' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-dolly text-sm"></i>
+                        <span>주문 & 실시간 배송 현황</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">② 상품 사진 & 재고 관리</span>
+                    <a href="{{ url_for('admin_products') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/products' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-boxes-stacked text-sm"></i>
+                        <span>등록 상품 & 사진 (16종)</span>
+                    </a>
+                    <a href="{{ url_for('admin_inventory_scan') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/inventory/scan' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-barcode text-sm"></i>
+                        <span>바코드 스캔 & FEFO 출고</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">③ 매출 정산 & 가이드 B2B</span>
+                    <a href="{{ url_for('admin_sales') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/sales' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-calculator text-sm"></i>
+                        <span>월매출·지출·순익 정산</span>
+                    </a>
+                    <a href="{{ url_for('admin_guides') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/guides' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-handshake-angle text-sm"></i>
+                        <span>가이드 25% RS 정산</span>
+                    </a>
+                </div>
+
+                <div class="space-y-1">
+                    <span class="px-3 text-[10px] uppercase tracking-wider font-bold text-stone-400 block">④ SNS 홍보 & 매장 설정</span>
+                    <a href="{{ url_for('admin_marketing') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/marketing' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-bullhorn text-sm"></i>
+                        <span>SNS 바이럴 & 카톡 전송</span>
+                    </a>
+                    <a href="{{ url_for('admin_crm') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/crm' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-heart text-sm"></i>
+                        <span>고객 사후관리 & 재구매 CRM</span>
+                    </a>
+                    <a href="{{ url_for('admin_settings') }}" class="flex items-center space-x-3 px-3.5 py-2.5 rounded-xl transition hover:bg-stone-800 hover:text-white {% if request.path == '/admin/settings' %}bg-amber-500 text-stone-950 font-black shadow-sm{% endif %}">
+                        <i class="fa-solid fa-gear text-sm"></i>
+                        <span>매장 정보 & 환율 관리</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Desktop Bottom User / Shop link / Logout -->
+        <div class="p-4 border-t border-stone-800 space-y-1 text-xs">
+            <a href="{{ url_for('index') }}" target="_blank" class="flex items-center space-x-2 text-stone-400 hover:text-amber-400 px-3 py-2 rounded-lg transition font-bold">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <span>고객 쇼핑몰 바로가기</span>
+            </a>
+            <a href="{{ url_for('admin_logout') }}" class="flex items-center space-x-2 text-red-400 hover:text-red-300 px-3 py-2 rounded-lg transition font-bold">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>로그아웃</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-grow flex flex-col min-w-0">
+        <!-- Top Nav Bar (Responsive) -->
+        <header class="bg-white border-b border-stone-200 h-16 flex items-center justify-between px-3 sm:px-6 sticky top-0 z-30">
+            <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                <!-- Mobile Menu Button -->
+                <button type="button" onclick="toggleMobileDrawer()" class="md:hidden p-2 rounded-xl text-stone-700 hover:bg-stone-100 focus:outline-none flex-shrink-0" aria-label="메뉴 열기">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="font-black text-stone-900 text-sm sm:text-base md:text-lg truncate [word-break:keep-all]">
+                    {% block page_title %}관리 시스템{% endblock %}
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 sm:space-x-4 text-xs font-bold flex-shrink-0">
+                <span class="hidden sm:inline-flex bg-amber-50 text-amber-800 px-3 py-1 rounded-lg border border-amber-300 items-center gap-1.5">
+                    <i class="fa-solid fa-store text-amber-600"></i>
+                    <span>소나시 직영</span>
+                </span>
+                <span class="text-stone-500 text-[11px] sm:text-xs">
+                    <strong class="text-stone-900">{{ session.get('admin_user', 'admin') }}</strong>
+                </span>
+                <a href="{{ url_for('admin_logout') }}" class="text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition text-xs font-bold">
+                    로그아웃
+                </a>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        <div class="px-3 sm:px-6 pt-4">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="p-3 text-xs rounded-xl font-bold mb-3 {% if category == 'danger' %}bg-red-50 text-red-700 border border-red-200{% else %}bg-amber-50 text-amber-900 border border-amber-300{% endif %}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Page Body -->
+        <main class="p-3 sm:p-6 flex-grow">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function toggleMobileDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const backdrop = document.getElementById('mobileDrawerBackdrop');
+            if (!drawer || !backdrop) return;
+            const isClosed = drawer.classList.contains('-translate-x-full');
+            if (isClosed) {
+                drawer.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                drawer.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

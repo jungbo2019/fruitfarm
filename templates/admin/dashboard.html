@@ -1,0 +1,396 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}푸꾸옥 플래그십 통합 대시보드{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Top KPI Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Card 1: Month Revenue -->
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">이번 달 총 매출 ({{ current_year_month }})</span>
+                <h3 class="text-2xl font-black text-amber-600 mt-1">${{ "%.2f"|format(month_stat['total_usd']) }}</h3>
+                <p class="text-xs text-stone-400 mt-0.5">₩{{ "{:,}".format(month_stat['total_krw']) }} ({{ month_stat['order_count'] }}건)</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-coins"></i>
+            </div>
+        </div>
+
+        <!-- Card 2: Today Revenue -->
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">오늘 매출</span>
+                <h3 class="text-2xl font-black text-emerald-600 mt-1">${{ "%.2f"|format(today_stat['total_usd']) }}</h3>
+                <p class="text-xs text-stone-400 mt-0.5">{{ today_stat['order_count'] }}건 접수</p>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-calendar-day"></i>
+            </div>
+        </div>
+
+        <!-- Card 3: Pending Orders -->
+        <div class="bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+            <div>
+                <span class="text-xs text-stone-500 font-bold uppercase tracking-wider">처리 대기 주문</span>
+                <h3 class="text-2xl font-black text-red-600 mt-1">{{ pending_count }}건</h3>
+                <a href="{{ url_for('admin_orders', status='received') }}" class="text-xs text-red-600 underline font-semibold mt-0.5 inline-block">주문 처리하러 가기</a>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-bell"></i>
+            </div>
+        </div>
+
+        <!-- Card 4: Quick Sales Action -->
+        <div class="bg-gradient-to-br from-amber-500 to-amber-600 text-white p-5 rounded-2xl shadow-sm flex flex-col justify-between">
+            <div>
+                <span class="text-xs text-amber-100 font-bold uppercase">정산 바로가기</span>
+                <h4 class="text-lg font-black mt-1">월매출 정산 & 엑셀 다운로드</h4>
+            </div>
+            <div class="mt-3">
+                <a href="{{ url_for('admin_sales') }}" class="inline-flex items-center text-xs font-bold bg-white text-stone-900 px-3.5 py-1.5 rounded-lg shadow hover:bg-amber-50 transition">
+                    <span>정산 상세 페이지</span>
+                    <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- 9-STAGE FULL E-COMMERCE VALUE CHAIN & MASTER OPERATION SOP -->
+    <div class="bg-gradient-to-br from-stone-950 via-stone-900 to-stone-950 text-white p-6 sm:p-7 rounded-3xl border border-stone-800 shadow-xl space-y-5">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-stone-800">
+            <div>
+                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-black uppercase tracking-wider mb-1 border border-amber-500/30">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-amber-400"></i>
+                    <span>END-TO-END E-COMMERCE VALUE CHAIN ARCHITECTURE</span>
+                </div>
+                <h3 class="text-xl font-black text-white">
+                    FRUIT FARM 9단계 이커머스 통합 밸류체인 관제 로드맵
+                </h3>
+                <p class="text-xs text-stone-300 mt-0.5">
+                    SNS 광고 유입부터 현지 모객, FEFO 재고 출고, 리조트 2시간 퀵, 사후관리 및 귀국 재구매까지 한눈에 직관적으로 운영합니다.
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="{{ url_for('admin_operations') }}" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-stone-950 rounded-xl text-xs font-black transition shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-play text-xs"></i>
+                    <span>인터랙티브 SOP 가이드</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 9 Pipeline Steps Horizontal Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2.5 text-xs">
+            <!-- Step 1: SNS Ads -->
+            <a href="{{ url_for('admin_marketing') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">01. SNS 광고</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">인스타/네이버</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">릴스, 스토리, 카페 내돈내산 바이럴 소재 배포</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>소재 생성기 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 2: Acquisition -->
+            <a href="{{ url_for('admin_guides') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">02. 모객 유치</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">가이드 RS 25%</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">전담 가이드 제휴 링크 & 무료 시식 샘플 배포</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>파트너 관리 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 3: Checkout -->
+            <a href="{{ url_for('admin_orders') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">03. 주문 결제</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">$100+ 무료배송</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">10+2 세트 유도 및 원화/달러 자동 환산</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>결제 검증 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 4: Inventory -->
+            <a href="{{ url_for('admin_inventory_scan') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">04. 재고 FEFO</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">바코드 스캔 출고</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">180일 유통기한 선입선출 및 진공 포장 검수</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>FEFO 스캐너 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 5: Logistics -->
+            <a href="{{ url_for('admin_orders') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">05. 운송 분기</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">퀵 vs 항공 직배송</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">푸꾸옥 2시간 퀵 라이더 vs 한국 항공 직송</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>라이더 배차 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 6: Situation -->
+            <a href="{{ url_for('admin_control_center') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">06. 상황 관제</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">WMS & 실시간 GPS</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">실시간 WMS 관제 및 라이더 이동 위치 관제</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>실시간 관제 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 7: Progress -->
+            <a href="{{ url_for('admin_orders') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">07. 진행여부</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">5단계 파이프라인</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">접수 ➔ 검수 ➔ 배차 ➔ 이동 ➔ 로비전달</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>단계 전진 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 8: Post-purchase -->
+            <a href="{{ url_for('admin_crm') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">08. 사후관리</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">100% 안심보증</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">파손 시 무상 맞교환 및 만족도 해피콜</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>고객 케어 &rarr;</span>
+                </div>
+            </a>
+
+            <!-- Step 9: Reorder -->
+            <a href="{{ url_for('admin_crm') }}" class="p-3 rounded-2xl bg-stone-900/90 border border-stone-800 hover:border-amber-400 transition flex flex-col justify-between group">
+                <div>
+                    <span class="text-[10px] font-mono text-amber-400 font-bold block">09. 추가매출</span>
+                    <h5 class="font-black text-stone-100 group-hover:text-amber-400 text-xs mt-1">귀국 재구매 LTV</h5>
+                    <p class="text-[10px] text-stone-400 mt-1 line-clamp-2">귀국 30일차 $15 쿠폰 & VIP 정기배송 특전</p>
+                </div>
+                <div class="mt-2 text-[10px] text-amber-400/80 font-bold flex items-center justify-between">
+                    <span>LTV 센터 &rarr;</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Monthly Sales Bar Chart -->
+        <div class="lg:col-span-8 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h3 class="text-base font-bold text-stone-900">최근 월별 매출 추이 (USD)</h3>
+                    <p class="text-xs text-stone-400">푸꾸옥 플래그십 월간 실매출 집계 현황</p>
+                </div>
+                <a href="{{ url_for('admin_sales') }}" class="text-xs font-bold text-amber-600 hover:underline">상세 정산 보기</a>
+            </div>
+            <div class="h-64">
+                <canvas id="monthlySalesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Delivery Distribution Doughnut Chart -->
+        <div class="lg:col-span-4 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+            <div>
+                <h3 class="text-base font-bold text-stone-900">당월 배송 유형 비중</h3>
+                <p class="text-xs text-stone-400">한국 직배송 vs 푸꾸옥 현지 배송</p>
+            </div>
+            <div class="h-52 my-auto flex items-center justify-center">
+                <canvas id="deliveryTypeChart"></canvas>
+            </div>
+            <div class="pt-4 border-t border-stone-100 grid grid-cols-2 gap-2 text-center text-xs">
+                {% for d in delivery_stats %}
+                <div class="p-2 rounded-lg bg-stone-50">
+                    <span class="text-stone-500 block">{% if d.delivery_type == 'direct_korea' %}한국 직배송{% else %}푸꾸옥 현지{% endif %}</span>
+                    <strong class="text-stone-900 font-bold">${{ "%.0f"|format(d.sum_usd) }} ({{ d.cnt }}건)</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Tables Row: Recent Orders & Sample Requests -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Recent Orders (8 cols) -->
+        <div class="lg:col-span-8 bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+            <div class="p-5 border-b border-stone-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-stone-900">최근 실시간 접수 주문</h3>
+                    <p class="text-xs text-stone-400">최신 주문 8건 내역</p>
+                </div>
+                <a href="{{ url_for('admin_orders') }}" class="text-xs font-bold text-amber-600 hover:underline">전체 주문 관리 &rarr;</a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                        <tr>
+                            <th class="p-3.5">주문번호</th>
+                            <th class="p-3.5">고객명/연락처</th>
+                            <th class="p-3.5">배송방식</th>
+                            <th class="p-3.5">금액(USD)</th>
+                            <th class="p-3.5">상태</th>
+                            <th class="p-3.5 text-right">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100">
+                        {% for o in recent_orders %}
+                        <tr class="hover:bg-stone-50 transition">
+                            <td class="p-3.5 font-mono font-bold text-stone-900">{{ o.order_number }}</td>
+                            <td class="p-3.5">
+                                <div class="font-bold text-stone-900">{{ o.customer_name }}</div>
+                                <div class="text-[11px] text-stone-400">{{ o.customer_phone }}</div>
+                            </td>
+                            <td class="p-3.5">
+                                {% if o.delivery_type == 'direct_korea' %}
+                                <span class="bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded text-[10px]">
+                                    <i class="fa-solid fa-plane-departure mr-1"></i>한국 직배송
+                                </span>
+                                {% else %}
+                                <span class="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded text-[10px]">
+                                    <i class="fa-solid fa-motorcycle mr-1"></i>푸꾸옥 현지
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="p-3.5 font-black text-amber-600">${{ "%.2f"|format(o.total_amount_usd) }}</td>
+                            <td class="p-3.5">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold
+                                    {% if o.order_status == 'delivered' %}bg-emerald-100 text-emerald-800
+                                    {% elif o.order_status == 'shipping' %}bg-blue-100 text-blue-800
+                                    {% elif o.order_status == 'preparing' %}bg-amber-100 text-amber-800
+                                    {% else %}bg-stone-100 text-stone-700{% endif %}">
+                                    {{ o.order_status }}
+                                </span>
+                            </td>
+                            <td class="p-3.5 text-right">
+                                <a href="{{ url_for('admin_orders', search=o.order_number) }}" class="text-stone-500 hover:text-stone-900 font-bold">
+                                    상세보기
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Guide Samples (4 cols) -->
+        <div class="lg:col-span-4 bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col justify-between">
+            <div class="p-5 border-b border-stone-200 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-stone-900">가이드 샘플 지원 신청</h3>
+                    <p class="text-xs text-stone-400">노쇼핑/쇼핑1회 팀</p>
+                </div>
+                <a href="{{ url_for('admin_samples') }}" class="text-xs font-bold text-emerald-600 hover:underline">전체보기</a>
+            </div>
+
+            <div class="p-4 divide-y divide-stone-100 flex-grow space-y-3">
+                {% for s in sample_requests %}
+                <div class="pt-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <strong class="text-stone-900">{{ s.guide_name }} ({{ s.agency_name or '팀' }})</strong>
+                        <span class="text-[10px] bg-stone-100 text-stone-700 px-2 py-0.5 rounded font-bold">{{ s.status }}</span>
+                    </div>
+                    <p class="text-stone-500 mt-0.5">수량: <strong>{{ s.sample_count }}팩</strong> &bull; {{ s.pickup_method }}</p>
+                    <p class="text-stone-400 text-[11px] truncate mt-0.5">{{ s.hotel_or_location }}</p>
+                </div>
+                {% else %}
+                <div class="text-center py-8 text-stone-400 text-xs">접수된 샘플 신청이 없습니다.</div>
+                {% endfor %}
+            </div>
+
+            <div class="p-4 bg-stone-50 border-t border-stone-100">
+                <a href="{{ url_for('admin_samples') }}" class="block text-center py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition">
+                    가이드 샘플 배송 관리 바로가기
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart initialization scripts -->
+<script>
+    // 1. Monthly Sales Chart
+    const pastMonthsData = {{ past_months|tojson }}.reverse();
+    const monthsLabels = pastMonthsData.map(d => d.ym);
+    const monthsSalesUsd = pastMonthsData.map(d => d.total_usd);
+
+    const ctxMonth = document.getElementById('monthlySalesChart').getContext('2d');
+    new Chart(ctxMonth, {
+        type: 'bar',
+        data: {
+            labels: monthsLabels,
+            datasets: [{
+                label: '월매출 (USD $)',
+                data: monthsSalesUsd,
+                backgroundColor: 'rgba(217, 119, 6, 0.85)',
+                borderRadius: 8,
+                barThickness: 36
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: val => '$' + val
+                    }
+                }
+            }
+        }
+    });
+
+    // 2. Delivery Type Chart
+    const deliveryData = {{ delivery_stats|tojson }};
+    const deliveryLabels = deliveryData.map(d => d.delivery_type === 'direct_korea' ? '한국 직배송' : '푸꾸옥 현지');
+    const deliveryCounts = deliveryData.map(d => d.cnt);
+
+    const ctxDelivery = document.getElementById('deliveryTypeChart').getContext('2d');
+    new Chart(ctxDelivery, {
+        type: 'doughnut',
+        data: {
+            labels: deliveryLabels,
+            datasets: [{
+                data: deliveryCounts,
+                backgroundColor: ['#3b82f6', '#10b981'],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,413 @@
+{% extends "admin/base_admin.html" %}
+
+{% block page_title %}PC 바코드 입출고 & 선입선출(FEFO) 현장 터미널{% endblock %}
+
+{% block admin_content %}
+<div class="space-y-6">
+
+    <!-- Top Mode Selector Bar -->
+    <div class="bg-black text-white p-6 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">USB BARCODE SCANNER READY</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black mt-1">PC 바코드 리더기 연동 터미널</h2>
+            <p class="text-xs text-stone-400 mt-0.5">포스기 없이 일반 컴퓨터에서 유통기한 선입선출(FEFO) 자동 출고 및 입고 관리</p>
+        </div>
+
+        <!-- Mode Buttons -->
+        <div class="flex items-center bg-stone-900 p-1.5 rounded-2xl border border-stone-800 text-xs font-bold">
+            <button type="button" onclick="setMode('OUT_POS')" id="btnModeOut" class="mode-btn px-4 py-2 rounded-xl bg-white text-black transition">
+                <i class="fa-solid fa-cart-shopping mr-1"></i> 현장판매 / 선입선출고 (FEFO)
+            </button>
+            <button type="button" onclick="setMode('IN_STOCK')" id="btnModeIn" class="mode-btn px-4 py-2 rounded-xl text-stone-400 hover:text-white transition">
+                <i class="fa-solid fa-box-archive mr-1"></i> 신규 물품 입고
+            </button>
+            <button type="button" onclick="setMode('CHECK')" id="btnModeCheck" class="mode-btn px-4 py-2 rounded-xl text-stone-400 hover:text-white transition">
+                <i class="fa-solid fa-barcode mr-1"></i> 재고·유통기한 실사
+            </button>
+        </div>
+    </div>
+
+    <!-- Active Scanner Input Box (Always Focused) -->
+    <div class="bg-white p-6 rounded-3xl border-2 border-black shadow-sm space-y-3">
+        <div class="flex justify-between items-center">
+            <label class="text-xs font-black text-black uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-barcode text-base"></i>
+                <span id="scanLabelTitle">바코드 스캐너를 제품 바코드에 찍으세요 (USB 스캐너 연동)</span>
+            </label>
+            <span class="text-[11px] font-bold text-stone-400">키보드 입력 자동 감지 &bull; Enter 자동 실행</span>
+        </div>
+
+        <form id="barcodeScanForm" onsubmit="handleBarcodeScan(event)" class="relative">
+            <input type="text" id="barcodeInput" autofocus autocomplete="off" placeholder="바코드 스캐너를 삑 찍거나 숫자를 입력하세요 (예: 8936001000041)"
+                   class="w-full pl-12 pr-28 py-4 border-2 border-stone-300 focus:border-black rounded-2xl text-base font-mono font-black focus:outline-none tracking-widest bg-stone-50/50">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-5 text-stone-400 text-lg"></i>
+            <button type="submit" class="absolute right-3 top-2.5 px-5 py-2.5 bg-black hover:bg-stone-800 text-white rounded-xl text-xs font-bold transition">
+                실행 &crarr;
+            </button>
+        </form>
+
+        <p class="text-[11px] text-stone-500">
+            &bull; <strong>선입선출(FEFO) 원칙:</strong> 출고 시 유통기한이 가장 빠른 로트부터 1순위로 자동 차감됩니다.<br>
+            &bull; <strong>테스트용 샘플 바코드:</strong> <button type="button" onclick="quickFill('8936001000041')" class="underline font-bold text-black font-mono">골드망고(8936001000041)</button> | <button type="button" onclick="quickFill('8936001000157')" class="underline font-bold text-black font-mono">수제망고청(8936001000157)</button> | <button type="button" onclick="quickFill('8936001000102')" class="underline font-bold text-black font-mono">캐슈넛(8936001000102)</button>
+        </p>
+    </div>
+
+    <!-- Scan Result & Action Display (Dynamic Terminal Card) -->
+    <div id="scanResultCard" class="hidden bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-4">
+        <!-- Injected via JavaScript -->
+    </div>
+
+    <!-- FEFO Active Lots Table (Current Stock by Expiry Date) -->
+    <div class="bg-white rounded-3xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-stone-200 flex flex-wrap justify-between items-center gap-3">
+            <div>
+                <h3 class="text-base font-black text-black">유통기한별 선입선출(FEFO) 실시간 재고 현황</h3>
+                <p class="text-xs text-stone-400">유통기한이 짧은 로트가 상단(1순위)에 자동 배치됩니다.</p>
+            </div>
+            <a href="{{ url_for('admin_inventory_reports') }}" class="px-4 py-2 border border-stone-300 hover:border-black rounded-xl text-xs font-bold text-black transition">
+                일/월/년 수불부 보기 &rarr;
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-stone-50 text-stone-600 font-bold border-b border-stone-200">
+                    <tr>
+                        <th class="p-3.5">출고 우선순위</th>
+                        <th class="p-3.5">상품명 / 바코드</th>
+                        <th class="p-3.5">로트 번호</th>
+                        <th class="p-3.5">입고 일자</th>
+                        <th class="p-3.5">유통기한 (D-Day)</th>
+                        <th class="p-3.5">잔여 수량</th>
+                        <th class="p-3.5 text-right">상태</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-stone-100" id="lotsTableBody">
+                    {% for lot in active_lots %}
+                    <tr class="hover:bg-stone-50/80 transition">
+                        <td class="p-3.5 font-bold">
+                            {% if loop.index == 1 %}
+                            <span class="bg-black text-white px-2 py-0.5 rounded text-[10px] font-black">1순위 자동출고</span>
+                            {% else %}
+                            <span class="text-stone-400 text-xs">{{ loop.index }}순위</span>
+                            {% endif %}
+                        </td>
+                        <td class="p-3.5">
+                            <div class="font-bold text-black text-sm">{{ lot.product_name }}</div>
+                            <div class="text-stone-400 font-mono text-[11px]">{{ lot.barcode }}</div>
+                        </td>
+                        <td class="p-3.5 font-mono font-bold text-stone-700">{{ lot.lot_number }}</td>
+                        <td class="p-3.5 text-stone-500">{{ lot.received_date }}</td>
+                        <td class="p-3.5">
+                            <span class="font-black text-black">{{ lot.expiry_date }}</span>
+                            <span class="ml-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-stone-100 text-stone-700">
+                                D-{{ lot.d_day }}일
+                            </span>
+                        </td>
+                        <td class="p-3.5">
+                            <span class="text-sm font-black text-black">{{ lot.current_qty }}</span>
+                            <span class="text-stone-400 text-[10px]">/ {{ lot.initial_qty }}개</span>
+                        </td>
+                        <td class="p-3.5 text-right">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                출고 가능
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-12 text-stone-400">등록된 재고 로트가 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal: New Inbound Stock Form -->
+<div id="inboundModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-stone-200 space-y-4">
+        <div class="flex justify-between items-center pb-3 border-b border-stone-200">
+            <div>
+                <h3 class="font-black text-base text-black">신규 물품 입고 등록</h3>
+                <p class="text-xs text-stone-400" id="inboundProductName">상품명</p>
+            </div>
+            <button onclick="closeInboundModal()" class="text-stone-400 hover:text-black">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <form id="inboundForm" onsubmit="submitInboundStock(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="inboundBarcode" name="barcode">
+            <input type="hidden" id="inboundProductId" name="product_id">
+
+            <div>
+                <label class="block font-bold text-stone-700 mb-1">로트 번호 (LOT Number) *</label>
+                <input type="text" id="inboundLotNo" name="lot_number" required class="w-full p-2.5 border rounded-xl font-mono uppercase font-bold">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">입고 일자 *</label>
+                    <input type="date" id="inboundReceivedDate" name="received_date" required class="w-full p-2.5 border rounded-xl font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">유통기한 (Expiry) *</label>
+                    <input type="date" id="inboundExpiryDate" name="expiry_date" required class="w-full p-2.5 border rounded-xl font-bold border-black">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">입고 수량 (개) *</label>
+                    <input type="number" name="qty" required min="1" value="50" class="w-full p-2.5 border rounded-xl font-bold text-sm">
+                </div>
+                <div>
+                    <label class="block font-bold text-stone-700 mb-1">입고 단가 (USD $)</label>
+                    <input type="number" step="0.1" name="unit_cost_usd" value="4.5" class="w-full p-2.5 border rounded-xl">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 bg-black hover:bg-stone-800 text-white font-bold rounded-2xl transition">
+                입고 등록 완료 (재고 즉시 반영)
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'OUT_POS'; // 'OUT_POS', 'IN_STOCK', 'CHECK'
+
+    // POS Electronic Scanner Sound Synthesizer (Web Audio API)
+    function playPosBeep(isSuccess = true) {
+        try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            const ctx = new AudioCtx();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            if (isSuccess) {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1760, ctx.currentTime); // 1760Hz POS Beep
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.09);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.09);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(320, ctx.currentTime); // Error buzz
+                gain.gain.setValueAtTime(0.25, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.25);
+            }
+        } catch(e) {}
+    }
+
+    function setMode(mode) {
+        currentMode = mode;
+        const btnOut = document.getElementById('btnModeOut');
+        const btnIn = document.getElementById('btnModeIn');
+        const btnCheck = document.getElementById('btnModeCheck');
+        const label = document.getElementById('scanLabelTitle');
+
+        [btnOut, btnIn, btnCheck].forEach(b => {
+            b.className = 'mode-btn px-4 py-2 rounded-xl text-stone-400 hover:text-white transition';
+        });
+
+        if (mode === 'OUT_POS') {
+            btnOut.className = 'mode-btn px-4 py-2 rounded-xl bg-white text-black font-bold transition';
+            label.textContent = '현장판매 / 출고 모드: 바코드를 스캔하면 유통기한 임박분(FEFO)부터 1개 자동 출고됩니다.';
+        } else if (mode === 'IN_STOCK') {
+            btnIn.className = 'mode-btn px-4 py-2 rounded-xl bg-white text-black font-bold transition';
+            label.textContent = '입고 모드: 바코드를 스캔하면 유통기한과 입고 수량 입력창이 열립니다.';
+        } else {
+            btnCheck = 'mode-btn px-4 py-2 rounded-xl bg-white text-black font-bold transition';
+            label.textContent = '재고 실사 모드: 바코드를 스캔하면 현재 로트별 잔여량과 유통기한을 조회합니다.';
+        }
+
+        document.getElementById('barcodeInput').focus();
+    }
+
+    function quickFill(bcode) {
+        document.getElementById('barcodeInput').value = bcode;
+        document.getElementById('barcodeInput').focus();
+    }
+
+    async function handleBarcodeScan(e) {
+        e.preventDefault();
+        const input = document.getElementById('barcodeInput');
+        const barcode = input.value.trim();
+        if (!barcode) return;
+
+        input.value = '';
+
+        try {
+            const res = await fetch('/api/admin/inventory/scan-action', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ barcode: barcode, mode: currentMode })
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                playPosBeep(false);
+                Swal.fire({ icon: 'error', title: '바코드 오류', text: data.message });
+                return;
+            }
+
+            playPosBeep(true);
+            if (currentMode === 'IN_STOCK') {
+                openInboundModal(data.product, barcode);
+            } else {
+                renderScanResult(data);
+                if (currentMode === 'OUT_POS') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: `[FEFO 출고 완료] ${data.product.name} (잔여: ${data.remaining_qty}개)`,
+                        text: `출고 로트: ${data.lot.lot_number} (유통기한: ${data.lot.expiry_date})`,
+                        timer: 2500,
+                        showConfirmButton: false
+                    });
+                    setTimeout(() => location.reload(), 1200);
+                }
+            }
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: '통신 오류', text: '처리 중 오류가 발생했습니다.' });
+        }
+    }
+
+    function renderScanResult(data) {
+        const card = document.getElementById('scanResultCard');
+        card.classList.remove('hidden');
+
+        if (currentMode === 'OUT_POS') {
+            card.innerHTML = `
+                <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+                    <div class="flex items-center space-x-3">
+                        <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                        <div>
+                            <h4 class="font-black text-sm text-black">선입선출(FEFO) 자동 출고 성공</h4>
+                            <p class="text-xs text-stone-500">${data.product.name} (${data.product.barcode})</p>
+                        </div>
+                    </div>
+                    <span class="text-sm font-black text-black">출고가: $${data.product.price_usd}</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-xs bg-stone-50 p-3 rounded-2xl">
+                    <div>
+                        <span class="text-stone-400 block">차감된 로트</span>
+                        <strong class="font-mono text-black">${data.lot.lot_number}</strong>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 block">해당 로트 유통기한</span>
+                        <strong class="text-red-600 font-bold">${data.lot.expiry_date} (D-${data.lot.d_day}일)</strong>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 block">출고 후 잔여 재고</span>
+                        <strong class="text-black">${data.remaining_qty}개</strong>
+                    </div>
+                </div>
+            `;
+        } else if (currentMode === 'CHECK') {
+            card.innerHTML = `
+                <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+                    <div>
+                        <h4 class="font-black text-base text-black">${data.product.name}</h4>
+                        <p class="text-xs text-stone-400 font-mono">바코드: ${data.product.barcode} &bull; 총 가용 재고: <strong>${data.total_stock}개</strong></p>
+                    </div>
+                </div>
+                <div class="space-y-1.5 text-xs">
+                    <span class="font-bold text-stone-600 block">보유 중인 유통기한 로트 목록 (FEFO 순서):</span>
+                    ${data.lots.map((l, i) => `
+                        <div class="flex justify-between p-2.5 rounded-xl border border-stone-200 bg-stone-50">
+                            <div>
+                                <span class="font-mono font-bold text-black">${l.lot_number}</span>
+                                <span class="text-stone-400 ml-2">입고: ${l.received_date}</span>
+                            </div>
+                            <div>
+                                <span class="font-bold text-red-600">유통기한: ${l.expiry_date} (D-${l.d_day}일)</span>
+                                <span class="ml-3 font-black text-black">잔여: ${l.current_qty}개</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+    }
+
+    function openInboundModal(product, barcode) {
+        document.getElementById('inboundProductName').textContent = `${product.name} (바코드: ${barcode})`;
+        document.getElementById('inboundBarcode').value = barcode;
+        document.getElementById('inboundProductId').value = product.id;
+
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        document.getElementById('inboundReceivedDate').value = dateStr;
+
+        const lotNum = `LOT-${product.id}-${dateStr.replace(/-/g, '').slice(2)}-${Math.floor(Math.random()*900)+100}`;
+        document.getElementById('inboundLotNo').value = lotNum;
+
+        // Default 6 months expiry
+        const exp = new Date(now.getTime() + (180 * 24 * 60 * 60 * 1000));
+        document.getElementById('inboundExpiryDate').value = exp.toISOString().split('T')[0];
+
+        document.getElementById('inboundModal').classList.remove('hidden');
+    }
+
+    function closeInboundModal() {
+        document.getElementById('inboundModal').classList.add('hidden');
+        document.getElementById('barcodeInput').focus();
+    }
+
+    async function submitInboundStock(e) {
+        e.preventDefault();
+        const form = document.getElementById('inboundForm');
+        const payload = {
+            product_id: form.product_id.value,
+            barcode: form.barcode.value,
+            lot_number: form.lot_number.value.trim(),
+            received_date: form.received_date.value,
+            expiry_date: form.expiry_date.value,
+            qty: parseInt(form.qty.value),
+            unit_cost_usd: parseFloat(form.unit_cost_usd.value) || 0.0
+        };
+
+        try {
+            const res = await fetch('/api/admin/inventory/inbound', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const d = await res.json();
+            if (d.success) {
+                closeInboundModal();
+                Swal.fire({ icon: 'success', title: '입고 등록 완료!', text: `신규 로트 ${payload.lot_number} (${payload.qty}개)가 입고되었습니다.` });
+                setTimeout(() => location.reload(), 1200);
+            } else {
+                Swal.fire({ icon: 'error', title: '입고 실패', text: d.message });
+            }
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: '오류', text: '입고 처리 중 오류가 발생했습니다.' });
+        }
+    }
+
+    // Keep barcode input focused on page click
+    document.addEventListener('click', (e) => {
+        if (!['INPUT', 'SELECT', 'BUTTON', 'TEXTAREA'].includes(e.target.tagName)) {
+            document.getElementById('barcodeInput')?.focus();
+        }
+    });
+</script>
+{% endblock %}
