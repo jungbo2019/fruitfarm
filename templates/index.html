@@ -143,9 +143,15 @@
                             소나시 12가 매장 전경
                         </span>
                     </div>
-                    <div class="p-3.5">
-                        <div class="font-bold text-xs text-white">푸꾸옥 플래그십 단독 플래그십</div>
-                        <div class="text-[11px] text-slate-400 mt-0.5">SV2A-V07 Sonasea Bãi Trường</div>
+                    <div class="p-3.5 flex items-center justify-between">
+                        <div>
+                            <div class="font-bold text-xs text-white">푸꾸옥 소나시 직영 플래그십</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">블루스파 아래 · 반미앤코 맞은편 코너</div>
+                        </div>
+                        <a href="https://www.google.com/maps/search/?api=1&query=10.133197,103.982065" target="_blank" rel="noopener noreferrer" class="text-[10px] bg-amber-500 hover:bg-amber-400 text-stone-950 font-black px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition shadow">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>핀 위치</span>
+                        </a>
                     </div>
                 </div>
 
@@ -711,64 +717,106 @@
 
     {# -------- SECTION: LOCATION ---------------- #}
     {% elif s == 'location' %}
-    <section <section id="store-location" data-tab="location" class="py-16 bg-stone-100 border-b border-stone-200">
+    <section id="store-location" data-tab="location" class="py-12 sm:py-16 bg-stone-100 border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm flex flex-col lg:flex-row items-center gap-10">
-                <div class="lg:w-1/2 space-y-4">
-                    <span class="text-xs font-black text-amber-600 tracking-widest uppercase">FLAGSHIP STORE</span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-stone-900 mt-1">FRUIT FARM 푸꾸옥 직영 플래그십</h2>
-                    <p class="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                        푸꾸옥 최고의 리조트 밀집 지역인 소나시(Sonasea) 야시장 메인 스트리트에 위치하고 있습니다. 노보텔, 풀만, 인터컨티넨탈에서 도보 5분 거리에 위치하여 언제든 편하게 무료 시식하러 오실 수 있습니다.
-                    </p>
-
-                    <div class="space-y-3 pt-4 border-t border-stone-100 text-xs text-stone-800">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                <i class="fa-solid fa-location-dot"></i>
-                            </div>
-                            <div>
-                                <strong class="text-stone-900 font-black">공식 매장 주소:</strong>
-                                <span class="text-stone-700 font-bold ml-1">SV2A - V07 Khu Sonasea Bãi Trường, Phú Quốc (소나시 12가 메인 스트리트)</span>
-                            </div>
+            <div class="bg-white rounded-3xl p-5 sm:p-8 border border-stone-200 shadow-sm flex flex-col lg:flex-row items-stretch gap-6 sm:gap-10">
+                <div class="lg:w-1/2 space-y-4 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <div>
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-amber-700 bg-amber-100 px-3 py-1 rounded-full tracking-wider uppercase">
+                                <i class="fa-solid fa-map-pin text-red-600"></i>
+                                <span>EXACT GPS PIN: 10.133197, 103.982065</span>
+                            </span>
+                            <h2 class="text-xl sm:text-3xl font-black text-stone-900 mt-2 [word-break:keep-all] break-keep">
+                                FRUIT FARM 푸꾸옥 직영 플래그십 찾아오시는 길
+                            </h2>
+                            <p class="text-xs sm:text-sm text-stone-600 leading-relaxed mt-1.5 [word-break:keep-all] break-keep">
+                                푸꾸옥 소나시(Sonasea) 쇼핑센터 야시장 메인 스트리트 중심 코너에 위치해 있습니다. 노보텔, 풀만, 인터컨티넨탈, 베스트웨스턴 리조트에서 도보 3~5분 거리로 언제든 편하게 방문하셔서 <strong>전 품목 100% 무료 시식</strong>을 즐기실 수 있습니다.
+                            </p>
                         </div>
 
-                        <div class="flex items-center space-x-3">
-                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-clock"></i>
+                        <div class="space-y-3 pt-4 border-t border-stone-100 text-xs text-stone-800">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <i class="fa-solid fa-location-dot text-sm"></i>
+                                </div>
+                                <div class="[word-break:keep-all] break-keep">
+                                    <strong class="text-stone-900 font-black block text-xs sm:text-sm">공식 매장 주소 & GPS 좌표</strong>
+                                    <span class="text-stone-700 font-bold block mt-0.5">SV2A - V07 Khu Sonasea Bãi Trường, Đường Bào, Phú Quốc</span>
+                                    <span class="text-[11px] text-stone-500 font-mono">GPS: 10.133197, 103.982065</span>
+                                </div>
                             </div>
-                            <div>
-                                <strong class="text-stone-900 font-black">운영 시간:</strong>
-                                <span class="text-stone-700 font-bold ml-1">매일 09:00 ~ 22:00 (연중무휴 · 전 품목 무료 시식 상시 운영)</span>
-                            </div>
-                        </div>
 
-                        <div class="flex items-center space-x-3">
-                            <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-comment"></i>
+                            <div class="flex items-start space-x-3 bg-amber-50/80 p-3 rounded-2xl border border-amber-200">
+                                <div class="w-8 h-8 rounded-xl bg-amber-500 text-stone-950 flex items-center justify-center flex-shrink-0 mt-0.5 font-black">
+                                    <i class="fa-solid fa-compass text-sm"></i>
+                                </div>
+                                <div class="[word-break:keep-all] break-keep">
+                                    <strong class="text-amber-950 font-black block text-xs sm:text-sm">한눈에 찾는 주변 건물 포인트</strong>
+                                    <span class="text-stone-800 font-bold block mt-0.5 leading-relaxed">
+                                        • <strong>블루스파(BLUE SPA)</strong> 바로 아래쪽 코너 건물<br>
+                                        • 길 건너 <strong>ALAND 선물가게</strong> & <strong>반미앤코(BANHMI&CO)</strong> 정면 맞은편<br>
+                                        • <strong>CUỐN CORNER(꾸온코너)</strong> 및 <strong>Hi Park Villas</strong> 바로 옆 코너
+                                    </span>
+                                </div>
                             </div>
-                            <div>
-                                <strong class="text-stone-900 font-black">실시간 고객 상담:</strong>
-                                <span class="text-stone-700 font-bold ml-1">카카오톡 채널 @fruitfarm (24시간 리조트 배달 및 주문 안내)</span>
+
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-xl bg-stone-100 text-stone-700 flex items-center justify-center flex-shrink-0">
+                                    <i class="fa-solid fa-clock text-sm"></i>
+                                </div>
+                                <div>
+                                    <strong class="text-stone-900 font-black">영업 시간:</strong>
+                                    <span class="text-stone-700 font-bold ml-1">매일 09:00 ~ 22:00 (연중무휴 · 상시 무료 시식)</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="pt-4 flex flex-wrap gap-3">
-                        <a href="https://www.google.com/maps/search/?api=1&query=Sonasea+Shopping+Center+Phu+Quoc" target="_blank" rel="noopener noreferrer" target="_blank"
-                           class="inline-flex items-center space-x-2 bg-stone-900 hover:bg-black text-white px-5 py-3 rounded-xl text-xs font-black transition shadow">
-                            <i class="fa-solid fa-map-location-dot text-amber-400"></i>
-                            <span>구글 지도에서 매장 찾기</span>
+                    <div class="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <a href="https://www.google.com/maps/search/?api=1&query=10.133197,103.982065" target="_blank" rel="noopener noreferrer"
+                           class="flex items-center justify-center space-x-2 bg-stone-950 hover:bg-black text-white px-4 py-3.5 rounded-xl text-xs font-black transition shadow-md">
+                            <i class="fa-solid fa-location-dot text-red-500 text-sm"></i>
+                            <span>구글 지도 정확한 핀 위치 열기</span>
                         </a>
-                        <a href="{{ settings.get('kakao_channel_url', 'https://pf.kakao.com') }}" target="_blank"
-                           class="inline-flex items-center space-x-2 bg-[#FEE500] hover:bg-[#edd500] text-black px-5 py-3 rounded-xl text-xs font-black border border-yellow-300 transition shadow">
-                            <i class="fa-solid fa-comment"></i>
-                            <span>카톡으로 리조트 배달 요청</span>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=10.133197,103.982065" target="_blank" rel="noopener noreferrer"
+                           class="flex items-center justify-center space-x-2 bg-amber-500 hover:bg-amber-400 text-stone-950 px-4 py-3.5 rounded-xl text-xs font-black border border-amber-600 transition shadow-md">
+                            <i class="fa-solid fa-diamond-turn-right text-sm"></i>
+                            <span>내 위치에서 매장 길찾기</span>
                         </a>
                     </div>
                 </div>
 
-                <div class="lg:w-1/2 w-full h-80 rounded-2xl overflow-hidden shadow-md border border-stone-200">
-                    <img src="/static/images/store/store_exterior.png" alt="FRUIT FARM 푸꾸옥 플래그십 매장 전경" class="w-full h-full object-cover">
+                <!-- Right: Interactive Google Map Embed + Store Exterior Preview -->
+                <div class="lg:w-1/2 w-full flex flex-col gap-3">
+                    <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden shadow-md border-2 border-amber-400 bg-stone-100">
+                        <iframe 
+                            src="https://maps.google.com/maps?q=10.133197,103.982065&hl=ko&z=19&output=embed"
+                            width="100%" 
+                            height="100%" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="FRUIT FARM 푸꾸옥 플래그십 정확한 구글 지도 위치">
+                        </iframe>
+                        <div class="absolute top-3 left-3 bg-stone-950/90 text-white text-[11px] font-black px-3 py-1.5 rounded-xl shadow flex items-center gap-1.5 border border-stone-700 pointer-events-none">
+                            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                            <span>소나시 코너 (블루스파 아래 / 반미앤코 맞은편)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between bg-stone-50 p-3 rounded-2xl border border-stone-200 text-xs">
+                        <div class="flex items-center gap-3">
+                            <img src="/static/images/store/store_exterior.png" alt="매장 외관" class="w-14 h-10 object-cover rounded-lg border border-stone-300 flex-shrink-0">
+                            <div class="[word-break:keep-all]">
+                                <div class="font-black text-stone-900 text-xs">FRUIT FARM 플래그십 실물 외관</div>
+                                <div class="text-[11px] text-stone-500">소나시 야시장 입구에서 도보 2분 코너 매장</div>
+                            </div>
+                        </div>
+                        <a href="https://www.google.com/maps/search/?api=1&query=10.133197,103.982065" target="_blank" class="text-amber-700 font-black hover:underline text-[11px] flex-shrink-0 ml-2">
+                            크게 보기 ➔
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
